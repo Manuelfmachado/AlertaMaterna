@@ -498,16 +498,16 @@ def main():
         with col1:
             st.markdown("#### Demográficos")
             total_nac = st.number_input("Total Nacimientos", min_value=10, value=1000, step=50)
-            edad_materna = st.slider("Edad Materna Promedio", 15, 45, 27)
-            pct_adolescentes = st.slider("% Madres Adolescentes", 0.0, 80.0, 15.0, 0.5)
-            pct_bajo_educacion = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 30.0, 1.0)
+            edad_materna = st.slider("Edad Materna Promedio", 15.0, 45.0, 27.0, 0.1)
+            pct_adolescentes = st.slider("% Madres Adolescentes", 0.0, 100.0, 15.0, 0.1)
+            pct_bajo_educacion = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 30.0, 0.1)
         
         with col2:
             st.markdown("#### Clínicos")
-            tasa_mort = st.slider("Tasa Mortalidad Fetal (‰)", 0.0, 200.0, 25.0, 1.0)
-            pct_bajo_peso_sim = st.slider("% Bajo Peso", 0.0, 50.0, 10.0, 0.5)
-            pct_cesarea_sim = st.slider("% Cesárea", 0.0, 100.0, 35.0, 1.0)
-            pct_prematuro_sim = st.slider("% Prematuro", 0.0, 50.0, 12.0, 0.5)
+            tasa_mort = st.slider("Tasa Mortalidad Fetal (‰)", 0.0, 200.0, 25.0, 0.1)
+            pct_bajo_peso_sim = st.slider("% Bajo Peso", 0.0, 100.0, 10.0, 0.1)
+            pct_cesarea_sim = st.slider("% Cesárea", 0.0, 100.0, 35.0, 0.1)
+            pct_prematuro_sim = st.slider("% Prematuro", 0.0, 100.0, 12.0, 0.1)
         
         with col3:
             st.markdown("#### Institucionales")
@@ -516,7 +516,7 @@ def main():
             # Calcular presión obstétrica en tiempo real
             presion_calc = total_nac / (num_inst * 5) if num_inst > 0 else 0
             st.info(f"💡 **Presión Obstétrica Calculada:** {presion_calc:.1f} nacimientos/institución")
-            presion_obs = st.slider("Ajustar Presión Obstétrica", 0.0, 500.0, presion_calc, 5.0)
+            presion_obs = st.slider("Ajustar Presión Obstétrica", 0.0, 500.0, presion_calc, 0.1)
         
         if st.button("Predecir Riesgo", type="primary"):
             # Mostrar valores actuales
