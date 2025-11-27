@@ -516,6 +516,17 @@ def main():
             presion_obs = st.slider("Presión Obstétrica", 0.0, 500.0, 100.0, 10.0)
         
         if st.button("Predecir Riesgo", type="primary"):
+            # Mostrar valores actuales
+            st.info(f"""
+            **Valores seleccionados:**
+            - Nacimientos: {total_nac:,} | Edad materna: {edad_materna} años
+            - Adolescentes: {pct_adolescentes:.1f}% | Bajo nivel educativo: {pct_bajo_educacion:.1f}%
+            - Tasa mortalidad: {tasa_mort:.1f}‰ | Bajo peso: {pct_bajo_peso_sim:.1f}%
+            - Cesárea: {pct_cesarea_sim:.1f}% | Prematuro: {pct_prematuro_sim:.1f}%
+            - Instituciones: {num_inst} | Camas per cápita: {camas_pc}
+            - Presión obstétrica: {presion_obs:.0f}
+            """)
+            
             # Calcular defunciones basado en tasa de mortalidad
             total_eventos = int(total_nac / (1 - tasa_mort / 1000))
             total_defunciones_calc = int(total_eventos * tasa_mort / 1000)
