@@ -518,21 +518,6 @@ def main():
             presion_obs = st.slider("Presión Obstétrica", 0.0, 100.0, min(presion_calc, 100.0), 0.1)
         
         if st.button("Predecir Riesgo", type="primary"):
-            # Mostrar valores actuales
-            st.info(f"""
-            **Valores seleccionados:**
-            - Nacimientos: {total_nac:,} | Edad materna: {edad_materna} años
-            - Adolescentes: {pct_adolescentes:.1f}% | Bajo nivel educativo: {pct_bajo_educacion:.1f}%
-            - Tasa mortalidad: {tasa_mort:.1f}‰ | Bajo peso: {pct_bajo_peso_sim:.1f}%
-            - Cesárea: {pct_cesarea_sim:.1f}% | Prematuro: {pct_prematuro_sim:.1f}%
-            - Instituciones: {num_inst} | Camas per cápita: {camas_pc}
-            - **Presión obstétrica: {presion_obs:.1f}** (crítico si >100)
-            
-            **📊 Comparación con caso similar (Orocué 2015):**
-            - Orocué: 59 nac, 0‰ mortalidad, presión=2.4 → **1.6% riesgo (BAJO)**
-            - Tu simulación: {total_nac} nac, {tasa_mort:.1f}‰, presión={presion_obs:.1f}
-            """)
-            
             # Calcular defunciones basado en tasa de mortalidad
             total_eventos = int(total_nac / (1 - tasa_mort / 1000))
             total_defunciones_calc = int(total_eventos * tasa_mort / 1000)
@@ -569,33 +554,47 @@ def main():
             prediccion = modelo.predict(X_sim_scaled)[0]
             probabilidad = modelo.predict_proba(X_sim_scaled)[0, 1]
             
-            st.markdown("---")
-            st.markdown("### Resultado de la Predicción")
+            # Calcular impacto
+            muertes_estimadas = int(total_nac * tasa_mort / 1000)
             
+            st.markdown("---")
+            
+            # Mostrar resultado con impacto visual
             if prediccion == 1:
                 st.error(f"""
-                ### ZONA DE ALTO RIESGO OBSTÉTRICO
+                ## 🚨 ZONA DE ALTO RIESGO OBSTÉTRICO
                 
-                **Probabilidad de Alto Riesgo:** {probabilidad*100:.1f}%
+                ### Probabilidad de Alto Riesgo: {probabilidad*100:.1f}%
                 
-                **Recomendaciones:**
-                - Reforzar atención prenatal
-                - Incrementar capacidad hospitalaria
-                - Implementar programas de prevención
-                - Mejorar acceso a servicios de salud
+                **Impacto estimado:**
+                - De cada **1,000 nacimientos**, aproximadamente **{tasa_mort:.0f} bebés** no sobrevivirían
+                - Con **{total_nac:,} nacimientos anuales**: ~**{muertes_estimadas} muertes fetales** estimadas
+                
+                ### 🏥 Intervenciones Prioritarias:
+                1. **Atención Prenatal**: Incrementar controles tempranos
+                2. **Infraestructura**: Ampliar capacidad hospitalaria ({num_inst} instituciones actuales)
+                3. **Prevención**: Programas para madres adolescentes ({pct_adolescentes:.1f}%)
+                4. **Acceso**: Mejorar servicios en áreas rurales
                 """)
             else:
                 st.success(f"""
-                ### ZONA DE BAJO RIESGO OBSTÉTRICO
+                ## ✅ ZONA DE BAJO RIESGO OBSTÉTRICO
                 
-                **Probabilidad de Alto Riesgo:** {probabilidad*100:.1f}%
+                ### Probabilidad de Alto Riesgo: {probabilidad*100:.1f}%
                 
-                **Recomendaciones:**
-                - Mantener estándares de atención
-                - Continuar monitoreo preventivo
-                - Fortalecer educación prenatal
+                **Indicadores positivos:**
+                - Sistema de salud funcionando adecuadamente
+                - Mortalidad fetal controlada: {tasa_mort:.1f}‰
+                - Infraestructura suficiente: {num_inst} instituciones, {camas_pc} camas per cápita
+                
+                ### 📋 Mantener y Fortalecer:
+                1. **Monitoreo Continuo**: Vigilancia de indicadores clave
+                2. **Estándares de Atención**: Mantener calidad actual
+                3. **Educación Prenatal**: Reforzar programas preventivos
+                4. **Capacitación**: Actualización constante del personal médico
                 """)
             
+            st.markdown("---")
             fig_prob = go.Figure(go.Indicator(
                 mode="gauge+number",
                 value=probabilidad * 100,
