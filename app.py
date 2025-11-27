@@ -497,45 +497,51 @@ def main():
         
         with col1:
             st.markdown("#### Demográficos")
-            total_nac = st.number_input("Total Nacimientos", min_value=0, value=500, step=10)
-            edad_materna = st.slider("Edad Materna Promedio", 15, 45, 25)
-            pct_adolescentes = st.slider("% Madres Adolescentes", 0.0, 50.0, 15.0, 0.1)
+            total_nac = st.number_input("Total Nacimientos", min_value=10, value=1000, step=50)
+            edad_materna = st.slider("Edad Materna Promedio", 15, 45, 27)
+            pct_adolescentes = st.slider("% Madres Adolescentes", 0.0, 80.0, 15.0, 0.5)
+            pct_bajo_educacion = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 30.0, 1.0)
         
         with col2:
             st.markdown("#### Clínicos")
-            tasa_mort = st.slider("Tasa Mortalidad Fetal (‰)", 0.0, 50.0, 10.0, 0.1)
-            pct_bajo_peso_sim = st.slider("% Bajo Peso", 0.0, 30.0, 8.0, 0.1)
-            pct_cesarea_sim = st.slider("% Cesárea", 0.0, 100.0, 30.0, 0.1)
+            tasa_mort = st.slider("Tasa Mortalidad Fetal (‰)", 0.0, 200.0, 25.0, 1.0)
+            pct_bajo_peso_sim = st.slider("% Bajo Peso", 0.0, 50.0, 10.0, 0.5)
+            pct_cesarea_sim = st.slider("% Cesárea", 0.0, 100.0, 35.0, 1.0)
+            pct_prematuro_sim = st.slider("% Prematuro", 0.0, 50.0, 12.0, 0.5)
         
         with col3:
             st.markdown("#### Institucionales")
-            num_inst = st.number_input("Número Instituciones", min_value=0, value=5, step=1)
-            camas_pc = st.number_input("Camas per cápita", min_value=0, value=200, step=10)
-            presion_obs = st.slider("Presión Obstétrica", 0.0, 200.0, 50.0, 1.0)
+            num_inst = st.number_input("Número Instituciones", min_value=0, value=8, step=1)
+            camas_pc = st.number_input("Camas per cápita", min_value=0, value=300, step=50)
+            presion_obs = st.slider("Presión Obstétrica", 0.0, 500.0, 100.0, 10.0)
         
         if st.button("Predecir Riesgo", type="primary"):
+            # Calcular defunciones basado en tasa de mortalidad
+            total_eventos = int(total_nac / (1 - tasa_mort / 1000))
+            total_defunciones_calc = int(total_eventos * tasa_mort / 1000)
+            
             datos_simulacion = {
                 'total_nacimientos': total_nac,
-                'total_defunciones': int(total_nac * tasa_mort / 1000),
+                'total_defunciones': total_defunciones_calc,
                 'pct_madres_adolescentes': pct_adolescentes,
-                'pct_madres_edad_avanzada': 5.0,
-                'pct_bajo_nivel_educativo': 20.0,
+                'pct_madres_edad_avanzada': max(0, 100 - pct_adolescentes - 70),  # Calculado
+                'pct_bajo_nivel_educativo': pct_bajo_educacion,
                 'edad_materna_promedio': edad_materna,
                 'tasa_mortalidad_fetal': tasa_mort,
                 'pct_bajo_peso': pct_bajo_peso_sim,
-                'pct_embarazo_multiple': 2.0,
+                'pct_embarazo_multiple': 2.5,
                 'pct_cesarea': pct_cesarea_sim,
-                'pct_prematuro': 10.0,
-                'apgar_bajo_promedio': 5.0,
+                'pct_prematuro': pct_prematuro_sim,
+                'apgar_bajo_promedio': pct_bajo_peso_sim / 2,  # Correlacionado
                 'presion_obstetrica': presion_obs,
                 'num_instituciones': num_inst,
-                'pct_instituciones_publicas': 50.0,
+                'pct_instituciones_publicas': 60.0,
                 'camas_per_capita': camas_pc,
-                'pct_sin_seguridad_social': 10.0,
-                'pct_area_rural': 30.0,
-                'pct_regimen_subsidiado': 60.0,
-                'pct_sin_control_prenatal': 5.0,
-                'consultas_promedio': 5.0
+                'pct_sin_seguridad_social': pct_bajo_educacion * 0.3,  # Correlacionado
+                'pct_area_rural': 25.0,
+                'pct_regimen_subsidiado': 55.0,
+                'pct_sin_control_prenatal': pct_adolescentes * 0.4,  # Correlacionado
+                'consultas_promedio': max(3, 8 - pct_adolescentes / 10)  # Correlacionado inverso
             }
             
             X_sim = pd.DataFrame([datos_simulacion])
