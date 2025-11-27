@@ -511,9 +511,12 @@ def main():
         
         with col3:
             st.markdown("#### Institucionales")
-            num_inst = st.number_input("Número Instituciones", min_value=0, value=8, step=1)
+            num_inst = st.number_input("Número Instituciones", min_value=1, value=8, step=1)
             camas_pc = st.number_input("Camas per cápita", min_value=0, value=300, step=50)
-            presion_obs = st.slider("Presión Obstétrica", 0.0, 500.0, 100.0, 10.0)
+            # Calcular presión obstétrica en tiempo real
+            presion_calc = total_nac / (num_inst * 5) if num_inst > 0 else 0
+            st.info(f"💡 **Presión Obstétrica Calculada:** {presion_calc:.1f} nacimientos/institución")
+            presion_obs = st.slider("Ajustar Presión Obstétrica", 0.0, 500.0, presion_calc, 5.0)
         
         if st.button("Predecir Riesgo", type="primary"):
             # Mostrar valores actuales
@@ -524,7 +527,11 @@ def main():
             - Tasa mortalidad: {tasa_mort:.1f}‰ | Bajo peso: {pct_bajo_peso_sim:.1f}%
             - Cesárea: {pct_cesarea_sim:.1f}% | Prematuro: {pct_prematuro_sim:.1f}%
             - Instituciones: {num_inst} | Camas per cápita: {camas_pc}
-            - Presión obstétrica: {presion_obs:.0f}
+            - **Presión obstétrica: {presion_obs:.1f}** (crítico si >100)
+            
+            **📊 Comparación con caso similar (Orocué 2015):**
+            - Orocué: 59 nac, 0‰ mortalidad, presión=2.4 → **1.6% riesgo (BAJO)**
+            - Tu simulación: {total_nac} nac, {tasa_mort:.1f}‰, presión={presion_obs:.1f}
             """)
             
             # Calcular defunciones basado en tasa de mortalidad
