@@ -515,8 +515,7 @@ def main():
             camas_pc = st.number_input("Camas per cápita", min_value=0, value=300, step=50)
             # Calcular presión obstétrica en tiempo real
             presion_calc = total_nac / (num_inst * 5) if num_inst > 0 else 0
-            st.info(f"💡 **Presión Obstétrica Calculada:** {presion_calc:.1f} nacimientos/institución")
-            presion_obs = st.slider("Ajustar Presión Obstétrica", 0.0, 500.0, presion_calc, 0.1)
+            presion_obs = st.slider("Presión Obstétrica", 0.0, 100.0, min(presion_calc, 100.0), 0.1)
         
         if st.button("Predecir Riesgo", type="primary"):
             # Mostrar valores actuales
