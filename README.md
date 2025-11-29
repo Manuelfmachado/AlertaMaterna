@@ -35,14 +35,14 @@ El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al
 
 ## Resultados Principales
 
-| Métrica | Valor |
-|---------|-------|
-| **Registros analizados** | 310 municipio-año (2020-2024) |
-| **Registros válidos** | 251 (≥10 nacimientos) |
-| **Municipios alto riesgo** | 53 (21.1%) |
+| Métrica                             | Valor                                     |
+| ------------------------------------ | ----------------------------------------- |
+| **Registros analizados**       | 310 municipio-año (2020-2024)            |
+| **Registros válidos**         | 251 (≥10 nacimientos)                    |
+| **Municipios alto riesgo**     | 53 (21.1%)                                |
 | **Casos críticos detectados** | 40 (mortalidad >50‰) - 100% sensibilidad |
-| **ROC-AUC Modelo Predictivo** | 0.71 |
-| **Accuracy** | 66% |
+| **ROC-AUC Modelo Predictivo**  | 0.71                                      |
+| **Accuracy**                   | 66%                                       |
 
 ## Modelos Implementados
 
@@ -51,10 +51,12 @@ El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al
 **Sistema híbrido de puntaje (0-8 puntos)**:
 
 Un municipio es clasificado como **ALTO RIESGO** si cumple:
+
 - ≥3 puntos en criterios de percentil 75 (mortalidad fetal, atención prenatal, bajo peso, prematuridad, cesáreas, presión obstétrica)
 - **O** mortalidad fetal >50‰ (clasificación automática, +3 puntos)
 
 **Justificación del umbral 50‰**:
+
 - Tasa global OMS: 5‰
 - Latinoamérica: 10-15‰
 - **50‰ = 10x la tasa normal** → crisis de salud pública (PAHO 2019)
@@ -66,15 +68,16 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 **Features**: 20 variables sociosanitarias (excluyendo identificadores y targets)
 
 **Performance**:
+
 - ROC-AUC: **0.71**
 - Recall (alta mortalidad): **62%** (prioriza detección de casos críticos)
 - Precision (baja mortalidad): **84%**
 
 **Top 3 features más importantes**:
+
 1. APGAR bajo promedio (18.7%)
 2. Porcentaje bajo peso al nacer (7.4%)
 3. Consultas prenatales promedio (7.2%)
-
 
 ## Instalación y Uso
 
@@ -171,6 +174,7 @@ El dashboard tiene **2 pestañas principales**:
 ## Features Generadas (24 variables)
 
 ### Demográficas (5)
+
 - `total_nacimientos`: Total de nacimientos registrados
 - `edad_materna_promedio`: Edad promedio de madres
 - `pct_madres_adolescentes`: % madres <18 años
@@ -178,6 +182,7 @@ El dashboard tiene **2 pestañas principales**:
 - `pct_bajo_nivel_educativo`: % madres con educación básica
 
 ### Clínicas (8)
+
 - `total_defunciones`: Defunciones infantiles (<1 año)
 - `defunciones_fetales`: Muertes fetales (≥22 semanas)
 - `tasa_mortalidad_fetal`: Defunciones fetales por 1,000 nacimientos
@@ -189,20 +194,24 @@ El dashboard tiene **2 pestañas principales**:
 - `apgar_bajo_promedio`: Promedio APGAR <7
 
 ### Institucionales (3)
+
 - `num_instituciones`: Número de instituciones de salud
 - `presion_obstetrica`: Nacimientos por institución
 - `pct_instituciones_publicas`: % instituciones públicas
 
 ### Socioeconómicas (3)
+
 - `pct_sin_seguridad_social`: % sin afiliación a salud
 - `pct_regimen_subsidiado`: % en régimen subsidiado
 - `pct_area_rural`: % nacimientos en zona rural
 
 ### Atención Prenatal (2)
+
 - `pct_sin_control_prenatal`: % sin control prenatal
 - `consultas_promedio`: Promedio de consultas prenatales
 
 ### Targets (3)
+
 - `riesgo_obstetrico`: ALTO / BAJO (Modelo 1)
 - `puntos_riesgo`: Puntaje 0-8 (Modelo 1)
 - `alta_mortalidad`: 0/1 (Modelo 2)
@@ -228,13 +237,12 @@ Todos los parámetros están respaldados por literatura científica. Ver **`DOCU
 
 ### Umbrales Críticos
 
-| Indicador | Umbral | Justificación |
-|-----------|--------|---------------|
-| Mortalidad fetal crítica | >50‰ | 10x tasa normal (OMS: 5‰) |
-| Sin atención prenatal | >50% | Falla sistémica (OMS recomienda 100%) |
-| Clasificación alto riesgo | ≥3 puntos | Detecta 100% casos críticos, 21% clasificados |
-| Target mortalidad infantil | >Percentil 75 | 6.42‰ (50% sobre promedio nacional ~4‰) |
-
+| Indicador                  | Umbral        | Justificación                                 |
+| -------------------------- | ------------- | ---------------------------------------------- |
+| Mortalidad fetal crítica  | >50‰         | 10x tasa normal (OMS: 5‰)                     |
+| Sin atención prenatal     | >50%          | Falla sistémica (OMS recomienda 100%)         |
+| Clasificación alto riesgo | ≥3 puntos    | Detecta 100% casos críticos, 21% clasificados |
+| Target mortalidad infantil | >Percentil 75 | 6.42‰ (50% sobre promedio nacional ~4‰)      |
 
 ## Casos de Uso
 
@@ -249,38 +257,41 @@ Todos los parámetros están respaldados por literatura científica. Ver **`DOCU
 
 ### Por Departamento (2024)
 
-| Departamento | Municipios | Alto Riesgo | % Alto Riesgo | Mortalidad Promedio |
-|--------------|------------|-------------|---------------|---------------------|
-| **Vichada** | 2 | 2 | 100% | 86.5‰ |
-| **Arauca** | 7 | 4 | 57% | 99.6‰ |
-| **Guaviare** | 4 | 1 | 25% | 85.2‰ |
-| **Meta** | 18 | 4 | 22% | 25.1‰ |
-| **Casanare** | 14 | 2 | 14% | 24.8‰ |
+| Departamento       | Municipios | Alto Riesgo | % Alto Riesgo | Mortalidad Promedio |
+| ------------------ | ---------- | ----------- | ------------- | ------------------- |
+| **Vichada**  | 2          | 2           | 100%          | 86.5‰              |
+| **Arauca**   | 7          | 4           | 57%           | 99.6‰              |
+| **Guaviare** | 4          | 1           | 25%           | 85.2‰              |
+| **Meta**     | 18         | 4           | 22%           | 25.1‰              |
+| **Casanare** | 14         | 2           | 14%           | 24.8‰              |
 
 ### Municipios Críticos (Mortalidad >50‰, 2024)
 
-| Municipio | Departamento | Nacimientos | Defunciones | Mortalidad | Estado |
-|-----------|--------------|-------------|-------------|------------|--------|
-| Saravena | Arauca | 1,716 | 278 | 162.0‰ | CRÍTICO |
-| Puerto Rondón | Arauca | 21 | 2 | 95.2‰ | CRÍTICO |
-| Puerto Carreño | Vichada | 513 | 47 | 91.6‰ | CRÍTICO |
-| Arauca | Arauca | 1,188 | 107 | 90.1‰ | CRÍTICO |
-| San José del Guaviare | Guaviare | 1,009 | 86 | 85.2‰ | CRÍTICO |
+| Municipio              | Departamento | Nacimientos | Defunciones | Mortalidad | Estado   |
+| ---------------------- | ------------ | ----------- | ----------- | ---------- | -------- |
+| Saravena               | Arauca       | 1,716       | 278         | 162.0‰    | CRÍTICO |
+| Puerto Rondón         | Arauca       | 21          | 2           | 95.2‰     | CRÍTICO |
+| Puerto Carreño        | Vichada      | 513         | 47          | 91.6‰     | CRÍTICO |
+| Arauca                 | Arauca       | 1,188       | 107         | 90.1‰     | CRÍTICO |
+| San José del Guaviare | Guaviare     | 1,009       | 86          | 85.2‰     | CRÍTICO |
 
 **Total población afectada**: 4,811 nacimientos en municipios críticos (38% del total 2024)
 
 ## Tecnologías Utilizadas
 
 ### Machine Learning
+
 - **XGBoost** 1.7+: Gradient boosting optimizado
 - **Scikit-learn** 1.3+: Preprocessing, métricas, validación
 - **Imbalanced-learn** 0.11+: SMOTE para balanceo de clases
 
 ### Análisis de Datos
+
 - **Pandas** 2.0+: Manipulación y análisis de datos
 - **NumPy** 1.24+: Operaciones numéricas
 
 ### Visualización
+
 - **Streamlit** 1.28+: Dashboard web interactivo
 - **Plotly** 5.11+: Gráficos interactivos
 - **Matplotlib** 3.7+: Visualizaciones estáticas
@@ -315,11 +326,13 @@ Este proyecto es de **código abierto** bajo licencia MIT para uso en salud púb
 ## Agradecimientos
 
 Datos proporcionados por:
+
 - **DANE** (Departamento Administrativo Nacional de Estadística)
 - **Ministerio de Salud y Protección Social de Colombia**
 - Registros vitales de nacimientos y defunciones (2020-2024)
 
 Referencias científicas:
+
 - **OMS** (Organización Mundial de la Salud)
 - **PAHO** (Pan American Health Organization)
 - **UNICEF** - Estudios sobre salud materno-infantil
@@ -327,6 +340,7 @@ Referencias científicas:
 ## Contacto
 
 Para preguntas, sugerencias o colaboraciones:
+
 - GitHub: [@Manuelfmachado](https://github.com/Manuelfmachado)
 - Repositorio: [AlertaMaterna](https://github.com/Manuelfmachado/AlertaMaterna)
 
@@ -345,7 +359,7 @@ de Mortalidad Infantil en la Región Orinoquía. GitHub: Manuelfmachado/AlertaMa
 
 **Accede a la aplicación web en vivo:**
 
-### 🚀 [Ir a AlertaMaterna Dashboard](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
+### [Ir a AlertaMaterna Dashboard](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
 
 Explora el sistema de clasificación de riesgo obstétrico, visualiza mapas interactivos y utiliza el predictor de mortalidad infantil directamente desde tu navegador.
 
@@ -353,7 +367,7 @@ Explora el sistema de clasificación de riesgo obstétrico, visualiza mapas inte
 
 <div align="center">
 
-**AlertaMaterna v1.0** | 2024-2025  
+**AlertaMaterna v1.0** | 2024-2025
 *Anticipación del riesgo obstétrico en la región Orinoquía*
 
 [Inicio](#alertamaterna-sistema-de-clasificación-de-riesgo-obstétrico-y-predicción-de-mortalidad-infantil-en-la-región-orinoquía) • [Dashboard](#-uso-del-dashboard) • [Documentación](#-documentación-adicional) • [Contribuir](#-contribuciones)
