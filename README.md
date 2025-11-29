@@ -1,350 +1,350 @@
-# AlertaMaterna: Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil en la Región Orinoquía
+﻿#AlertaMaterna:SistemadeClasificacióndeRiesgoObstétricoyPrediccióndeMortalidadInfantilenlaRegiónOrinoquía
 
-![AlertaMaterna Banner](alertamaterna_banner.png)
+![AlertaMaternaBanner](alertamaterna_banner.png)
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Python3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License:MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 
-## 📋 Descripción
+##📋Descripción
 
-**AlertaMaterna** es un sistema de inteligencia artificial que identifica municipios de la región Orinoquía con alto riesgo de mortalidad materno-infantil, utilizando datos oficiales del DANE del periodo 2020-2024.
+**AlertaMaterna**esunsistemadeinteligenciaartificialqueidentificamunicipiosdelaregiónOrinoquíaconaltoriesgodemortalidadmaterno-infantil,utilizandodatosoficialesdelDANEdelperiodo2020-2024.
 
-El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al nacer, prematuridad, acceso a servicios) para clasificar **55 municipios** en dos categorías: **ALTO RIESGO** o **BAJO RIESGO**, además de predecir la probabilidad de mortalidad infantil en cada municipio.
+Elsistemaanaliza**24indicadoresdesalud**(atenciónprenatal,bajopesoalnacer,prematuridad,accesoaservicios)paraclasificar**55municipios**endoscategorías:**ALTORIESGO**o**BAJORIESGO**,ademásdepredecirlaprobabilidaddemortalidadinfantilencadamunicipio.
 
-### 🎯 Objetivos
+###🎯Objetivos
 
-1. **Clasificar** municipios según su nivel de riesgo obstétrico
-2. **Predecir** probabilidad de mortalidad infantil (<1 año)
-3. **Priorizar** intervenciones en salud pública
-4. **Monitorear** evolución temporal de indicadores críticos
+1.**Clasificar**municipiossegúnsunivelderiesgoobstétrico
+2.**Predecir**probabilidaddemortalidadinfantil(<1año)
+3.**Priorizar**intervencionesensaludpública
+4.**Monitorear**evolucióntemporaldeindicadorescríticos
 
-### 🌍 Región de Análisis
+###🌍RegióndeAnálisis
 
-**Orinoquía colombiana**: Meta, Arauca, Casanare, Guaviare y Vichada (55 municipios, 310 registros municipio-año 2020-2024)
+**Orinoquíacolombiana**:Meta,Arauca,Casanare,GuaviareyVichada(55municipios,310registrosmunicipio-año2020-2024)
 
-## 🚀 Características Principales
+##🚀CaracterísticasPrincipales
 
-- ✅ **Sistema híbrido de clasificación**: Combina percentiles estadísticos + umbrales críticos OMS/PAHO
-- ✅ **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
-- ✅ **Modelo predictivo XGBoost**: ROC-AUC 0.71, prioriza sensibilidad sobre especificidad
-- ✅ **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
-- ✅ **Basado en datos oficiales**: DANE - 453,901 nacimientos y 21,250 defunciones fetales (2024)
-- ✅ **Código abierto**: Disponible en GitHub bajo licencia MIT
+-✅**Sistemahíbridodeclasificación**:Combinapercentilesestadísticos+umbralescríticosOMS/PAHO
+-✅**100%dedeteccióndecasoscríticos**:Identificatodoslosmunicipiosconmortalidad>50‰
+-✅**ModelopredictivoXGBoost**:ROC-AUC0.71,priorizasensibilidadsobreespecificidad
+-✅**Dashboardinteractivo**:VisualizacionesentiemporealconStreamlityPlotly
+-✅**Basadoendatosoficiales**:DANE-453,901nacimientosy21,250defuncionesfetales(2024)
+-✅**Códigoabierto**:DisponibleenGitHubbajolicenciaMIT
 
-## 📊 Resultados Principales
+##📊ResultadosPrincipales
 
-| Métrica | Valor |
+|Métrica|Valor|
 |---------|-------|
-| **Registros analizados** | 310 municipio-año (2020-2024) |
-| **Registros válidos** | 251 (≥10 nacimientos) |
-| **Municipios alto riesgo** | 53 (21.1%) |
-| **Casos críticos detectados** | 40 (mortalidad >50‰) - 100% sensibilidad |
-| **ROC-AUC Modelo Predictivo** | 0.71 |
-| **Accuracy** | 66% |
+|**Registrosanalizados**|310municipio-año(2020-2024)|
+|**Registrosválidos**|251(≥10nacimientos)|
+|**Municipiosaltoriesgo**|53(21.1%)|
+|**Casoscríticosdetectados**|40(mortalidad>50‰)-100%sensibilidad|
+|**ROC-AUCModeloPredictivo**|0.71|
+|**Accuracy**|66%|
 
-## 🧠 Modelos Implementados
+##🧠ModelosImplementados
 
-### Modelo 1: Clasificación de Riesgo Obstétrico
+###Modelo1:ClasificacióndeRiesgoObstétrico
 
-**Sistema híbrido de puntaje (0-8 puntos)**:
+**Sistemahíbridodepuntaje(0-8puntos)**:
 
-Un municipio es clasificado como **ALTO RIESGO** si cumple:
-- ≥3 puntos en criterios de percentil 75 (mortalidad fetal, atención prenatal, bajo peso, prematuridad, cesáreas, presión obstétrica)
-- **O** mortalidad fetal >50‰ (clasificación automática, +3 puntos)
+Unmunicipioesclasificadocomo**ALTORIESGO**sicumple:
+-≥3puntosencriteriosdepercentil75(mortalidadfetal,atenciónprenatal,bajopeso,prematuridad,cesáreas,presiónobstétrica)
+-**O**mortalidadfetal>50‰(clasificaciónautomática,+3puntos)
 
-**Justificación del umbral 50‰**:
-- Tasa global OMS: 5‰
-- Latinoamérica: 10-15‰
-- **50‰ = 10x la tasa normal** → crisis de salud pública (PAHO 2019)
+**Justificacióndelumbral50‰**:
+-TasaglobalOMS:5‰
+-Latinoamérica:10-15‰
+-**50‰=10xlatasanormal**→crisisdesaludpública(PAHO2019)
 
-### Modelo 2: Predicción de Mortalidad Infantil
+###Modelo2:PrediccióndeMortalidadInfantil
 
-**Algoritmo**: XGBoost con SMOTE (balanceo de clases)
+**Algoritmo**:XGBoostconSMOTE(balanceodeclases)
 
-**Features**: 20 variables sociosanitarias (excluyendo identificadores y targets)
+**Features**:20variablessociosanitarias(excluyendoidentificadoresytargets)
 
 **Performance**:
-- ROC-AUC: **0.71**
-- Recall (alta mortalidad): **62%** (prioriza detección de casos críticos)
-- Precision (baja mortalidad): **84%**
+-ROC-AUC:**0.71**
+-Recall(altamortalidad):**62%**(priorizadeteccióndecasoscríticos)
+-Precision(bajamortalidad):**84%**
 
-**Top 3 features más importantes**:
-1. APGAR bajo promedio (18.7%)
-2. Porcentaje bajo peso al nacer (7.4%)
-3. Consultas prenatales promedio (7.2%)
+**Top3featuresmásimportantes**:
+1.APGARbajopromedio(18.7%)
+2.Porcentajebajopesoalnacer(7.4%)
+3.Consultasprenatalespromedio(7.2%)
 
 
-## 🛠️ Instalación y Uso
+##🛠️InstalaciónyUso
 
-### Requisitos Previos
+###RequisitosPrevios
 
-- Python 3.8 o superior
-- pip (gestor de paquetes Python)
+-Python3.8osuperior
+-pip(gestordepaquetesPython)
 
-### Instalación
-
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/Manuelfmachado/AlertaMaterna.git
-cd AlertaMaterna
-
-# 2. Instalar dependencias
-pip install -r requirements.txt
-```
-
-### Ejecución Rápida
-
-**Opción 1: Ejecutar dashboard directamente** (modelos ya entrenados)
+###Instalación
 
 ```bash
-streamlit run app_simple.py
+#1.Clonarelrepositorio
+gitclonehttps://github.com/Manuelfmachado/AlertaMaterna.git
+cdAlertaMaterna
+
+#2.Instalardependencias
+pipinstall-rrequirements.txt
 ```
 
-El dashboard se abrirá en `http://localhost:8501`
+###EjecuciónRápida
 
-**Opción 2: Ejecutar pipeline completo** (reentrenar modelos)
+**Opción1:Ejecutardashboarddirectamente**(modelosyaentrenados)
 
 ```bash
-# Paso 1: Generar features
-cd src
-python features.py
-
-# Paso 2: Entrenar modelos
-python train_model.py
-
-# Paso 3: Lanzar dashboard
-cd ..
-streamlit run app_simple.py
+streamlitrunapp_simple.py
 ```
 
-## 📁 Estructura del Proyecto
+Eldashboardseabriráen`http://localhost:8501`
+
+**Opción2:Ejecutarpipelinecompleto**(reentrenarmodelos)
+
+```bash
+#Paso1:Generarfeatures
+cdsrc
+pythonfeatures.py
+
+#Paso2:Entrenarmodelos
+pythontrain_model.py
+
+#Paso3:Lanzardashboard
+cd..
+streamlitrunapp_simple.py
+```
+
+##📁EstructuradelProyecto
 
 ```
 AlertaMaterna/
-├── data/
-│   ├── raw/                              # Datos originales DANE
-│   │   ├── BD-EEVV-Nacimientos-*.csv
-│   │   ├── BD-EEVV-Defunciones*.csv
-│   │   └── codigos_*.csv
-│   └── processed/                        # Datos procesados
-│       ├── features_municipio_anio.csv   # 310 registros con 24 features
-│       └── features_alerta_materna.csv   # Con targets y clasificación
-├── src/
-│   ├── features.py                       # Generación de 24 features
-│   └── train_model.py                    # Entrenamiento de modelos
-├── models/                                # Modelos entrenados (.pkl)
-│   ├── modelo_mortalidad_xgb.pkl
-│   ├── scaler_mortalidad.pkl
-│   ├── umbral_mortalidad.pkl
-│   └── umbral_riesgo_obstetrico.pkl
-├── app_simple.py                          # Dashboard Streamlit
-├── requirements.txt                       # Dependencias Python
-├── DOCUMENTACION_TECNICA.md              # Justificación científica (60+ páginas)
-├── alertamaterna_banner.png              # Banner del proyecto
-└── README.md                              # Este archivo
+├──data/
+│├──raw/#DatosoriginalesDANE
+││├──BD-EEVV-Nacimientos-*.csv
+││├──BD-EEVV-Defunciones*.csv
+││└──codigos_*.csv
+│└──processed/#Datosprocesados
+│├──features_municipio_anio.csv#310registroscon24features
+│└──features_alerta_materna.csv#Contargetsyclasificación
+├──src/
+│├──features.py#Generaciónde24features
+│└──train_model.py#Entrenamientodemodelos
+├──models/#Modelosentrenados(.pkl)
+│├──modelo_mortalidad_xgb.pkl
+│├──scaler_mortalidad.pkl
+│├──umbral_mortalidad.pkl
+│└──umbral_riesgo_obstetrico.pkl
+├──app_simple.py#DashboardStreamlit
+├──requirements.txt#DependenciasPython
+├──DOCUMENTACION_TECNICA.md#Justificacióncientífica(60+páginas)
+├──alertamaterna_banner.png#Bannerdelproyecto
+└──README.md#Estearchivo
 ```
 
-## 📈 Uso del Dashboard
+##📈UsodelDashboard
 
-El dashboard tiene **2 pestañas principales**:
+Eldashboardtiene**2pestañasprincipales**:
 
-### 1. 📊 Panorama General
+###1.📊PanoramaGeneral
 
-- **Indicadores principales**: Municipios analizados, alto riesgo, nacimientos, mortalidad fetal
-- **Distribución de riesgo**: Gráfico comparativo por departamento
-- **Indicadores clave**: Promedios de mortalidad, atención prenatal, bajo peso
-- **Top 10 municipios alto riesgo**: Ranking con puntajes detallados
+-**Indicadoresprincipales**:Municipiosanalizados,altoriesgo,nacimientos,mortalidadfetal
+-**Distribuciónderiesgo**:Gráficocomparativopordepartamento
+-**Indicadoresclave**:Promediosdemortalidad,atenciónprenatal,bajopeso
+-**Top10municipiosaltoriesgo**:Rankingconpuntajesdetallados
 
-### 2. 🎯 Predictor de Riesgo
+###2.🎯PredictordeRiesgo
 
-**Herramienta interactiva** para evaluar municipios:
+**Herramientainteractiva**paraevaluarmunicipios:
 
-1. Ingresa 20 indicadores del municipio (nacimientos, atención prenatal, APGAR, etc.)
-2. El sistema calcula probabilidad de alta mortalidad
-3. Visualización de riesgo:
-   - 🟢 **Verde (<30%)**: Riesgo bajo
-   - 🟡 **Amarillo (30-60%)**: Riesgo medio
-   - 🔴 **Rojo (>60%)**: Riesgo alto
+1.Ingresa20indicadoresdelmunicipio(nacimientos,atenciónprenatal,APGAR,etc.)
+2.Elsistemacalculaprobabilidaddealtamortalidad
+3.Visualizaciónderiesgo:
+-🟢**Verde(<30%)**:Riesgobajo
+-🟡**Amarillo(30-60%)**:Riesgomedio
+-🔴**Rojo(>60%)**:Riesgoalto
 
-## 🔢 Features Generadas (24 variables)
+##🔢FeaturesGeneradas(24variables)
 
-### 📊 Demográficas (5)
-- `total_nacimientos`: Total de nacimientos registrados
-- `edad_materna_promedio`: Edad promedio de madres
-- `pct_madres_adolescentes`: % madres <18 años
-- `pct_madres_edad_avanzada`: % madres ≥35 años
-- `pct_bajo_nivel_educativo`: % madres con educación básica
+###📊Demográficas(5)
+-`total_nacimientos`:Totaldenacimientosregistrados
+-`edad_materna_promedio`:Edadpromediodemadres
+-`pct_madres_adolescentes`:%madres<18años
+-`pct_madres_edad_avanzada`:%madres≥35años
+-`pct_bajo_nivel_educativo`:%madresconeducaciónbásica
 
-### 🏥 Clínicas (8)
-- `total_defunciones`: Defunciones infantiles (<1 año)
-- `defunciones_fetales`: Muertes fetales (≥22 semanas)
-- `tasa_mortalidad_fetal`: Defunciones fetales por 1,000 nacimientos
-- `tasa_mortalidad_infantil`: Defunciones <1 año por 1,000 nacimientos
-- `pct_bajo_peso`: % nacimientos <2,500g
-- `pct_embarazo_multiple`: % embarazos múltiples
-- `pct_cesarea`: % partos por cesárea
-- `pct_prematuro`: % nacimientos <37 semanas
-- `apgar_bajo_promedio`: Promedio APGAR <7
+###🏥Clínicas(8)
+-`total_defunciones`:Defuncionesinfantiles(<1año)
+-`defunciones_fetales`:Muertesfetales(≥22semanas)
+-`tasa_mortalidad_fetal`:Defuncionesfetalespor1,000nacimientos
+-`tasa_mortalidad_infantil`:Defunciones<1añopor1,000nacimientos
+-`pct_bajo_peso`:%nacimientos<2,500g
+-`pct_embarazo_multiple`:%embarazosmúltiples
+-`pct_cesarea`:%partosporcesárea
+-`pct_prematuro`:%nacimientos<37semanas
+-`apgar_bajo_promedio`:PromedioAPGAR<7
 
-### 🏢 Institucionales (3)
-- `num_instituciones`: Número de instituciones de salud
-- `presion_obstetrica`: Nacimientos por institución
-- `pct_instituciones_publicas`: % instituciones públicas
+###🏢Institucionales(3)
+-`num_instituciones`:Númerodeinstitucionesdesalud
+-`presion_obstetrica`:Nacimientosporinstitución
+-`pct_instituciones_publicas`:%institucionespúblicas
 
-### 💰 Socioeconómicas (3)
-- `pct_sin_seguridad_social`: % sin afiliación a salud
-- `pct_regimen_subsidiado`: % en régimen subsidiado
-- `pct_area_rural`: % nacimientos en zona rural
+###💰Socioeconómicas(3)
+-`pct_sin_seguridad_social`:%sinafiliaciónasalud
+-`pct_regimen_subsidiado`:%enrégimensubsidiado
+-`pct_area_rural`:%nacimientosenzonarural
 
-### 🩺 Atención Prenatal (2)
-- `pct_sin_control_prenatal`: % sin control prenatal
-- `consultas_promedio`: Promedio de consultas prenatales
+###🩺AtenciónPrenatal(2)
+-`pct_sin_control_prenatal`:%sincontrolprenatal
+-`consultas_promedio`:Promediodeconsultasprenatales
 
-### 🎯 Targets (3)
-- `riesgo_obstetrico`: ALTO / BAJO (Modelo 1)
-- `puntos_riesgo`: Puntaje 0-8 (Modelo 1)
-- `alta_mortalidad`: 0/1 (Modelo 2)
+###🎯Targets(3)
+-`riesgo_obstetrico`:ALTO/BAJO(Modelo1)
+-`puntos_riesgo`:Puntaje0-8(Modelo1)
+-`alta_mortalidad`:0/1(Modelo2)
 
-## 📚 Metodología Científica
+##📚MetodologíaCientífica
 
-### Justificación de Parámetros
+###JustificacióndeParámetros
 
-Todos los parámetros están respaldados por literatura científica. Ver **`DOCUMENTACION_TECNICA.md`** (60+ páginas) con:
+Todoslosparámetrosestánrespaldadosporliteraturacientífica.Ver**`DOCUMENTACION_TECNICA.md`**(60+páginas)con:
 
-- 16 referencias bibliográficas (OMS, PAHO, estudios epidemiológicos)
-- Justificación del umbral 50‰ (10x tasa normal)
-- Análisis de sensibilidad del umbral ≥3 puntos
-- Explicación de SMOTE para balanceo de clases
-- Validación de hiperparámetros XGBoost
-- Coherencia con conocimiento del dominio médico
+-16referenciasbibliográficas(OMS,PAHO,estudiosepidemiológicos)
+-Justificacióndelumbral50‰(10xtasanormal)
+-Análisisdesensibilidaddelumbral≥3puntos
+-ExplicacióndeSMOTEparabalanceodeclases
+-ValidacióndehiperparámetrosXGBoost
+-Coherenciaconconocimientodeldominiomédico
 
-### Filtrado de Datos
+###FiltradodeDatos
 
-- **Umbral mínimo**: 10 nacimientos/año por municipio
-- **Justificación**: Evitar varianza extrema por números pequeños
-- **Resultado**: 310 registros → 251 válidos (81%)
+-**Umbralmínimo**:10nacimientos/añopormunicipio
+-**Justificación**:Evitarvarianzaextremapornúmerospequeños
+-**Resultado**:310registros→251válidos(81%)
 
-### Umbrales Críticos
+###UmbralesCríticos
 
-| Indicador | Umbral | Justificación |
+|Indicador|Umbral|Justificación|
 |-----------|--------|---------------|
-| Mortalidad fetal crítica | >50‰ | 10x tasa normal (OMS: 5‰) |
-| Sin atención prenatal | >50% | Falla sistémica (OMS recomienda 100%) |
-| Clasificación alto riesgo | ≥3 puntos | Detecta 100% casos críticos, 21% clasificados |
-| Target mortalidad infantil | >Percentil 75 | 6.42‰ (50% sobre promedio nacional ~4‰) |
+|Mortalidadfetalcrítica|>50‰|10xtasanormal(OMS:5‰)|
+|Sinatenciónprenatal|>50%|Fallasistémica(OMSrecomienda100%)|
+|Clasificaciónaltoriesgo|≥3puntos|Detecta100%casoscríticos,21%clasificados|
+|Targetmortalidadinfantil|>Percentil75|6.42‰(50%sobrepromedionacional~4‰)|
 
 
-## 🎯 Casos de Uso
+##🎯CasosdeUso
 
-1. **Planificación estratégica en salud pública**: Identificar municipios que requieren inversión prioritaria
-2. **Asignación eficiente de recursos**: Priorizar departamentos según nivel de riesgo
-3. **Monitoreo temporal**: Evaluar evolución de indicadores críticos (2020-2024)
-4. **Análisis de impacto**: Simular efectos de mejoras en infraestructura sanitaria
-5. **Sistema de alertas tempranas**: Detectar deterioro de indicadores en tiempo real
-6. **Evaluación de políticas públicas**: Medir efectividad de intervenciones
+1.**Planificaciónestratégicaensaludpública**:Identificarmunicipiosquerequiereninversiónprioritaria
+2.**Asignacióneficientederecursos**:Priorizardepartamentossegúnnivelderiesgo
+3.**Monitoreotemporal**:Evaluarevolucióndeindicadorescríticos(2020-2024)
+4.**Análisisdeimpacto**:Simularefectosdemejoraseninfraestructurasanitaria
+5.**Sistemadealertastempranas**:Detectardeteriorodeindicadoresentiemporeal
+6.**Evaluacióndepolíticaspúblicas**:Medirefectividaddeintervenciones
 
-## 🏆 Resultados Destacados
+##🏆ResultadosDestacados
 
-### Por Departamento (2024)
+###PorDepartamento(2024)
 
-| Departamento | Municipios | Alto Riesgo | % Alto Riesgo | Mortalidad Promedio |
+|Departamento|Municipios|AltoRiesgo|%AltoRiesgo|MortalidadPromedio|
 |--------------|------------|-------------|---------------|---------------------|
-| **Vichada** | 2 | 2 | 100% | 86.5‰ |
-| **Arauca** | 7 | 4 | 57% | 99.6‰ |
-| **Guaviare** | 4 | 1 | 25% | 85.2‰ |
-| **Meta** | 18 | 4 | 22% | 25.1‰ |
-| **Casanare** | 14 | 2 | 14% | 24.8‰ |
+|**Vichada**|2|2|100%|86.5‰|
+|**Arauca**|7|4|57%|99.6‰|
+|**Guaviare**|4|1|25%|85.2‰|
+|**Meta**|18|4|22%|25.1‰|
+|**Casanare**|14|2|14%|24.8‰|
 
-### Municipios Críticos (Mortalidad >50‰, 2024)
+###MunicipiosCríticos(Mortalidad>50‰,2024)
 
-| Municipio | Departamento | Nacimientos | Defunciones | Mortalidad | Estado |
+|Municipio|Departamento|Nacimientos|Defunciones|Mortalidad|Estado|
 |-----------|--------------|-------------|-------------|------------|--------|
-| Saravena | Arauca | 1,716 | 278 | 162.0‰ | 🔴 CRÍTICO |
-| Puerto Rondón | Arauca | 21 | 2 | 95.2‰ | 🔴 CRÍTICO |
-| Puerto Carreño | Vichada | 513 | 47 | 91.6‰ | 🔴 CRÍTICO |
-| Arauca | Arauca | 1,188 | 107 | 90.1‰ | 🔴 CRÍTICO |
-| San José del Guaviare | Guaviare | 1,009 | 86 | 85.2‰ | 🔴 CRÍTICO |
+|Saravena|Arauca|1,716|278|162.0‰|🔴CRÍTICO|
+|PuertoRondón|Arauca|21|2|95.2‰|🔴CRÍTICO|
+|PuertoCarreño|Vichada|513|47|91.6‰|🔴CRÍTICO|
+|Arauca|Arauca|1,188|107|90.1‰|🔴CRÍTICO|
+|SanJosédelGuaviare|Guaviare|1,009|86|85.2‰|🔴CRÍTICO|
 
-**Total población afectada**: 4,811 nacimientos en municipios críticos (38% del total 2024)
+**Totalpoblaciónafectada**:4,811nacimientosenmunicipioscríticos(38%deltotal2024)
 
-## 🔧 Tecnologías Utilizadas
+##🔧TecnologíasUtilizadas
 
-### Machine Learning
-- **XGBoost** 1.7+: Gradient boosting optimizado
-- **Scikit-learn** 1.3+: Preprocessing, métricas, validación
-- **Imbalanced-learn** 0.11+: SMOTE para balanceo de clases
+###MachineLearning
+-**XGBoost**1.7+:Gradientboostingoptimizado
+-**Scikit-learn**1.3+:Preprocessing,métricas,validación
+-**Imbalanced-learn**0.11+:SMOTEparabalanceodeclases
 
-### Análisis de Datos
-- **Pandas** 2.0+: Manipulación y análisis de datos
-- **NumPy** 1.24+: Operaciones numéricas
+###AnálisisdeDatos
+-**Pandas**2.0+:Manipulaciónyanálisisdedatos
+-**NumPy**1.24+:Operacionesnuméricas
 
-### Visualización
-- **Streamlit** 1.28+: Dashboard web interactivo
-- **Plotly** 5.11+: Gráficos interactivos
-- **Matplotlib** 3.7+: Visualizaciones estáticas
+###Visualización
+-**Streamlit**1.28+:Dashboardwebinteractivo
+-**Plotly**5.11+:Gráficosinteractivos
+-**Matplotlib**3.7+:Visualizacionesestáticas
 
-## 📖 Documentación Adicional
+##📖DocumentaciónAdicional
 
-- **DOCUMENTACION_TECNICA.md**: Justificación científica completa (60+ páginas, 16 referencias)
-  - Marco teórico y contexto epidemiológico
-  - Justificación de cada parámetro con literatura médica
-  - Análisis de sensibilidad de umbrales
-  - Validación y coherencia de resultados
-  - Limitaciones y trabajo futuro
+-**DOCUMENTACION_TECNICA.md**:Justificacióncientíficacompleta(60+páginas,16referencias)
+-Marcoteóricoycontextoepidemiológico
+-Justificacióndecadaparámetroconliteraturamédica
+-Análisisdesensibilidaddeumbrales
+-Validaciónycoherenciaderesultados
+-Limitacionesytrabajofuturo
 
-## 🤝 Contribuciones
+##🤝Contribuciones
 
-Las contribuciones son bienvenidas. Por favor:
+Lascontribucionessonbienvenidas.Porfavor:
 
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1.Forkelrepositorio
+2.Creaunaramaparatufeature(`gitcheckout-bfeature/AmazingFeature`)
+3.Committuscambios(`gitcommit-m'AddsomeAmazingFeature'`)
+4.Pushalarama(`gitpushoriginfeature/AmazingFeature`)
+5.AbreunPullRequest
 
-## 📄 Licencia
+##📄Licencia
 
-Este proyecto es de **código abierto** bajo licencia MIT para uso en salud pública.
+Esteproyectoesde**códigoabierto**bajolicenciaMITparausoensaludpública.
 
-## 👥 Autores
+##👥Autores
 
-**Proyecto AlertaMaterna** - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil
+**ProyectoAlertaMaterna**-SistemadeClasificacióndeRiesgoObstétricoyPrediccióndeMortalidadInfantil
 
-## 🙏 Agradecimientos
+##🙏Agradecimientos
 
-Datos proporcionados por:
-- **DANE** (Departamento Administrativo Nacional de Estadística)
-- **Ministerio de Salud y Protección Social de Colombia**
-- Registros vitales de nacimientos y defunciones (2020-2024)
+Datosproporcionadospor:
+-**DANE**(DepartamentoAdministrativoNacionaldeEstadística)
+-**MinisteriodeSaludyProtecciónSocialdeColombia**
+-Registrosvitalesdenacimientosydefunciones(2020-2024)
 
-Referencias científicas:
-- **OMS** (Organización Mundial de la Salud)
-- **PAHO** (Pan American Health Organization)
-- **UNICEF** - Estudios sobre salud materno-infantil
+Referenciascientíficas:
+-**OMS**(OrganizaciónMundialdelaSalud)
+-**PAHO**(PanAmericanHealthOrganization)
+-**UNICEF**-Estudiossobresaludmaterno-infantil
 
-## 📞 Contacto
+##📞Contacto
 
-Para preguntas, sugerencias o colaboraciones:
-- GitHub: [@Manuelfmachado](https://github.com/Manuelfmachado)
-- Repositorio: [AlertaMaterna](https://github.com/Manuelfmachado/AlertaMaterna)
+Parapreguntas,sugerenciasocolaboraciones:
+-GitHub:[@Manuelfmachado](https://github.com/Manuelfmachado)
+-Repositorio:[AlertaMaterna](https://github.com/Manuelfmachado/AlertaMaterna)
 
-## 📌 Cómo Citar
+##📌CómoCitar
 
-Si utilizas este proyecto en tu investigación o trabajo, por favor cítalo como:
+Siutilizasesteproyectoentuinvestigaciónotrabajo,porfavorcítalocomo:
 
 ```
-AlertaMaterna (2025). Sistema de Clasificación de Riesgo Obstétrico y Predicción 
-de Mortalidad Infantil en la Región Orinoquía. GitHub: Manuelfmachado/AlertaMaterna
+AlertaMaterna(2025).SistemadeClasificacióndeRiesgoObstétricoyPredicción
+deMortalidadInfantilenlaRegiónOrinoquía.GitHub:Manuelfmachado/AlertaMaterna
 ```
 
 ---
 
-<div align="center">
+<divalign="center">
 
-**AlertaMaterna v1.0** | 2024-2025  
-*Anticipación del riesgo obstétrico en la región Orinoquía*
+**AlertaMaternav1.0**|2024-2025
+*AnticipacióndelriesgoobstétricoenlaregiónOrinoquía*
 
-[🏠 Inicio](#alertamaterna-sistema-de-clasificación-de-riesgo-obstétrico-y-predicción-de-mortalidad-infantil-en-la-región-orinoquía) • [📊 Dashboard](#-uso-del-dashboard) • [📚 Documentación](#-documentación-adicional) • [🤝 Contribuir](#-contribuciones)
+[🏠Inicio](#alertamaterna-sistema-de-clasificación-de-riesgo-obstétrico-y-predicción-de-mortalidad-infantil-en-la-región-orinoquía)•[📊Dashboard](#-uso-del-dashboard)•[📚Documentación](#-documentación-adicional)•[🤝Contribuir](#-contribuciones)
 
 </div>
