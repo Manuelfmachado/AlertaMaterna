@@ -7,6 +7,8 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
 
+> Esta herramienta nace de la participación en el **Concurso Datos al Ecosistema 2025**.
+
 ## Descripción
 
 **AlertaMaterna** es un sistema de inteligencia artificial que identifica municipios de la región Orinoquía con alto riesgo de mortalidad materno-infantil, utilizando datos oficiales del DANE del periodo 2020-2024.
