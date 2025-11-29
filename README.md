@@ -341,6 +341,16 @@ de Mortalidad Infantil en la Región Orinoquía. GitHub: Manuelfmachado/AlertaMa
 
 ---
 
+## 🌐 Abrir el Sitio Web de AlertaMaterna
+
+**Accede a la aplicación web en vivo:**
+
+### 🚀 [Ir a AlertaMaterna Dashboard](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
+
+Explora el sistema de clasificación de riesgo obstétrico, visualiza mapas interactivos y utiliza el predictor de mortalidad infantil directamente desde tu navegador.
+
+---
+
 <div align="center">
 
 **AlertaMaterna v1.0** | 2024-2025  
