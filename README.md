@@ -7,7 +7,15 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
 
-> Esta herramienta nace de la participación en el **Concurso Datos al Ecosistema 2025**.
+---
+
+## Concurso Datos al Ecosistema 2025
+
+**Esta herramienta nace de la participación en el Concurso Datos al Ecosistema 2025.**
+
+Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia alojados en [https://www.datos.gov.co/](https://www.datos.gov.co/), específicamente los registros de **estadísticas vitales** (nacimientos y defunciones) del **DANE** para el periodo 2020-2024, con el objetivo de generar valor público mediante inteligencia artificial aplicada a la salud materno-infantil.
+
+---
 
 ## Descripción
 
