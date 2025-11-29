@@ -165,7 +165,32 @@ def preparar_datos(df):
     dptos_map = {50: 'Meta', 81: 'Arauca', 85: 'Casanare', 95: 'Guaviare', 99: 'Vichada'}
     df['DEPARTAMENTO'] = df['COD_DPTO'].map(dptos_map)
     
-    # Clasificación
+    # Calcular riesgo obstétrico basado en criterios híbridos
+    # Umbrales críticos
+    UMBRAL_CRITICO_MORTALIDAD = 50.0
+    UMBRAL_CRITICO_SIN_PRENATAL = 0.50
+    
+    # Calcular percentiles para criterios
+    p75_mort_fetal = df['tasa_mortalidad_fetal'].quantile(0.75)
+    p75_sin_prenatal = df['pct_sin_control_prenatal'].quantile(0.75)
+    p75_bajo_peso = df['pct_bajo_peso'].quantile(0.75)
+    p75_prematuro = df['pct_prematuro'].quantile(0.75)
+    p25_cesarea = df['pct_cesarea'].quantile(0.25)
+    p75_presion_obs = df['presion_obstetrica'].quantile(0.75)
+    
+    # Calcular puntuación (0-8 puntos máximo)
+    df['puntos_riesgo'] = 0
+    df.loc[df['tasa_mortalidad_fetal'] > p75_mort_fetal, 'puntos_riesgo'] += 1
+    df.loc[df['pct_bajo_peso'] > p75_bajo_peso, 'puntos_riesgo'] += 1
+    df.loc[df['pct_prematuro'] > p75_prematuro, 'puntos_riesgo'] += 1
+    df.loc[df['pct_cesarea'] < p25_cesarea, 'puntos_riesgo'] += 1
+    df.loc[df['presion_obstetrica'] > p75_presion_obs, 'puntos_riesgo'] += 1
+    df.loc[df['pct_sin_control_prenatal'] > p75_sin_prenatal, 'puntos_riesgo'] += 1
+    df.loc[df['pct_sin_control_prenatal'] > UMBRAL_CRITICO_SIN_PRENATAL, 'puntos_riesgo'] += 1
+    df.loc[df['tasa_mortalidad_fetal'] > UMBRAL_CRITICO_MORTALIDAD, 'puntos_riesgo'] += 3
+    
+    # Clasificar: ≥3 puntos = alto riesgo
+    df['riesgo_obstetrico'] = (df['puntos_riesgo'] >= 3).astype(int)
     df['RIESGO'] = df['riesgo_obstetrico'].apply(lambda x: 'ALTO' if x == 1 else 'BAJO')
     
     return df
