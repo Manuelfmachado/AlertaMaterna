@@ -1,0 +1,183 @@
+variable,codigo,descripcion,categoria
+COD_DPTO,05,Antioquia,Departamento
+COD_DPTO,08,Atlántico,Departamento
+COD_DPTO,11,Bogotá,Departamento
+COD_DPTO,13,Bolívar,Departamento
+COD_DPTO,15,Boyacá,Departamento
+COD_DPTO,17,Caldas,Departamento
+COD_DPTO,18,Caquetá,Departamento
+COD_DPTO,19,Cauca,Departamento
+COD_DPTO,20,Cesar,Departamento
+COD_DPTO,23,Córdoba,Departamento
+COD_DPTO,25,Cundinamarca,Departamento
+COD_DPTO,27,Chocó,Departamento
+COD_DPTO,41,Huila,Departamento
+COD_DPTO,44,La Guajira,Departamento
+COD_DPTO,47,Magdalena,Departamento
+COD_DPTO,50,Meta,Departamento
+COD_DPTO,52,Nariño,Departamento
+COD_DPTO,54,Norte de Santander,Departamento
+COD_DPTO,63,Quindío,Departamento
+COD_DPTO,66,Risaralda,Departamento
+COD_DPTO,68,Santander,Departamento
+COD_DPTO,70,Sucre,Departamento
+COD_DPTO,73,Tolima,Departamento
+COD_DPTO,76,Valle del Cauca,Departamento
+COD_DPTO,81,Arauca,Departamento
+COD_DPTO,85,Casanare,Departamento
+COD_DPTO,86,Putumayo,Departamento
+COD_DPTO,88,San Andrés y Providencia,Departamento
+COD_DPTO,91,Amazonas,Departamento
+COD_DPTO,94,Guainía,Departamento
+COD_DPTO,95,Guaviare,Departamento
+COD_DPTO,97,Vaupés,Departamento
+COD_DPTO,99,Vichada,Departamento
+AREANAC,1,Cabecera municipal,Área
+AREANAC,2,Centro poblado,Área
+AREANAC,3,Rural disperso,Área
+AREANAC,9,Sin información,Área
+SIT_PARTO,1,Institución de salud,Sitio
+SIT_PARTO,2,Domicilio,Sitio
+SIT_PARTO,3,Otro,Sitio
+SIT_PARTO,9,Sin información,Sitio
+SEXO,1,Masculino,Sexo
+SEXO,2,Femenino,Sexo
+SEXO,3,Indeterminado,Sexo
+PESO_NAC,1,Menos de 1000g,Peso al nacer
+PESO_NAC,2,1000-1499g,Peso al nacer
+PESO_NAC,3,1500-1999g,Peso al nacer
+PESO_NAC,4,2000-2499g,Peso al nacer
+PESO_NAC,5,2500-2999g,Peso al nacer
+PESO_NAC,6,3000-3499g,Peso al nacer
+PESO_NAC,7,3500-3999g,Peso al nacer
+PESO_NAC,8,4000g y más,Peso al nacer
+PESO_NAC,9,Sin información,Peso al nacer
+TALLA_NAC,1,Menos de 20cm,Talla al nacer
+TALLA_NAC,2,20-29cm,Talla al nacer
+TALLA_NAC,3,30-39cm,Talla al nacer
+TALLA_NAC,4,40-49cm,Talla al nacer
+TALLA_NAC,5,50-59cm,Talla al nacer
+TALLA_NAC,6,60cm y más,Talla al nacer
+TALLA_NAC,9,Sin información,Talla al nacer
+MES,01,Enero,Mes
+MES,02,Febrero,Mes
+MES,03,Marzo,Mes
+MES,04,Abril,Mes
+MES,05,Mayo,Mes
+MES,06,Junio,Mes
+MES,07,Julio,Mes
+MES,08,Agosto,Mes
+MES,09,Septiembre,Mes
+MES,10,Octubre,Mes
+MES,11,Noviembre,Mes
+MES,12,Diciembre,Mes
+ATEN_PAR,1,Médico,Atención del parto
+ATEN_PAR,2,Enfermero(a),Atención del parto
+ATEN_PAR,3,Auxiliar de enfermería,Atención del parto
+ATEN_PAR,4,Promotor(a) de salud,Atención del parto
+ATEN_PAR,5,Partera,Atención del parto
+ATEN_PAR,6,Otra persona,Atención del parto
+ATEN_PAR,9,Sin información,Atención del parto
+T_GES,1,Menos de 22 semanas,Tiempo de gestación
+T_GES,2,22-27 semanas,Tiempo de gestación
+T_GES,3,28-37 semanas,Tiempo de gestación
+T_GES,4,38-41 semanas,Tiempo de gestación
+T_GES,5,42 semanas y más,Tiempo de gestación
+T_GES,6,Ignorado,Tiempo de gestación
+T_GES,9,Sin información,Tiempo de gestación
+NUMCONSUL,00,Ninguna consulta,Consultas prenatales
+NUMCONSUL,99,Sin información,Consultas prenatales
+TIPO_PARTO,1,Espontáneo,Tipo de parto
+TIPO_PARTO,2,Cesárea,Tipo de parto
+TIPO_PARTO,3,Instrumentado,Tipo de parto
+TIPO_PARTO,4,Ignorado,Tipo de parto
+TIPO_PARTO,9,Sin información,Tipo de parto
+MUL_PARTO,1,Simple,Multiplicidad
+MUL_PARTO,2,Doble,Multiplicidad
+MUL_PARTO,3,Triple,Multiplicidad
+MUL_PARTO,4,Cuádruple o más,Multiplicidad
+MUL_PARTO,9,Sin información,Multiplicidad
+APGAR1,99,Sin información,APGAR 1 minuto
+APGAR2,99,Sin información,APGAR 5 minutos
+IDHEMOCLAS,1,A,Grupo sanguíneo
+IDHEMOCLAS,2,B,Grupo sanguíneo
+IDHEMOCLAS,3,O,Grupo sanguíneo
+IDHEMOCLAS,4,AB,Grupo sanguíneo
+IDHEMOCLAS,9,Sin información,Grupo sanguíneo
+IDFACTORRH,1,Positivo,Factor RH
+IDFACTORRH,2,Negativo,Factor RH
+IDFACTORRH,9,Sin información,Factor RH
+IDPERTET,1,Indígena,Etnia
+IDPERTET,2,Rom (Gitano),Etnia
+IDPERTET,3,Raizal,Etnia
+IDPERTET,4,Palenquero,Etnia
+IDPERTET,5,Negro/Afrodescendiente,Etnia
+IDPERTET,6,Ninguna de las anteriores,Etnia
+IDPERTET,9,Sin información,Etnia
+EDAD_MADRE,1,10-14 años,Edad materna
+EDAD_MADRE,2,15-19 años,Edad materna
+EDAD_MADRE,3,20-24 años,Edad materna
+EDAD_MADRE,4,25-29 años,Edad materna
+EDAD_MADRE,5,30-34 años,Edad materna
+EDAD_MADRE,6,35-39 años,Edad materna
+EDAD_MADRE,7,40-44 años,Edad materna
+EDAD_MADRE,8,45-49 años,Edad materna
+EDAD_MADRE,9,50-54 años,Edad materna
+EDAD_MADRE,99,Sin información,Edad materna
+EST_CIVM,1,Unión libre 2+ años,Estado civil
+EST_CIVM,2,Unión libre menos 2 años,Estado civil
+EST_CIVM,3,Separada/Divorciada,Estado civil
+EST_CIVM,4,Viuda,Estado civil
+EST_CIVM,5,Soltera,Estado civil
+EST_CIVM,6,Casada,Estado civil
+EST_CIVM,9,Sin información,Estado civil
+NIV_EDUM,1,Preescolar,Nivel educativo madre
+NIV_EDUM,2,Básica primaria,Nivel educativo madre
+NIV_EDUM,3,Básica secundaria,Nivel educativo madre
+NIV_EDUM,4,Media académica,Nivel educativo madre
+NIV_EDUM,5,Media técnica,Nivel educativo madre
+NIV_EDUM,6,Normalista,Nivel educativo madre
+NIV_EDUM,7,Técnica profesional,Nivel educativo madre
+NIV_EDUM,8,Tecnológica,Nivel educativo madre
+NIV_EDUM,9,Profesional,Nivel educativo madre
+NIV_EDUM,10,Especialización,Nivel educativo madre
+NIV_EDUM,11,Maestría,Nivel educativo madre
+NIV_EDUM,12,Doctorado,Nivel educativo madre
+NIV_EDUM,13,Ninguno,Nivel educativo madre
+NIV_EDUM,99,Sin información,Nivel educativo madre
+AREA_RES,1,Cabecera municipal,Área residencia
+AREA_RES,2,Centro poblado,Área residencia
+AREA_RES,3,Rural disperso,Área residencia
+AREA_RES,9,Sin información,Área residencia
+SEG_SOCIAL,1,Contributivo,Régimen salud
+SEG_SOCIAL,2,Subsidiado,Régimen salud
+SEG_SOCIAL,3,Excepción,Régimen salud
+SEG_SOCIAL,4,Especial,Régimen salud
+SEG_SOCIAL,5,No asegurado,Régimen salud
+SEG_SOCIAL,9,Sin información,Régimen salud
+IDCLASADMI,1,EPS,Tipo entidad
+IDCLASADMI,2,EPS Subsidiado,Tipo entidad
+IDCLASADMI,3,Entidad adaptada,Tipo entidad
+IDCLASADMI,4,Entidad especial,Tipo entidad
+IDCLASADMI,5,Entidad exceptuada,Tipo entidad
+IDCLASADMI,9,Sin información,Tipo entidad
+NIV_EDUP,1,Preescolar,Nivel educativo padre
+NIV_EDUP,2,Básica primaria,Nivel educativo padre
+NIV_EDUP,3,Básica secundaria,Nivel educativo padre
+NIV_EDUP,4,Media académica,Nivel educativo padre
+NIV_EDUP,5,Media técnica,Nivel educativo padre
+NIV_EDUP,6,Normalista,Nivel educativo padre
+NIV_EDUP,7,Técnica profesional,Nivel educativo padre
+NIV_EDUP,8,Tecnológica,Nivel educativo padre
+NIV_EDUP,9,Profesional,Nivel educativo padre
+NIV_EDUP,10,Especialización,Nivel educativo padre
+NIV_EDUP,11,Maestría,Nivel educativo padre
+NIV_EDUP,12,Doctorado,Nivel educativo padre
+NIV_EDUP,13,Ninguno,Nivel educativo padre
+NIV_EDUP,99,Sin información,Nivel educativo padre
+PROFESION,1,Médico,Profesión certificador
+PROFESION,2,Enfermero(a),Profesión certificador
+PROFESION,3,Auxiliar de enfermería,Profesión certificador
+PROFESION,4,Promotor(a) de salud,Profesión certificador
+PROFESION,5,Funcionario registro civil,Profesión certificador
+PROFESION,9,Sin información,Profesión certificador
