@@ -1,6 +1,6 @@
 # AlertaMaterna: Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil en la Región Orinoquía
 
-![AlertaMaterna Banner](alertamaterna_banner.png)
+![AlertaMaterna Banner](ALERTAMATERNA.png)
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
