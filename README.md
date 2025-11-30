@@ -16,14 +16,16 @@
 Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia, integrando **6 datasets oficiales**:
 
 **De [www.datos.gov.co](https://www.datos.gov.co/):**
+
 - **Registro Especial de Prestadores de Servicios de Salud (REPS)** - Instituciones y sedes
 - **Registros Individuales de Prestación de Servicios de Salud (RIPS)** - Consultas, urgencias y procedimientos
 - **Códigos DIVIPOLA** - Códigos oficiales de municipios colombianos
 
 **Del DANE (Estadísticas Vitales 2020-2024):**
-- Nacimientos (453,901 registros 2024)
-- Defunciones fetales (21,250 registros 2024)
-- Defunciones no fetales
+
+- Nacimientos (2020 - 2024)
+- Defunciones fetales (2020 - 2024)
+- Defunciones no fetales (2020 - 2024)
 
 El objetivo es generar **valor público** mediante inteligencia artificial aplicada a la salud materno-infantil, transformando datos dispersos en alertas tempranas accionables.
 
@@ -57,15 +59,15 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 
 ## Resultados Principales
 
-| Métrica                             | Valor                                     |
-| ------------------------------------ | ----------------------------------------- |
-| **Registros analizados**       | 310 municipio-año (2020-2024)            |
-| **Registros válidos**         | 251 (≥10 nacimientos)                    |
-| **Registros alto riesgo**      | 53 de 251 (21.1%)                         |
+| Métrica                             | Valor                                               |
+| ------------------------------------ | --------------------------------------------------- |
+| **Registros analizados**       | 310 municipio-año (2020-2024)                      |
+| **Registros válidos**         | 251 (≥10 nacimientos)                              |
+| **Registros alto riesgo**      | 53 de 251 (21.1%)                                   |
 | **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
-| **Municipios 2024**            | 13 de 45 en alto riesgo (29%)             |
-| **ROC-AUC Modelo Predictivo**  | 0.7731                                    |
-| **Accuracy**                   | 87%                                       |
+| **Municipios 2024**            | 13 de 45 en alto riesgo (29%)                       |
+| **ROC-AUC Modelo Predictivo**  | 0.7731                                              |
+| **Accuracy**                   | 87%                                                 |
 
 ## Modelos Implementados
 
@@ -106,10 +108,12 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 5. Procedimientos per nacimiento (4.97%)
 
 **Features integradas RIPS/REPS** (2020-2024):
+
 - **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
 - **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
 
 **Features críticas avanzadas** (Nov 2025):
+
 - **Tasa mortalidad neonatal**: Muertes 0-7 días por 1000 nacimientos (media: 3.47‰)
 - **% Mortalidad evitable**: Causas CIE-10 prevenibles según DANE (media: 49.7%)
 - **% Embarazos alto riesgo**: Prematuridad + bajo peso + múltiples (media: 93.8%)
