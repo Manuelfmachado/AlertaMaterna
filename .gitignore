@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 *.so
 .Python
 env/
@@ -44,6 +45,9 @@ Thumbs.db
 *.tmp
 *.bak
 *.log
+
+# Scripts temporales de Windows
+*.ps1
 
 # Archivos grandes (>50MB)
 data/processed/*_decoded.csv
