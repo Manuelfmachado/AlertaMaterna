@@ -45,13 +45,15 @@ Thumbs.db
 *.bak
 *.log
 
-# Archivos grandes (>100MB)
+# Archivos grandes (>50MB)
 data/processed/*_decoded.csv
 data/processed/defunciones_*.csv
 data/processed/nacimientos_*.csv
 data/processed/Indicadores_*.csv
 data/processed/Registros_*.csv
 data/processed/Registro_*.csv
+
+# Archivos raw grandes (>50MB)
 data/raw/*.csv
 
 # EXCEPCIONES: Archivos pequeños necesarios
@@ -62,6 +64,8 @@ data/raw/*.csv
 !data/processed/codigos_*.csv
 !data/processed/DIVIPOLA*.csv
 !data/processed/mortalidad_materna*.csv
+!data/processed/defunciones_fetales_2020_2024_orinoquia.csv
+!data/processed/defunciones_no_fetales_2020_2024_orinoquia.csv
 
 # Archivos temporales
 *.csv~
