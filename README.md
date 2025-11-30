@@ -49,8 +49,9 @@ El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al
 | ------------------------------------ | ----------------------------------------- |
 | **Registros analizados**       | 310 municipio-año (2020-2024)            |
 | **Registros válidos**         | 251 (≥10 nacimientos)                    |
-| **Municipios alto riesgo**     | 53 (21.1%)                                |
-| **Casos críticos detectados** | 40 (mortalidad >50‰) - 100% sensibilidad |
+| **Registros alto riesgo**      | 53 de 251 (21.1%)                         |
+| **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
+| **Municipios 2024**            | 13 de 45 en alto riesgo (29%)             |
 | **ROC-AUC Modelo Predictivo**  | 0.71                                      |
 | **Accuracy**                   | 66%                                       |
 

@@ -33,8 +33,9 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 **Resultados principales:**
 - 310 registros municipio-año analizados (2020-2024)
 - 251 registros válidos (≥10 nacimientos)
-- 53 municipios clasificados como alto riesgo (21.1%)
-- 40 municipios con mortalidad crítica (>50‰) correctamente identificados
+- 53 registros clasificados como alto riesgo (21.1%)
+- 40 registros con mortalidad crítica (>50‰) correctamente identificados
+- En 2024: 13 municipios en alto riesgo (29% del total)
 
 ---
 
@@ -282,12 +283,17 @@ Umbral    Alto Riesgo    Críticos detectados    Especificidad
 ### 5.6 Resultados del Modelo 1
 
 **Distribución final (251 registros válidos):**
-- Alto riesgo: 53 municipios (21.1%)
-- Bajo riesgo: 198 municipios (78.9%)
+- Alto riesgo: 53 registros municipio-año (21.1%)
+- Bajo riesgo: 198 registros municipio-año (78.9%)
 
 **Casos críticos identificados:**
-- 40 municipios con mortalidad >50‰ (todos clasificados como ALTO RIESGO)
+- 40 registros con mortalidad >50‰ (todos clasificados como ALTO RIESGO)
 - 100% de sensibilidad en casos críticos
+
+**Distribución 2024 (año más reciente):**
+- 45 municipios con datos válidos
+- 13 municipios clasificados alto riesgo (29%)
+- 11 municipios con mortalidad >50‰
 
 **Promedios por grupo:**
 ```
