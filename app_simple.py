@@ -210,6 +210,9 @@ def main():
     df = cargar_datos()
     df = preparar_datos(df)
     
+    # Filtrar registros válidos (≥10 nacimientos) - Consistente con documentación técnica
+    df = df[df['total_nacimientos'] >= 10].copy()
+    
     # Sidebar - Filtros
     with st.sidebar:
         st.header("Filtros")
@@ -224,12 +227,17 @@ def main():
         
         st.markdown("---")
         
+        # Nota metodológica
+        st.info("📊 **Criterio de validez estadística:** Solo se analizan municipios con ≥10 nacimientos/año (estándar OMS)")
+        
+        st.markdown("---")
+        
         # Ayuda e información
         with st.expander("Guía de Uso del Dashboard"):
             st.markdown("""
             ### Indicadores Principales
             
-            **Municipios**: Cantidad de municipios analizados
+            **Municipios**: Cantidad de municipios analizados (≥10 nacimientos)
             
             **Alto Riesgo**: Municipios con ≥3 puntos de riesgo
             - Sistema híbrido: percentiles + umbrales críticos
