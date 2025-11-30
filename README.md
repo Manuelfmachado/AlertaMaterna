@@ -378,17 +378,9 @@ Este proyecto es de **código abierto** bajo licencia MIT para uso en salud púb
 - **Manuel Machado**
 - **Martha Machado**
 
-**Proyecto AlertaMaterna** - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil
+**Proyecto AlertaMaterna** - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil en la Región Orinoquía
 
-## Agradecimientos
-
-Datos proporcionados por:
-
-- **DANE** (Departamento Administrativo Nacional de Estadística)
-- **Ministerio de Salud y Protección Social de Colombia**
-- Registros vitales de nacimientos y defunciones (2020-2024)
-
-Referencias científicas:
+## Referencias cientificas
 
 - **OMS** (Organización Mundial de la Salud)
 - **PAHO** (Pan American Health Organization)
