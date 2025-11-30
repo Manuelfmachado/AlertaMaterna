@@ -13,18 +13,17 @@
 
 **Esta herramienta nace de la participación en el Concurso Datos al Ecosistema 2025.**
 
-Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia, integrando **7 datasets oficiales**:
+Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia, integrando **6 datasets oficiales**:
 
 **De [www.datos.gov.co](https://www.datos.gov.co/):**
-- 📊 **Indicadores de mortalidad y morbilidad** según departamento, municipio y año
-- 🏥 **Registro Especial de Prestadores de Servicios de Salud (REPS)** - Instituciones y sedes
-- 🩺 **Registros Individuales de Prestación de Servicios de Salud (RIPS)** - Consultas, urgencias y procedimientos
+- **Registro Especial de Prestadores de Servicios de Salud (REPS)** - Instituciones y sedes
+- **Registros Individuales de Prestación de Servicios de Salud (RIPS)** - Consultas, urgencias y procedimientos
 
 **Del DANE (Estadísticas Vitales 2020-2024):**
-- 👶 Nacimientos (453,901 registros 2024)
-- 💔 Defunciones fetales (21,250 registros 2024)
-- 📉 Defunciones no fetales
-- 📍 Códigos DIVIPOLA de municipios
+- Nacimientos (453,901 registros 2024)
+- Defunciones fetales (21,250 registros 2024)
+- Defunciones no fetales
+- Códigos DIVIPOLA de municipios
 
 El objetivo es generar **valor público** mediante inteligencia artificial aplicada a la salud materno-infantil, transformando datos dispersos en alertas tempranas accionables.
 
@@ -100,21 +99,21 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 
 **Top 5 features más importantes**:
 
-1. **Tasa mortalidad neonatal (24.17%)** ← 🆕 CRÍTICA
+1. **Tasa mortalidad neonatal (24.17%)** - CRÍTICA
 2. Número instituciones (9.24%)
-3. **% Mortalidad evitable (6.65%)** ← 🆕 CRÍTICA
+3. **% Mortalidad evitable (6.65%)** - CRÍTICA
 4. % Bajo peso al nacer (5.44%)
 5. Procedimientos per nacimiento (4.97%)
 
 **Features integradas RIPS/REPS** (2020-2024):
-- ✅ **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
-- ✅ **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
+- **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
+- **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
 
 **Features críticas avanzadas** (Nov 2025):
-- 🆕 **Tasa mortalidad neonatal**: Muertes 0-7 días por 1000 nacimientos (media: 3.47‰)
-- 🆕 **% Mortalidad evitable**: Causas CIE-10 prevenibles según DANE (media: 49.7%)
-- 🆕 **% Embarazos alto riesgo**: Prematuridad + bajo peso + múltiples (media: 93.8%)
-- 🆕 **Índice fragilidad sistema**: (mortalidad × presión) / densidad institucional (23 municipios críticos)
+- **Tasa mortalidad neonatal**: Muertes 0-7 días por 1000 nacimientos (media: 3.47‰)
+- **% Mortalidad evitable**: Causas CIE-10 prevenibles según DANE (media: 49.7%)
+- **% Embarazos alto riesgo**: Prematuridad + bajo peso + múltiples (media: 93.8%)
+- **Índice fragilidad sistema**: (mortalidad × presión) / densidad institucional (23 municipios críticos)
 
 ## Instalación y Uso
 
@@ -254,7 +253,7 @@ El dashboard tiene **2 pestañas principales**:
 - `pct_sin_control_prenatal`: % sin control prenatal
 - `consultas_promedio`: Promedio de consultas prenatales
 
-### Críticas Avanzadas (4) 🆕
+### Críticas Avanzadas (4)
 
 - `tasa_mortalidad_neonatal`: Muertes 0-7 días por 1,000 nacimientos (media: 3.47‰, 22 municipios críticos >15‰)
 - `pct_mortalidad_evitable`: % muertes por causas prevenibles CIE-10 (códigos DANE 401-410, 501-506) (media: 49.7%)

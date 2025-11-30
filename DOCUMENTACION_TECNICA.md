@@ -151,7 +151,7 @@ Las 29 variables fueron seleccionadas basándose en:
 | `pct_instituciones_publicas` | % instituciones públicas por municipio | Cobertura del sistema público (REPS diferenciado) |
 | `presion_obstetrica` | Nacimientos / instituciones | Capacidad instalada vs demanda |
 
-#### D. Indicadores de Acceso a Servicios RIPS (4) ⭐ NUEVO
+#### D. Indicadores de Acceso a Servicios RIPS (4) - NUEVO
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `atenciones_per_nacimiento` | Total atenciones obstétricas / nacimientos | Intensidad de uso del sistema de salud |
@@ -172,7 +172,7 @@ Las 29 variables fueron seleccionadas basándose en:
 | `pct_sin_control_prenatal` | % sin ningún control prenatal | Factor de riesgo crítico (WHO 2016) |
 | `consultas_promedio` | # promedio de consultas prenatales | OMS recomienda mínimo 8 consultas |
 
-#### G. Indicadores Críticos Avanzados (4) 🆕
+#### G. Indicadores Críticos Avanzados (4) - NUEVO
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `tasa_mortalidad_neonatal` | Muertes 0-7 días × 1000 / nacimientos | Período crítico: 40% de mortalidad infantil ocurre en primera semana (WHO 2020). Detecta problemas en atención inmediata post-parto. Feature #1 del modelo (24.17% importancia). |
@@ -250,9 +250,9 @@ presion_obstetrica = total_nacimientos / num_instituciones
 ```
 Criterio                           Condición              Puntos
 ────────────────────────────────────────────────────────────────
-Mortalidad crítica                 >50‰                   +3 ⚠️
+Mortalidad crítica                 >50‰                   +3 [CRÍTICO]
 Mortalidad fetal alta              >percentil 75          +1
-Sin control prenatal crítico       >50%                   +2 ⚠️
+Sin control prenatal crítico       >50%                   +2 [CRÍTICO]
 Sin control prenatal alto          >percentil 75          +1
 Bajo peso al nacer alto            >percentil 75          +1
 Prematuridad alta                  >percentil 75          +1
@@ -365,18 +365,18 @@ alta_mortalidad = 1 si tasa > 6.42, sino 0
 4.  consultas_promedio
 5.  defunciones_fetales
 6.  edad_materna_promedio
-7.  indice_fragilidad_sistema (🆕 Crítica)
+7.  indice_fragilidad_sistema [Crítica]
 8.  num_instituciones
 9.  pct_area_rural
 10. pct_bajo_nivel_educativo
 11. pct_bajo_peso
 12. pct_cesarea
 13. pct_embarazo_multiple
-14. pct_embarazos_alto_riesgo (🆕 Crítica)
+14. pct_embarazos_alto_riesgo [Crítica]
 15. pct_instituciones_publicas
 16. pct_madres_adolescentes
 17. pct_madres_edad_avanzada
-18. pct_mortalidad_evitable (🆕 Crítica)
+18. pct_mortalidad_evitable [Crítica]
 19. pct_prematuro
 20. pct_regimen_subsidiado
 21. pct_sin_control_prenatal
@@ -384,7 +384,7 @@ alta_mortalidad = 1 si tasa > 6.42, sino 0
 23. presion_obstetrica
 24. procedimientos_per_nacimiento (RIPS)
 25. tasa_mortalidad_fetal
-26. tasa_mortalidad_neonatal (🆕 Crítica)
+26. tasa_mortalidad_neonatal [Crítica]
 27. total_defunciones
 28. total_nacimientos
 29. urgencias_per_nacimiento (RIPS)
@@ -575,9 +575,9 @@ Alta │   5       11
 ```
 Feature                           Importancia    Justificación
 ──────────────────────────────────────────────────────────────────
-🆕 tasa_mortalidad_neonatal         0.2417       Predictor directo período más crítico (0-7 días)
+tasa_mortalidad_neonatal [CRÍTICA] 0.2417       Predictor directo período más crítico (0-7 días)
 num_instituciones                   0.0924       Proxy de acceso a servicios de salud
-🆕 pct_mortalidad_evitable          0.0665       Identifica municipios con muertes prevenibles
+pct_mortalidad_evitable [CRÍTICA]  0.0665       Identifica municipios con muertes prevenibles
 pct_bajo_peso                       0.0544       Predictor clásico de mortalidad neonatal
 procedimientos_per_nacimiento       0.0497       Intensidad de atención médica recibida (RIPS)
 edad_materna_promedio               0.0459       Embarazos extremos (muy jóvenes/mayores)
