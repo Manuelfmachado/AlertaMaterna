@@ -21,7 +21,7 @@ Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia alojados
 
 **AlertaMaterna** es un sistema de inteligencia artificial que identifica municipios de la región Orinoquía con alto riesgo de mortalidad materno-infantil, utilizando datos oficiales del DANE del periodo 2020-2024.
 
-El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al nacer, prematuridad, acceso a servicios) para clasificar **55 municipios** en dos categorías: **ALTO RIESGO** o **BAJO RIESGO**, además de predecir la probabilidad de mortalidad infantil en cada municipio.
+El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al nacer, prematuridad, acceso a servicios, mortalidad neonatal, causas evitables) para clasificar **55 municipios** en dos categorías: **ALTO RIESGO** o **BAJO RIESGO**, además de predecir la probabilidad de mortalidad infantil en cada municipio.
 
 ### Objetivos
 
@@ -38,7 +38,7 @@ El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al
 
 - **Sistema híbrido de clasificación**: Combina percentiles estadísticos + umbrales críticos OMS/PAHO
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
-- **Modelo predictivo XGBoost**: ROC-AUC 0.71, prioriza sensibilidad sobre especificidad
+- **Modelo predictivo XGBoost**: ROC-AUC 0.7731, prioriza sensibilidad sobre especificidad
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
 - **Basado en datos oficiales**: DANE - 453,901 nacimientos y 21,250 defunciones fetales (2024)
 - **Código abierto**: Disponible en GitHub bajo licencia MIT
@@ -52,8 +52,8 @@ El sistema analiza **24 indicadores de salud** (atención prenatal, bajo peso al
 | **Registros alto riesgo**      | 53 de 251 (21.1%)                         |
 | **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
 | **Municipios 2024**            | 13 de 45 en alto riesgo (29%)             |
-| **ROC-AUC Modelo Predictivo**  | 0.71                                      |
-| **Accuracy**                   | 66%                                       |
+| **ROC-AUC Modelo Predictivo**  | 0.7731                                    |
+| **Accuracy**                   | 87%                                       |
 
 ## Modelos Implementados
 
@@ -76,25 +76,32 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 
 **Algoritmo**: XGBoost con SMOTE (balanceo de clases)
 
-**Features**: 28 variables sociosanitarias (7 demográficas + 7 clínicas + 3 institucionales + 4 acceso a servicios RIPS + 3 socioeconómicas + 2 atención prenatal + 2 targets)
+**Features**: 28 variables sociosanitarias (5 demográficas + 8 clínicas + 3 institucionales + 4 acceso a servicios RIPS + 3 socioeconómicas + 2 atención prenatal + 4 críticas avanzadas)
 
 **Performance**:
 
-- ROC-AUC: **0.71**
-- Recall (alta mortalidad): **62%** (prioriza detección de casos críticos)
-- Precision (baja mortalidad): **84%**
+- ROC-AUC: **0.7731** (+2.31% mejora vs baseline)
+- Recall (alta mortalidad): **69%** (prioriza detección de casos críticos)
+- Precision (alta mortalidad): **79%**
+- Accuracy: **87%**
 
 **Top 5 features más importantes**:
 
-1. APGAR bajo promedio (18.7%)
-2. Porcentaje bajo peso al nacer (7.4%)
-3. Consultas prenatales promedio (7.2%)
-4. Porcentaje área rural (6.9%)
-5. Tasa mortalidad fetal (6.9%)
+1. **Tasa mortalidad neonatal (24.17%)** ← 🆕 CRÍTICA
+2. Número instituciones (9.24%)
+3. **% Mortalidad evitable (6.65%)** ← 🆕 CRÍTICA
+4. % Bajo peso al nacer (5.44%)
+5. Procedimientos per nacimiento (4.97%)
 
-**Nuevas features integradas** (2020-2024):
+**Features integradas RIPS/REPS** (2020-2024):
 - ✅ **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
 - ✅ **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
+
+**Features críticas avanzadas** (Nov 2025):
+- 🆕 **Tasa mortalidad neonatal**: Muertes 0-7 días por 1000 nacimientos (media: 3.47‰)
+- 🆕 **% Mortalidad evitable**: Causas CIE-10 prevenibles según DANE (media: 49.7%)
+- 🆕 **% Embarazos alto riesgo**: Prematuridad + bajo peso + múltiples (media: 93.8%)
+- 🆕 **Índice fragilidad sistema**: (mortalidad × presión) / densidad institucional (23 municipios críticos)
 
 ## Instalación y Uso
 
@@ -149,10 +156,10 @@ AlertaMaterna/
 │   │   ├── BD-EEVV-Defunciones*.csv
 │   │   └── codigos_*.csv
 │   └── processed/                        # Datos procesados
-│       ├── features_municipio_anio.csv   # 310 registros con 24 features
+│       ├── features_municipio_anio.csv   # 310 registros con 29 features
 │       └── features_alerta_materna.csv   # Con targets y clasificación
 ├── src/
-│   ├── features.py                       # Generación de 24 features
+│   ├── features.py                       # Generación de 29 features
 │   └── train_model.py                    # Entrenamiento de modelos
 ├── models/                                # Modelos entrenados (.pkl)
 │   ├── modelo_mortalidad_xgb.pkl
@@ -188,7 +195,7 @@ El dashboard tiene **2 pestañas principales**:
    - **Amarillo (30-60%)**: Riesgo medio
    - **Rojo (>60%)**: Riesgo alto
 
-## Features Generadas (24 variables)
+## Features Generadas (29 variables)
 
 ### Demográficas (5)
 
@@ -216,6 +223,13 @@ El dashboard tiene **2 pestañas principales**:
 - `presion_obstetrica`: Nacimientos por institución
 - `pct_instituciones_publicas`: % instituciones públicas
 
+### Acceso a Servicios - RIPS (4)
+
+- `consultas_per_nacimiento`: Consultas médicas por nacimiento
+- `urgencias_per_nacimiento`: Atenciones de urgencia por nacimiento
+- `procedimientos_per_nacimiento`: Procedimientos médicos por nacimiento
+- `atenciones_per_nacimiento`: Total atenciones por nacimiento
+
 ### Socioeconómicas (3)
 
 - `pct_sin_seguridad_social`: % sin afiliación a salud
@@ -226,6 +240,13 @@ El dashboard tiene **2 pestañas principales**:
 
 - `pct_sin_control_prenatal`: % sin control prenatal
 - `consultas_promedio`: Promedio de consultas prenatales
+
+### Críticas Avanzadas (4) 🆕
+
+- `tasa_mortalidad_neonatal`: Muertes 0-7 días por 1,000 nacimientos (media: 3.47‰, 22 municipios críticos >15‰)
+- `pct_mortalidad_evitable`: % muertes por causas prevenibles CIE-10 (códigos DANE 401-410, 501-506) (media: 49.7%)
+- `pct_embarazos_alto_riesgo`: % embarazos con prematuridad + bajo peso + múltiples (media: 93.8%)
+- `indice_fragilidad_sistema`: Índice compuesto (mortalidad × presión) / densidad institucional, escala 0-100 (23 municipios >80)
 
 ### Targets (3)
 

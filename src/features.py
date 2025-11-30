@@ -197,23 +197,24 @@ def generar_features_institucionales(df_nac, df_inst):
     """Genera features institucionales por municipio-año"""
     print("\nGenerando features institucionales...")
     
-    # Extraer código de municipio del REPS (asegurar formato string)
-    df_inst['COD_MUNIC'] = df_inst['MunicipioSede'].astype(str).str.zfill(5)
-    
-    # Contar instituciones por municipio
-    inst_por_mun = df_inst.groupby('COD_MUNIC').agg(
+    # Contar instituciones por municipio (MunicipioSede ya tiene código completo 5 dígitos)
+    inst_por_mun = df_inst.groupby('MunicipioSede').agg(
         num_instituciones=('CodigoHabilitacionSede', 'nunique'),
         pct_instituciones_publicas=('NaturalezaJuridica', lambda x: (x == 'Pública').sum() / len(x) if len(x) > 0 else 0)
     ).reset_index()
+    inst_por_mun.rename(columns={'MunicipioSede': 'COD_MUNIC_COMPLETO'}, inplace=True)
+    inst_por_mun['COD_MUNIC_COMPLETO'] = inst_por_mun['COD_MUNIC_COMPLETO'].astype(int)
     
-    # Features de nacimientos por municipio-año (asegurar COD_MUNIC como string)
+    # Features de nacimientos por municipio-año
     features = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
         total_nacimientos_temp=('ANO', 'size')
     ).reset_index()
-    features['COD_MUNIC'] = features['COD_MUNIC'].astype(str).str.zfill(5)
+    
+    # Construir código municipal completo (COD_DPTO + COD_MUNIC)
+    features['COD_MUNIC_COMPLETO'] = (features['COD_DPTO'].astype(int) * 1000 + features['COD_MUNIC'].astype(int))
     
     # Merge con instituciones (usar datos reales por municipio)
-    features = features.merge(inst_por_mun, on='COD_MUNIC', how='left')
+    features = features.merge(inst_por_mun, on='COD_MUNIC_COMPLETO', how='left')
     
     # Para municipios sin match, usar promedios regionales
     promedio_inst = inst_por_mun['num_instituciones'].mean()
@@ -225,9 +226,11 @@ def generar_features_institucionales(df_nac, df_inst):
     # Calcular presión obstétrica
     features['presion_obstetrica'] = features['total_nacimientos_temp'] / features['num_instituciones']
     
-    # Eliminar columna temporal
-    features = features.drop('total_nacimientos_temp', axis=1)
+    # Eliminar columnas temporales
+    features = features.drop(['total_nacimientos_temp', 'COD_MUNIC_COMPLETO'], axis=1)
     
+    print(f"  → 3 features institucionales generadas")
+    return features
     print(f"  → 3 features institucionales generadas")
     return features
 
@@ -239,39 +242,44 @@ def generar_features_rips(df_nac, df_rips):
     """Genera features de acceso a servicios de salud (RIPS) por municipio-año"""
     print("\nGenerando features de acceso a servicios (RIPS)...")
     
-    # Asegurar tipos consistentes
-    df_rips['COD_DPTO'] = df_rips['COD_DPTO'].astype(str)
-    df_rips['COD_MUNIC'] = df_rips['COD_MUNIC'].astype(str).str.zfill(5)
+    # RIPS ya tiene códigos completos (ej. "50001"), construir COD_MUNIC_COMPLETO
+    df_rips['COD_MUNIC_COMPLETO'] = df_rips['COD_MUNIC'].astype(int)
     
-    # Limpiar y agrupar RIPS por municipio-año
-    rips_agg = df_rips.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    # Limpiar y agrupar RIPS por código completo y año
+    rips_agg = df_rips.groupby(['COD_MUNIC_COMPLETO', 'ANO']).agg(
         total_atenciones=('NumeroAtenciones', 'sum'),
         total_consultas=('TipoAtencion', lambda x: (x == 'CONSULTAS').sum()),
         total_urgencias=('TipoAtencion', lambda x: (x == 'URGENCIAS').sum()),
         total_procedimientos=('TipoAtencion', lambda x: (x == 'PROCEDIMIENTOS DE SALUD').sum())
     ).reset_index()
     
-    # Features de nacimientos con tipos consistentes
+    # Features de nacimientos con código completo
     nac_count = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().reset_index(name='total_nacimientos_temp')
-    nac_count['COD_DPTO'] = nac_count['COD_DPTO'].astype(str)
-    nac_count['COD_MUNIC'] = nac_count['COD_MUNIC'].astype(str).str.zfill(5)
+    nac_count['COD_MUNIC_COMPLETO'] = (nac_count['COD_DPTO'].astype(int) * 1000 + nac_count['COD_MUNIC'].astype(int))
     
     # Merge
-    features = nac_count.merge(rips_agg, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    features = nac_count.merge(rips_agg, on=['COD_MUNIC_COMPLETO', 'ANO'], how='left')
     
     # Rellenar nulos (municipios sin datos RIPS)
     features[['total_atenciones', 'total_consultas', 'total_urgencias', 'total_procedimientos']] = \
         features[['total_atenciones', 'total_consultas', 'total_urgencias', 'total_procedimientos']].fillna(0)
     
-    # Calcular ratios per cápita (por nacimiento)
-    features['atenciones_per_nacimiento'] = features['total_atenciones'] / features['total_nacimientos_temp']
-    features['consultas_per_nacimiento'] = features['total_consultas'] / features['total_nacimientos_temp']
-    features['urgencias_per_nacimiento'] = features['total_urgencias'] / features['total_nacimientos_temp']
-    features['procedimientos_per_nacimiento'] = features['total_procedimientos'] / features['total_nacimientos_temp']
+    # Asegurar tipos numéricos antes de calcular ratios
+    features['total_nacimientos_temp'] = features['total_nacimientos_temp'].astype(float)
+    features['total_atenciones'] = features['total_atenciones'].astype(float)
+    features['total_consultas'] = features['total_consultas'].astype(float)
+    features['total_urgencias'] = features['total_urgencias'].astype(float)
+    features['total_procedimientos'] = features['total_procedimientos'].astype(float)
+    
+    # Calcular ratios per cápita (por nacimiento), reemplazar inf y NaN con 0
+    features['atenciones_per_nacimiento'] = (features['total_atenciones'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['consultas_per_nacimiento'] = (features['total_consultas'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['urgencias_per_nacimiento'] = (features['total_urgencias'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['procedimientos_per_nacimiento'] = (features['total_procedimientos'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
     
     # Eliminar columnas temporales
     features = features.drop(['total_nacimientos_temp', 'total_atenciones', 'total_consultas', 
-                              'total_urgencias', 'total_procedimientos'], axis=1)
+                              'total_urgencias', 'total_procedimientos', 'COD_MUNIC_COMPLETO'], axis=1)
     
     print(f"  → 4 features de acceso a servicios generadas")
     return features
@@ -306,7 +314,193 @@ def generar_features_atencion_prenatal(df_nac):
         consultas_promedio=('NUMCONSUL', lambda x: x[~x.isin([99])].mean() if len(x[~x.isin([99])]) > 0 else 0)
     ).reset_index()
     
-    print(f"  → 2 features de atención prenatal generadas")
+    print(f"  → 3 features prenatales generadas")
+    return features
+
+# ============================================================================
+# FUNCIONES DE FEATURES - CRÍTICAS AVANZADAS (4)
+# ============================================================================
+
+def generar_features_mortalidad_neonatal(df_nac, df_def_nofet):
+    """
+    Genera features de mortalidad neonatal temprana (0-7 días).
+    Indicador clave OMS de calidad de atención perinatal.
+    """
+    print("\nGenerando features de mortalidad neonatal...")
+    
+    # Contar nacimientos por municipio-año
+    nac_count = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().reset_index(name='total_nacimientos_temp')
+    
+    # Filtrar defunciones neonatales tempranas (0-7 días): GRU_ED1 = 1, 2, 3
+    # 1: < 1 hora, 2: 1-23 horas, 3: 1-6 días
+    df_neonatal = df_def_nofet[df_def_nofet['GRU_ED1'].isin([1, 2, 3])].copy()
+    
+    # Contar defunciones neonatales por municipio-año
+    def_neonatal = df_neonatal.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().reset_index(name='defunciones_neonatales')
+    
+    # Merge
+    features = nac_count.merge(def_neonatal, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    features['defunciones_neonatales'] = features['defunciones_neonatales'].fillna(0)
+    
+    # Calcular tasa por 1000 nacidos vivos
+    features['tasa_mortalidad_neonatal'] = (features['defunciones_neonatales'] / features['total_nacimientos_temp'] * 1000).fillna(0)
+    
+    # Limpiar columnas temporales
+    features = features[['COD_DPTO', 'COD_MUNIC', 'ANO', 'tasa_mortalidad_neonatal']]
+    
+    print(f"  → 1 feature de mortalidad neonatal generada")
+    print(f"     Media nacional: {features['tasa_mortalidad_neonatal'].mean():.2f} por 1000 nacidos vivos")
+    return features
+
+def generar_features_causas_evitables(df_def_fet, df_def_nofet, df_nac):
+    """
+    Genera features de mortalidad por causas evitables.
+    Basado en clasificación CIE-10 de causas evitables (usa CAUSA_667).
+    Requiere df_nac para crear el esqueleto de todos los municipios-años.
+    """
+    print("\nGenerando features de causas evitables...")
+    
+    # Códigos 667 de causas EVITABLES según clasificación DANE
+    # 401-410: Causas obstétricas directas evitables
+    # 501-506: Causas perinatales evitables
+    causas_evitables_667 = list(range(401, 411)) + list(range(501, 507))
+    
+    # Combinar defunciones fetales y no fetales
+    def_fet_causas = df_def_fet[['COD_DPTO', 'COD_MUNIC', 'ANO', 'CAUSA_667']].copy()
+    def_nofet_causas = df_def_nofet[['COD_DPTO', 'COD_MUNIC', 'ANO', 'CAUSA_667']].copy() if 'CAUSA_667' in df_def_nofet.columns else pd.DataFrame()
+    
+    todas_def = pd.concat([def_fet_causas, def_nofet_causas], ignore_index=True)
+    
+    # Identificar causas evitables
+    todas_def['CAUSA_667'] = pd.to_numeric(todas_def['CAUSA_667'], errors='coerce')
+    todas_def['es_evitable'] = todas_def['CAUSA_667'].isin(causas_evitables_667).astype(int)
+    
+    # Agrupar por municipio-año
+    features_temp = todas_def.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+        total_defunciones_temp=('ANO', 'size'),
+        defunciones_evitables=('es_evitable', 'sum')
+    ).reset_index()
+    
+    # Calcular proporción
+    features_temp['pct_mortalidad_evitable'] = (features_temp['defunciones_evitables'] / features_temp['total_defunciones_temp'] * 100)
+    
+    # Crear esqueleto con TODOS los municipios-años (desde nacimientos)
+    esqueleto = df_nac[['COD_DPTO', 'COD_MUNIC', 'ANO']].drop_duplicates().reset_index(drop=True)
+    
+    # Merge con esqueleto (left join para mantener todos los municipios)
+    features = esqueleto.merge(
+        features_temp[['COD_DPTO', 'COD_MUNIC', 'ANO', 'pct_mortalidad_evitable']], 
+        on=['COD_DPTO', 'COD_MUNIC', 'ANO'], 
+        how='left'
+    )
+    
+    # Rellenar NaN con 0 (municipios sin defunciones = 0% evitable)
+    features['pct_mortalidad_evitable'] = features['pct_mortalidad_evitable'].fillna(0)
+    
+    print(f"  → 1 feature de causas evitables generada")
+    print(f"     Media: {features['pct_mortalidad_evitable'].mean():.1f}% de muertes evitables")
+    print(f"     Municipios con datos: {(features['pct_mortalidad_evitable'] > 0).sum()}/{len(features)}")
+    return features
+
+def generar_features_embarazo_alto_riesgo(df_nac):
+    """
+    Genera features de embarazos de alto riesgo clínico.
+    Combina prematuridad, bajo peso y embarazo múltiple.
+    T_GES: 1=<22sem, 2=22-27, 3=28-31, 4=32-36, 5=37-41, 6=42+
+    PESO_NAC: 1=<500g, 2=500-999, 3=1000-1499, 4=1500-1999, 5=2000-2499, 6=2500-2999, 7=3000-3499, 8=3500-3999, 9=4000+
+    """
+    print("\nGenerando features de embarazo alto riesgo...")
+    
+    # Identificar embarazos de alto riesgo
+    df_nac_temp = df_nac.copy()
+    
+    # T_GES codificado: Prematuro = 1, 2, 3, 4 (< 37 semanas)
+    df_nac_temp['T_GES'] = pd.to_numeric(df_nac_temp['T_GES'], errors='coerce')
+    df_nac_temp['es_prematuro'] = (df_nac_temp['T_GES'].isin([1, 2, 3, 4])).astype(int)
+    
+    # PESO_NAC codificado: Bajo peso = 1, 2, 3, 4, 5 (< 2500g)
+    df_nac_temp['PESO_NAC'] = pd.to_numeric(df_nac_temp['PESO_NAC'], errors='coerce')
+    df_nac_temp['es_bajo_peso'] = (df_nac_temp['PESO_NAC'].isin([1, 2, 3, 4, 5])).astype(int)
+    
+    # Embarazo múltiple (MUL_PARTO > 1)
+    df_nac_temp['MUL_PARTO'] = pd.to_numeric(df_nac_temp['MUL_PARTO'], errors='coerce')
+    df_nac_temp['es_multiple'] = (df_nac_temp['MUL_PARTO'] > 1).fillna(0).astype(int)
+    
+    # Un embarazo es de alto riesgo si cumple AL MENOS UNA condición
+    df_nac_temp['es_alto_riesgo'] = (
+        (df_nac_temp['es_prematuro'] == 1) | 
+        (df_nac_temp['es_bajo_peso'] == 1) | 
+        (df_nac_temp['es_multiple'] == 1)
+    ).astype(int)
+    
+    # Agrupar por municipio-año
+    features = df_nac_temp.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+        total_nacimientos_temp=('ANO', 'size'),
+        embarazos_alto_riesgo=('es_alto_riesgo', 'sum')
+    ).reset_index()
+    
+    # Calcular proporción
+    features['pct_embarazos_alto_riesgo'] = (features['embarazos_alto_riesgo'] / features['total_nacimientos_temp'] * 100).fillna(0)
+    
+    # Limpiar columnas temporales
+    features = features[['COD_DPTO', 'COD_MUNIC', 'ANO', 'pct_embarazos_alto_riesgo']]
+    
+    print(f"  → 1 feature de embarazo alto riesgo generada")
+    print(f"     Media: {features['pct_embarazos_alto_riesgo'].mean():.1f}% embarazos alto riesgo")
+    return features
+
+def generar_features_fragilidad_sistema(feat_demograficas, feat_institucionales, feat_mortalidad_neonatal):
+    """
+    Genera índice de fragilidad del sistema de salud.
+    Combina mortalidad neonatal, presión obstétrica y densidad institucional.
+    Fórmula: (mortalidad_neonatal × presion_obstetrica) / (num_instituciones + 1)
+    """
+    print("\nGenerando índice de fragilidad del sistema...")
+    
+    # Merge de las tres fuentes
+    features = feat_demograficas[['COD_DPTO', 'COD_MUNIC', 'ANO', 'total_nacimientos']].copy()
+    
+    # Agregar presión obstétrica y num_instituciones
+    features = features.merge(
+        feat_institucionales[['COD_DPTO', 'COD_MUNIC', 'ANO', 'presion_obstetrica', 'num_instituciones']], 
+        on=['COD_DPTO', 'COD_MUNIC', 'ANO'], 
+        how='left'
+    )
+    
+    # Agregar mortalidad neonatal
+    features = features.merge(
+        feat_mortalidad_neonatal[['COD_DPTO', 'COD_MUNIC', 'ANO', 'tasa_mortalidad_neonatal']], 
+        on=['COD_DPTO', 'COD_MUNIC', 'ANO'], 
+        how='left'
+    )
+    
+    # Rellenar nulos
+    features['presion_obstetrica'] = features['presion_obstetrica'].fillna(features['presion_obstetrica'].mean())
+    features['num_instituciones'] = features['num_instituciones'].fillna(1)
+    features['tasa_mortalidad_neonatal'] = features['tasa_mortalidad_neonatal'].fillna(0)
+    
+    # Calcular densidad institucional (instituciones per capita, ajustado por 1000 nacimientos)
+    features['densidad_institucional'] = features['num_instituciones'] / (features['total_nacimientos'] / 1000 + 1)
+    
+    # Calcular índice de fragilidad
+    # Normalizar presión obstétrica para evitar valores extremos
+    presion_norm = features['presion_obstetrica'] / features['presion_obstetrica'].quantile(0.75)
+    presion_norm = presion_norm.clip(upper=3)  # Cap en 3x el percentil 75
+    
+    features['indice_fragilidad_sistema'] = (
+        features['tasa_mortalidad_neonatal'] * presion_norm / (features['densidad_institucional'] + 0.1)
+    )
+    
+    # Normalizar a escala 0-100
+    max_fragilidad = features['indice_fragilidad_sistema'].quantile(0.95)
+    features['indice_fragilidad_sistema'] = (features['indice_fragilidad_sistema'] / max_fragilidad * 100).clip(upper=100)
+    
+    # Limpiar columnas temporales
+    features = features[['COD_DPTO', 'COD_MUNIC', 'ANO', 'indice_fragilidad_sistema']]
+    
+    print(f"  → 1 feature de fragilidad del sistema generada")
+    print(f"     Media: {features['indice_fragilidad_sistema'].mean():.1f} (escala 0-100)")
+    print(f"     Municipios críticos (>80): {(features['indice_fragilidad_sistema'] > 80).sum()}")
     return features
 
 # ============================================================================
@@ -334,21 +528,48 @@ def main():
     feat_socioeconomicas = generar_features_socioeconomicas(df_nacimientos)
     feat_prenatal = generar_features_atencion_prenatal(df_nacimientos)
     
+    # 2.1. Generar features CRÍTICAS AVANZADAS
+    print("\n" + "=" * 80)
+    print("GENERANDO FEATURES CRÍTICAS AVANZADAS")
+    print("=" * 80)
+    feat_mortalidad_neonatal = generar_features_mortalidad_neonatal(df_nacimientos, df_def_no_fetales)
+    feat_causas_evitables = generar_features_causas_evitables(df_def_fetales, df_def_no_fetales, df_nacimientos)
+    feat_embarazo_riesgo = generar_features_embarazo_alto_riesgo(df_nacimientos)
+    
     # 3. Normalizar tipos de las columnas de merge
     print("\nNormalizando tipos de datos...")
-    for df in [feat_demograficas, feat_clinicas, feat_institucionales, feat_rips, feat_socioeconomicas, feat_prenatal]:
+    for df in [feat_demograficas, feat_clinicas, feat_institucionales, feat_rips, feat_socioeconomicas, feat_prenatal,
+               feat_mortalidad_neonatal, feat_causas_evitables, feat_embarazo_riesgo]:
         df['COD_DPTO'] = df['COD_DPTO'].astype(str)
         df['COD_MUNIC'] = df['COD_MUNIC'].astype(str).str.zfill(5)
         df['ANO'] = df['ANO'].astype(int)
     
-    # 4. Combinar todas las features
-    print("Combinando features...")
+    # 4. Combinar todas las features (incluyendo las básicas primero)
+    print("Combinando features básicas...")
     features_final = feat_demograficas
     features_final = features_final.merge(feat_clinicas, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_institucionales, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_rips, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_socioeconomicas, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_prenatal, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    
+    # 4.1. Combinar features críticas avanzadas
+    print("Combinando features críticas...")
+    features_final = features_final.merge(feat_mortalidad_neonatal, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    features_final = features_final.merge(feat_causas_evitables, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    features_final = features_final.merge(feat_embarazo_riesgo, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    
+    # 4.2. Generar índice de fragilidad (requiere features previas combinadas)
+    print("Generando índice de fragilidad del sistema...")
+    feat_fragilidad = generar_features_fragilidad_sistema(feat_demograficas, feat_institucionales, feat_mortalidad_neonatal)
+    
+    # Normalizar tipos
+    feat_fragilidad['COD_DPTO'] = feat_fragilidad['COD_DPTO'].astype(str)
+    feat_fragilidad['COD_MUNIC'] = feat_fragilidad['COD_MUNIC'].astype(str).str.zfill(5)
+    feat_fragilidad['ANO'] = feat_fragilidad['ANO'].astype(int)
+    
+    # Merge final
+    features_final = features_final.merge(feat_fragilidad, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     
     # 5. Reordenar columnas
     columnas_id = ['COD_DPTO', 'COD_MUNIC', 'ANO']
@@ -364,10 +585,43 @@ def main():
     print("=" * 80)
     print(f"Total de registros: {len(features_final):,}")
     print(f"Total de features: {len(features_final.columns) - 3}")  # -3 por las columnas de ID
+    print(f"  • Features básicas: 21")
+    print(f"  • Features críticas nuevas: 4")
+    print(f"    - tasa_mortalidad_neonatal")
+    print(f"    - pct_mortalidad_evitable")
+    print(f"    - pct_embarazos_alto_riesgo")
+    print(f"    - indice_fragilidad_sistema")
     print(f"Años: {sorted(features_final['ANO'].unique())}")
     print(f"Departamentos: {sorted(features_final['COD_DPTO'].unique())}")
     print(f"Municipios únicos: {features_final['COD_MUNIC'].nunique()}")
     print(f"\nArchivo guardado en: {OUTPUT_FILE}")
+    
+    # 7. Estadísticas de features críticas
+    print("\n" + "=" * 80)
+    print("ESTADÍSTICAS DE FEATURES CRÍTICAS")
+    print("=" * 80)
+    
+    if 'tasa_mortalidad_neonatal' in features_final.columns:
+        print(f"\n📊 Mortalidad Neonatal:")
+        print(f"   Media: {features_final['tasa_mortalidad_neonatal'].mean():.2f} por 1000 nacidos vivos")
+        print(f"   Rango: {features_final['tasa_mortalidad_neonatal'].min():.2f} - {features_final['tasa_mortalidad_neonatal'].max():.2f}")
+        print(f"   Municipios con tasa >15: {(features_final['tasa_mortalidad_neonatal'] > 15).sum()}")
+    
+    if 'pct_mortalidad_evitable' in features_final.columns:
+        print(f"\n📊 Mortalidad Evitable:")
+        print(f"   Media: {features_final['pct_mortalidad_evitable'].mean():.1f}%")
+        print(f"   Municipios con >50% evitable: {(features_final['pct_mortalidad_evitable'] > 50).sum()}")
+    
+    if 'pct_embarazos_alto_riesgo' in features_final.columns:
+        print(f"\n📊 Embarazos Alto Riesgo:")
+        print(f"   Media: {features_final['pct_embarazos_alto_riesgo'].mean():.1f}%")
+        print(f"   Municipios con >30% alto riesgo: {(features_final['pct_embarazos_alto_riesgo'] > 30).sum()}")
+    
+    if 'indice_fragilidad_sistema' in features_final.columns:
+        print(f"\n📊 Índice de Fragilidad:")
+        print(f"   Media: {features_final['indice_fragilidad_sistema'].mean():.1f}")
+        print(f"   Municipios críticos (>80): {(features_final['indice_fragilidad_sistema'] > 80).sum()}")
+        print(f"   Municipios muy críticos (>90): {(features_final['indice_fragilidad_sistema'] > 90).sum()}")
     
     # 7. Mostrar primeras filas
     print("\nPrimeras filas:")

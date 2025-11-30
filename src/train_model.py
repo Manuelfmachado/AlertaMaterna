@@ -15,6 +15,7 @@ import pickle
 import warnings
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
@@ -217,6 +218,11 @@ def entrenar_modelo_mortalidad(X, y, feature_cols):
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
+    
+    # Imputar NaN generados por StandardScaler (por si hay features constantes)
+    imputer = SimpleImputer(strategy='constant', fill_value=0)
+    X_train_scaled = imputer.fit_transform(X_train_scaled)
+    X_test_scaled = imputer.transform(X_test_scaled)
     
     # SMOTE para balancear clases
     print("\nAplicando SMOTE para balancear clases...")
