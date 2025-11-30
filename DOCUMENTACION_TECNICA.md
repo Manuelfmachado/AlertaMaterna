@@ -4,7 +4,7 @@
 
 **Región:** Orinoquía, Colombia (Meta, Arauca, Casanare, Guaviare, Vichada)  
 **Periodo de análisis:** 2020-2024  
-**Fuente de datos:** DANE - Estadísticas Vitales
+**Fuentes de datos:** DANE y www.datos.gov.co
 
 ---
 

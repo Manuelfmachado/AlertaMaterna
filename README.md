@@ -18,12 +18,12 @@ Este proyecto aprovecha los **datos abiertos** del Gobierno de Colombia, integra
 **De [www.datos.gov.co](https://www.datos.gov.co/):**
 - **Registro Especial de Prestadores de Servicios de Salud (REPS)** - Instituciones y sedes
 - **Registros Individuales de Prestación de Servicios de Salud (RIPS)** - Consultas, urgencias y procedimientos
+- **Códigos DIVIPOLA** - Códigos oficiales de municipios colombianos
 
 **Del DANE (Estadísticas Vitales 2020-2024):**
 - Nacimientos (453,901 registros 2024)
 - Defunciones fetales (21,250 registros 2024)
 - Defunciones no fetales
-- Códigos DIVIPOLA de municipios
 
 El objetivo es generar **valor público** mediante inteligencia artificial aplicada a la salud materno-infantil, transformando datos dispersos en alertas tempranas accionables.
 
