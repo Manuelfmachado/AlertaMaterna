@@ -228,7 +228,7 @@ def main():
         st.markdown("---")
         
         # Nota metodológica
-        st.info("📊 **Criterio de validez estadística:** Solo se analizan municipios con ≥10 nacimientos/año (estándar OMS)")
+        st.info("**Criterio de validez estadística:** Solo se analizan municipios con ≥10 nacimientos/año (estándar OMS)")
         
         st.markdown("---")
         
