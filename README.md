@@ -54,7 +54,7 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
 - **Modelo predictivo XGBoost**: ROC-AUC 0.7731, prioriza sensibilidad sobre especificidad
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
-- **Basado en datos oficiales**: DANE - 453,901 nacimientos y 21,250 defunciones fetales (2024)
+- **Basado en datos oficiales**: DANE - 2,789,391 nacimientos y 138,385 defunciones fetales (2020-2024)
 - **Código abierto**: Disponible en GitHub bajo licencia MIT
 
 ## Resultados Principales
