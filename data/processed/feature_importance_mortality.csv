@@ -15,7 +15,11 @@ pct_sin_seguridad_social,0.039300915
 edad_materna_promedio,0.037398994
 pct_embarazo_multiple,0.036887255
 pct_madres_adolescentes,0.03359362
-pct_instituciones_publicas,0.0
 num_instituciones,0.0
+consultas_per_nacimiento,0.0
+atenciones_per_nacimiento,0.0
+pct_instituciones_publicas,0.0
 pct_madres_edad_avanzada,0.0
+procedimientos_per_nacimiento,0.0
 total_nacimientos,0.0
+urgencias_per_nacimiento,0.0

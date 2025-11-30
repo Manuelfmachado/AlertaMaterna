@@ -76,7 +76,7 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 
 **Algoritmo**: XGBoost con SMOTE (balanceo de clases)
 
-**Features**: 20 variables sociosanitarias (excluyendo identificadores y targets)
+**Features**: 28 variables sociosanitarias (7 demográficas + 7 clínicas + 3 institucionales + 4 acceso a servicios RIPS + 3 socioeconómicas + 2 atención prenatal + 2 targets)
 
 **Performance**:
 
@@ -84,11 +84,17 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 - Recall (alta mortalidad): **62%** (prioriza detección de casos críticos)
 - Precision (baja mortalidad): **84%**
 
-**Top 3 features más importantes**:
+**Top 5 features más importantes**:
 
 1. APGAR bajo promedio (18.7%)
 2. Porcentaje bajo peso al nacer (7.4%)
 3. Consultas prenatales promedio (7.2%)
+4. Porcentaje área rural (6.9%)
+5. Tasa mortalidad fetal (6.9%)
+
+**Nuevas features integradas** (2020-2024):
+- ✅ **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
+- ✅ **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
 
 ## Instalación y Uso
 

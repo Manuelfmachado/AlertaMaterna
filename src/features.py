@@ -26,6 +26,7 @@ NACIMIENTOS_FILE = f'{DATA_DIR}nacimientos_2020_2024_decoded.csv'
 DEFUNCIONES_FETALES_FILE = f'{DATA_DIR}defunciones_fetales_2020_2024_decoded.csv'
 DEFUNCIONES_NO_FETALES_FILE = f'{DATA_DIR}defunciones_no_fetales_2020_2024_decoded.csv'
 REPS_FILE = f'{DATA_DIR}Registro_Especial_de_Prestadores_y_Sedes_de_Servicios_de_Salud_20251120.csv'
+RIPS_FILE = f'{DATA_DIR}Registros_Individuales_de_Prestación_de_Servicios_de_Salud_–_RIPS_20251120.csv'
 OUTPUT_FILE = f'{DATA_DIR}features_municipio_anio.csv'
 
 # ============================================================================
@@ -103,6 +104,30 @@ def cargar_instituciones():
     print(f"  → {len(df):,} instituciones cargadas")
     return df
 
+def cargar_rips():
+    """Carga datos de servicios de salud (RIPS) por municipio-año"""
+    print("Cargando servicios de salud (RIPS)...")
+    df = pd.read_csv(RIPS_FILE, sep=';', encoding='latin1', low_memory=False)
+    
+    # Limpiar columna vacía
+    if 'Unnamed: 6' in df.columns:
+        df = df.drop('Unnamed: 6', axis=1)
+    
+    # Extraer códigos de departamento y municipio
+    df['COD_DPTO'] = df['Departamento'].str.extract(r'^(\d+)')[0]
+    df['COD_MUNIC'] = df['Municipio'].str.extract(r'^(\d+)')[0]
+    
+    # La columna 'Año' está mal codificada como 'AÃ±o' por el encoding
+    col_ano = [c for c in df.columns if 'o' in c and len(c) < 5][0]  # Buscar columna del año
+    df['ANO'] = pd.to_numeric(df[col_ano].astype(str).str.replace(',', ''), errors='coerce').astype('Int64')
+    
+    # Filtrar Orinoquía y años 2020-2024
+    df = df[df['COD_DPTO'].isin(['50', '81', '85', '95', '99'])].copy()
+    df = df[(df['ANO'] >= 2020) & (df['ANO'] <= 2024)].copy()
+    
+    print(f"  → {len(df):,} registros RIPS Orinoquía 2020-2024 cargados")
+    return df
+
 # ============================================================================
 # FUNCIONES DE FEATURES - DEMOGRÁFICAS (5)
 # ============================================================================
@@ -172,30 +197,83 @@ def generar_features_institucionales(df_nac, df_inst):
     """Genera features institucionales por municipio-año"""
     print("\nGenerando features institucionales...")
     
-    # Contar instituciones por municipio (asumir que no cambian mucho año a año)
-    # Mapear nombres de municipios a códigos (simplificado, usar último dato disponible)
-    inst_por_mun = df_inst.groupby(['MunicipioSede']).agg(
+    # Extraer código de municipio del REPS (asegurar formato string)
+    df_inst['COD_MUNIC'] = df_inst['MunicipioSede'].astype(str).str.zfill(5)
+    
+    # Contar instituciones por municipio
+    inst_por_mun = df_inst.groupby('COD_MUNIC').agg(
         num_instituciones=('CodigoHabilitacionSede', 'nunique'),
         pct_instituciones_publicas=('NaturalezaJuridica', lambda x: (x == 'Pública').sum() / len(x) if len(x) > 0 else 0)
     ).reset_index()
     
-    # Features de nacimientos
+    # Features de nacimientos por municipio-año (asegurar COD_MUNIC como string)
     features = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
         total_nacimientos_temp=('ANO', 'size')
     ).reset_index()
+    features['COD_MUNIC'] = features['COD_MUNIC'].astype(str).str.zfill(5)
     
-    # Para simplificar, asignar promedios globales (en producción harías un merge más sofisticado)
-    num_inst_promedio = inst_por_mun['num_instituciones'].mean()
-    pct_pub_promedio = inst_por_mun['pct_instituciones_publicas'].mean()
+    # Merge con instituciones (usar datos reales por municipio)
+    features = features.merge(inst_por_mun, on='COD_MUNIC', how='left')
     
-    features['num_instituciones'] = num_inst_promedio
-    features['pct_instituciones_publicas'] = pct_pub_promedio
+    # Para municipios sin match, usar promedios regionales
+    promedio_inst = inst_por_mun['num_instituciones'].mean()
+    promedio_pub = inst_por_mun['pct_instituciones_publicas'].mean()
+    
+    features['num_instituciones'] = features['num_instituciones'].fillna(promedio_inst)
+    features['pct_instituciones_publicas'] = features['pct_instituciones_publicas'].fillna(promedio_pub)
+    
+    # Calcular presión obstétrica
     features['presion_obstetrica'] = features['total_nacimientos_temp'] / features['num_instituciones']
     
     # Eliminar columna temporal
     features = features.drop('total_nacimientos_temp', axis=1)
     
     print(f"  → 3 features institucionales generadas")
+    return features
+
+# ============================================================================
+# FUNCIONES DE FEATURES - ACCESO A SERVICIOS RIPS (4)
+# ============================================================================
+
+def generar_features_rips(df_nac, df_rips):
+    """Genera features de acceso a servicios de salud (RIPS) por municipio-año"""
+    print("\nGenerando features de acceso a servicios (RIPS)...")
+    
+    # Asegurar tipos consistentes
+    df_rips['COD_DPTO'] = df_rips['COD_DPTO'].astype(str)
+    df_rips['COD_MUNIC'] = df_rips['COD_MUNIC'].astype(str).str.zfill(5)
+    
+    # Limpiar y agrupar RIPS por municipio-año
+    rips_agg = df_rips.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+        total_atenciones=('NumeroAtenciones', 'sum'),
+        total_consultas=('TipoAtencion', lambda x: (x == 'CONSULTAS').sum()),
+        total_urgencias=('TipoAtencion', lambda x: (x == 'URGENCIAS').sum()),
+        total_procedimientos=('TipoAtencion', lambda x: (x == 'PROCEDIMIENTOS DE SALUD').sum())
+    ).reset_index()
+    
+    # Features de nacimientos con tipos consistentes
+    nac_count = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().reset_index(name='total_nacimientos_temp')
+    nac_count['COD_DPTO'] = nac_count['COD_DPTO'].astype(str)
+    nac_count['COD_MUNIC'] = nac_count['COD_MUNIC'].astype(str).str.zfill(5)
+    
+    # Merge
+    features = nac_count.merge(rips_agg, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    
+    # Rellenar nulos (municipios sin datos RIPS)
+    features[['total_atenciones', 'total_consultas', 'total_urgencias', 'total_procedimientos']] = \
+        features[['total_atenciones', 'total_consultas', 'total_urgencias', 'total_procedimientos']].fillna(0)
+    
+    # Calcular ratios per cápita (por nacimiento)
+    features['atenciones_per_nacimiento'] = features['total_atenciones'] / features['total_nacimientos_temp']
+    features['consultas_per_nacimiento'] = features['total_consultas'] / features['total_nacimientos_temp']
+    features['urgencias_per_nacimiento'] = features['total_urgencias'] / features['total_nacimientos_temp']
+    features['procedimientos_per_nacimiento'] = features['total_procedimientos'] / features['total_nacimientos_temp']
+    
+    # Eliminar columnas temporales
+    features = features.drop(['total_nacimientos_temp', 'total_atenciones', 'total_consultas', 
+                              'total_urgencias', 'total_procedimientos'], axis=1)
+    
+    print(f"  → 4 features de acceso a servicios generadas")
     return features
 
 # ============================================================================
@@ -246,23 +324,33 @@ def main():
     df_def_fetales = cargar_defunciones_fetales()
     df_def_no_fetales = cargar_defunciones_no_fetales()
     df_instituciones = cargar_instituciones()
+    df_rips = cargar_rips()
     
     # 2. Generar features por categoría
     feat_demograficas = generar_features_demograficas(df_nacimientos)
     feat_clinicas = generar_features_clinicas(df_nacimientos, df_def_fetales, df_def_no_fetales)
     feat_institucionales = generar_features_institucionales(df_nacimientos, df_instituciones)
+    feat_rips = generar_features_rips(df_nacimientos, df_rips)
     feat_socioeconomicas = generar_features_socioeconomicas(df_nacimientos)
     feat_prenatal = generar_features_atencion_prenatal(df_nacimientos)
     
-    # 3. Combinar todas las features
-    print("\nCombinando features...")
+    # 3. Normalizar tipos de las columnas de merge
+    print("\nNormalizando tipos de datos...")
+    for df in [feat_demograficas, feat_clinicas, feat_institucionales, feat_rips, feat_socioeconomicas, feat_prenatal]:
+        df['COD_DPTO'] = df['COD_DPTO'].astype(str)
+        df['COD_MUNIC'] = df['COD_MUNIC'].astype(str).str.zfill(5)
+        df['ANO'] = df['ANO'].astype(int)
+    
+    # 4. Combinar todas las features
+    print("Combinando features...")
     features_final = feat_demograficas
     features_final = features_final.merge(feat_clinicas, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_institucionales, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
+    features_final = features_final.merge(feat_rips, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_socioeconomicas, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     features_final = features_final.merge(feat_prenatal, on=['COD_DPTO', 'COD_MUNIC', 'ANO'], how='left')
     
-    # 4. Reordenar columnas
+    # 5. Reordenar columnas
     columnas_id = ['COD_DPTO', 'COD_MUNIC', 'ANO']
     columnas_features = [col for col in features_final.columns if col not in columnas_id]
     features_final = features_final[columnas_id + sorted(columnas_features)]

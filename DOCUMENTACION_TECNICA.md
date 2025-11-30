@@ -120,7 +120,7 @@ Las 24 variables fueron seleccionadas basándose en:
 
 ## 4. Ingeniería de Features
 
-### 4.1 Variables Generadas (24 features)
+### 4.1 Variables Generadas (28 features)
 
 #### A. Indicadores Demográficos (7)
 | Variable | Descripción | Justificación |
@@ -147,22 +147,32 @@ Las 24 variables fueron seleccionadas basándose en:
 #### C. Indicadores Institucionales (3)
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
-| `num_instituciones` | # instituciones de salud | Acceso a servicios |
-| `pct_instituciones_publicas` | % instituciones públicas | Cobertura del sistema público |
+| `num_instituciones` | # instituciones de salud por municipio | Acceso a servicios (REPS diferenciado) |
+| `pct_instituciones_publicas` | % instituciones públicas por municipio | Cobertura del sistema público (REPS diferenciado) |
 | `presion_obstetrica` | Nacimientos / instituciones | Capacidad instalada vs demanda |
 
-#### D. Indicadores Socioeconómicos (3)
+#### D. Indicadores de Acceso a Servicios RIPS (4) ⭐ NUEVO
+| Variable | Descripción | Justificación |
+|----------|-------------|---------------|
+| `atenciones_per_nacimiento` | Total atenciones obstétricas / nacimientos | Intensidad de uso del sistema de salud |
+| `consultas_per_nacimiento` | Consultas obstétricas / nacimientos | Acceso efectivo a servicios prenatales |
+| `urgencias_per_nacimiento` | Urgencias obstétricas / nacimientos | Indicador de complicaciones y acceso a emergencias |
+| `procedimientos_per_nacimiento` | Procedimientos obstétricos / nacimientos | Complejidad de atención requerida |
+
+#### E. Indicadores Socioeconómicos (3)
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `pct_sin_seguridad_social` | % sin afiliación en salud | Acceso a servicios |
 | `pct_regimen_subsidiado` | % en régimen subsidiado | Proxy de nivel socioeconómico |
 | `pct_area_rural` | % población rural | Ruralidad asociada a menor acceso |
 
-#### E. Indicadores de Atención Prenatal (2)
+#### F. Indicadores de Atención Prenatal (2)
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `pct_sin_control_prenatal` | % sin ningún control prenatal | Factor de riesgo crítico (WHO 2016) |
 | `consultas_promedio` | # promedio de consultas prenatales | OMS recomienda mínimo 8 consultas |
+
+**Nota:** Las features institucionales (C) ahora utilizan datos reales diferenciados por municipio del REPS, en lugar de promedios globales. Las features de acceso a servicios (D) son nuevas y provienen del procesamiento de los RIPS 2020-2024.
 
 ### 4.2 Transformaciones Aplicadas
 
