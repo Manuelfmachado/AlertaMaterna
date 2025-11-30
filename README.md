@@ -112,7 +112,7 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 - **REPS diferenciado**: Instituciones de salud por municipio (antes promedios globales)
 - **RIPS acceso a servicios**: Consultas, urgencias, procedimientos por nacimiento
 
-**Features críticas avanzadas** (Nov 2025):
+**Features críticas avanzadas**:
 
 - **Tasa mortalidad neonatal**: Muertes 0-7 días por 1000 nacimientos (media: 3.47‰)
 - **% Mortalidad evitable**: Causas CIE-10 prevenibles según DANE (media: 49.7%)
@@ -400,6 +400,18 @@ Para preguntas, sugerencias o colaboraciones:
 
 - GitHub: [@Manuelfmachado](https://github.com/Manuelfmachado)
 - Repositorio: [AlertaMaterna](https://github.com/Manuelfmachado/AlertaMaterna)
+
+## Agradecimientos
+
+Este proyecto fue desarrollado en el marco del **Concurso Datos al Ecosistema 2025** organizado por el **Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC)**.
+
+Agradecemos especialmente:
+
+- **MinTIC** por promover la innovación basada en datos abiertos y fomentar soluciones que generen valor público
+- **Concurso Datos al Ecosistema** por la oportunidad de participar y contribuir al ecosistema de datos en Colombia
+- **Personal docente** por brindar conocimiento, guía y herramientas fundamentales para el desarrollo de este proyecto
+
+---
 
 ## Cómo Citar
 
