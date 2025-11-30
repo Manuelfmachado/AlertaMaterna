@@ -45,6 +45,24 @@ Thumbs.db
 *.bak
 *.log
 
-# Archivos grandes
+# Archivos grandes (>100MB)
+data/processed/*_decoded.csv
+data/processed/defunciones_*.csv
+data/processed/nacimientos_*.csv
+data/processed/Indicadores_*.csv
+data/processed/Registros_*.csv
+data/processed/Registro_*.csv
+data/raw/*.csv
+
+# EXCEPCIONES: Archivos pequeños necesarios
+!data/processed/features_alerta_materna.csv
+!data/processed/features_municipio_anio.csv
+!data/processed/feature_importance*.csv
+!data/processed/municipios_orinoquia*.csv
+!data/processed/codigos_*.csv
+!data/processed/DIVIPOLA*.csv
+!data/processed/mortalidad_materna*.csv
+
+# Archivos temporales
 *.csv~
 *.xlsx~
