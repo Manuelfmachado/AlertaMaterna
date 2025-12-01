@@ -331,21 +331,21 @@ def main():
         if anio_sel == 'Todos':
             num_criticos = len(municipios_criticos)
             num_alto_riesgo_total = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
-            texto_alerta = f"🚨 URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
+            texto_alerta = f"URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
             texto_expander = "Ver registros en alerta crítica"
         else:
             num_municipios_criticos = municipios_criticos['NOMBRE_MUNICIPIO'].nunique()
             num_municipios_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
-            texto_alerta = f"🚨 URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
+            texto_alerta = f"URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
             texto_expander = f"Ver municipios en alerta crítica {anio_sel}"
         
         st.error(f"""
         **{texto_alerta}**
         
         Estos valores son extremadamente altos (10x la tasa normal de 5‰) y requieren:
-        - ⚡ Verificación inmediata con autoridades de salud locales
-        - 📋 Validación de datos con DANE
-        - 🏥 Intervención urgente si los datos son correctos
+        - Verificación inmediata con autoridades de salud locales
+        - Validación de datos con DANE
+        - Intervención urgente si los datos son correctos
         """)
         
         # Mostrar municipios críticos
