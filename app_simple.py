@@ -106,6 +106,24 @@ st.markdown("""
         font-size: 1.3rem !important;
         line-height: 1.8 !important;
     }
+    
+    /* Líneas verticales separadoras entre métricas */
+    div[data-testid="metric-container"] {
+        border-right: 2px solid #dee2e6;
+        padding-right: 1rem;
+    }
+    
+    div[data-testid="metric-container"]:last-child {
+        border-right: none;
+    }
+    
+    /* Línea horizontal más visible */
+    hr {
+        border: none;
+        height: 2px;
+        background-color: #dee2e6;
+        margin: 2rem 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
