@@ -107,14 +107,11 @@ st.markdown("""
         line-height: 1.8 !important;
     }
     
-    /* Líneas verticales separadoras entre métricas */
-    div[data-testid="metric-container"] {
+    /* Líneas verticales para cada métrica individual */
+    div[data-testid="stMetric"] {
         border-right: 2px solid #dee2e6;
-        padding-right: 1rem;
-    }
-    
-    div[data-testid="metric-container"]:last-child {
-        border-right: none;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
     }
     
     /* Línea horizontal más visible */
