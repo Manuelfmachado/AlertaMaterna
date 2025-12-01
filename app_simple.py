@@ -244,9 +244,10 @@ def main():
     with st.sidebar:
         st.header("Filtros")
         
-        # Filtro de año
+        # Filtro de año - Predeterminado 2024
         anios = ['Todos'] + sorted(df['ANO'].unique(), reverse=True)
-        anio_sel = st.selectbox("Año", anios, index=0)
+        default_anio = anios.index(2024) if 2024 in anios else 0
+        anio_sel = st.selectbox("Año", anios, index=default_anio)
         
         # Filtro de departamento
         deptos = ['Todos'] + sorted(df['DEPARTAMENTO'].unique().tolist())
@@ -326,8 +327,17 @@ def main():
     municipios_criticos = df_filtrado[df_filtrado['tasa_mortalidad_fetal'] > UMBRAL_CRITICO]
     
     if len(municipios_criticos) > 0:
+        # Determinar texto según filtro
+        if anio_sel == 'Todos':
+            texto_alerta = f"{len(municipios_criticos)} registro(s) municipio-año con mortalidad fetal >50‰"
+            texto_expander = "Ver registros en estado crítico"
+        else:
+            num_municipios_criticos = municipios_criticos['NOMBRE_MUNICIPIO'].nunique()
+            texto_alerta = f"{num_municipios_criticos} municipio(s) en estado crítico en {anio_sel} (mortalidad fetal >50‰)"
+            texto_expander = "Ver municipios en estado crítico"
+        
         st.error(f"""
-        **ALERTA CRÍTICA**: {len(municipios_criticos)} municipio(s) con mortalidad fetal >50‰
+        **⚠️ ALERTA CRÍTICA**: {texto_alerta}
         
         Estos valores son extremadamente altos (10x la tasa normal de 5‰) y requieren:
         - Verificación inmediata con autoridades de salud locales
@@ -336,7 +346,7 @@ def main():
         """)
         
         # Mostrar municipios críticos
-        with st.expander("Ver municipios en estado crítico"):
+        with st.expander(texto_expander):
             for _, row in municipios_criticos.iterrows():
                 st.markdown(f"""
                 **{row['NOMBRE_MUNICIPIO']}** ({row['DEPARTAMENTO']})
@@ -354,26 +364,49 @@ def main():
     tab1, tab2 = st.tabs(["Panorama General", "Predictor de Riesgo"])
     
     with tab1:
-        # KPIs principales
-        st.subheader(f"Resumen - {depto_sel if depto_sel != 'Todos' else 'Orinoquía'} {anio_sel}")
+        # KPIs principales - Título dinámico según filtros
+        if anio_sel == 'Todos' and depto_sel == 'Todos':
+            titulo_resumen = "Resumen - Orinoquía Completa (2020-2024)"
+        elif anio_sel == 'Todos':
+            titulo_resumen = f"Resumen - {depto_sel} (2020-2024)"
+        elif depto_sel == 'Todos':
+            titulo_resumen = f"Resumen - Orinoquía {anio_sel}"
+        else:
+            titulo_resumen = f"Resumen - {depto_sel} {anio_sel}"
+        
+        st.subheader(titulo_resumen)
         
         col1, col2, col3, col4, col5 = st.columns([1.2, 1.5, 1.3, 1.5, 1.5])
         
-        # KPIs: Contar registros totales y registros en alto riesgo (no municipios únicos)
-        total_registros = len(df_filtrado)
-        registros_alto_riesgo = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
+        # KPIs: Contar municipios únicos en año seleccionado o registros si es "Todos"
+        if anio_sel == 'Todos':
+            # Vista histórica: mostrar registros municipio-año
+            total_items = len(df_filtrado)
+            items_alto_riesgo = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
+            etiqueta1 = "Registros (Municipio-Año)"
+            etiqueta2 = "Registros Alto Riesgo"
+            help1 = f"Total de registros municipio-año analizados en el periodo 2020-2024. Un registro = 1 municipio en 1 año. Solo incluye registros con ≥10 nacimientos/año (estándar OMS)"
+            help2 = f"Registros municipio-año clasificados como ALTO RIESGO en el periodo. Criterios: ≥3 factores de riesgo o mortalidad fetal >50‰"
+        else:
+            # Vista por año específico: mostrar municipios únicos
+            total_items = df_filtrado['NOMBRE_MUNICIPIO'].nunique()
+            items_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
+            etiqueta1 = f"Municipios {anio_sel}"
+            etiqueta2 = f"Municipios Alto Riesgo"
+            help1 = f"Municipios analizados en {anio_sel} con ≥10 nacimientos (estándar OMS)"
+            help2 = f"Municipios clasificados como ALTO RIESGO en {anio_sel}. Criterios: ≥3 factores de riesgo o mortalidad fetal >50‰"
+        
         total_nac = df_filtrado['total_nacimientos'].sum()
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
         
         with col1:
-            st.metric("Registros Municipio-Año", f"{total_registros}", help="Total de registros analizados. Un registro = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros. Solo se incluyen registros con ≥10 nacimientos/año (estándar OMS)")
+            st.metric(etiqueta1, f"{total_items}", help=help1)
         with col2:
-            pct_alto = (registros_alto_riesgo/total_registros*100) if total_registros > 0 else 0
-            st.metric("Registros Alto Riesgo", f"{registros_alto_riesgo} ({pct_alto:.1f}%)", 
-                     help="Registros municipio-año clasificados como ALTO RIESGO. Criterios: ≥3 factores de riesgo o tasa de mortalidad fetal >50‰ (5%)")
+            pct_alto = (items_alto_riesgo/total_items*100) if total_items > 0 else 0
+            st.metric(etiqueta2, f"{items_alto_riesgo} ({pct_alto:.1f}%)", help=help2)
         with col3:
             st.metric("Nacimientos Totales", f"{int(total_nac):,}", 
-                     help="Total de nacimientos vivos registrados en el periodo analizado según datos oficiales del DANE")
+                     help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
         with col4:
             st.metric("Mortalidad Fetal Promedio", f"{mort_prom:.1f}‰",
                      help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10‰ (Normal), 10-30‰ (Moderado), 30-50‰ (Alto), >50‰ (Crítico)")
