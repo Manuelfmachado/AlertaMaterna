@@ -836,7 +836,7 @@ def main():
             fig = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=prob * 100,
-                title={'text': "Probabilidad de Alta Mortalidad (%)"},
+                title={'text': "Probabilidad de Alta Mortalidad Infantil (<1 año) (%)"},
                 delta={'reference': 50},
                 gauge={
                     'axis': {'range': [0, 100]},
