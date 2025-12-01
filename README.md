@@ -59,15 +59,21 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 
 ## Resultados Principales
 
+**Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio tiene 5 registros (2020-2024).
+
 | Métrica                             | Valor                                               |
 | ------------------------------------ | --------------------------------------------------- |
-| **Registros analizados**       | 310 municipio-año (2020-2024)                      |
-| **Registros válidos**         | 251 (≥10 nacimientos)                              |
-| **Registros alto riesgo**      | 53 de 251 (21.1%)                                   |
+| **Registros analizados**       | 310 registros municipio-año (2020-2024)                      |
+| **Registros válidos**         | 251 registros con ≥10 nacimientos/año (estándar OMS)                              |
+| **Registros alto riesgo**      | 63 de 251 (25.1%)                                   |
+| **Nacimientos totales**        | 137,780 nacimientos vivos (periodo analizado)       |
+| **Mortalidad fetal promedio**  | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)     |
+| **Mortalidad evitable**        | 49.7% de muertes maternas son PREVENIBLES           |
 | **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
-| **Municipios 2024**            | 13 de 45 en alto riesgo (29%)                       |
 | **ROC-AUC Modelo Predictivo**  | 0.7731                                              |
 | **Accuracy**                   | 87%                                                 |
+| **Precision**                  | 79%                                                 |
+| **Falsos Positivos**           | 3 municipios                                        |
 
 ## Modelos Implementados
 

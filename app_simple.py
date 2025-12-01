@@ -366,19 +366,19 @@ def main():
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
         
         with col1:
-            st.metric("Registros", f"{total_registros}", help="Total de registros municipio-año analizados. Cada municipio puede tener múltiples registros (uno por año). Solo se incluyen registros con ≥10 nacimientos/año")
+            st.metric("Registros Municipio-Año", f"{total_registros}", help="Total de registros analizados. Un registro = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros. Solo se incluyen registros con ≥10 nacimientos/año (estándar OMS)")
         with col2:
             pct_alto = (registros_alto_riesgo/total_registros*100) if total_registros > 0 else 0
-            st.metric("Alto Riesgo", f"{registros_alto_riesgo} ({pct_alto:.1f}%)", 
+            st.metric("Registros Alto Riesgo", f"{registros_alto_riesgo} ({pct_alto:.1f}%)", 
                      help="Registros municipio-año clasificados como ALTO RIESGO. Criterios: ≥3 factores de riesgo o tasa de mortalidad fetal >50‰ (5%)")
         with col3:
-            st.metric("Nacimientos", f"{int(total_nac):,}", 
+            st.metric("Nacimientos Totales", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo analizado según datos oficiales del DANE")
         with col4:
-            st.metric("Mortalidad Fetal", f"{mort_prom:.1f}‰",
+            st.metric("Mortalidad Fetal Promedio", f"{mort_prom:.1f}‰",
                      help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10‰ (Normal), 10-30‰ (Moderado), 30-50‰ (Alto), >50‰ (Crítico)")
         with col5:
-            st.metric("Mortalidad Evitable", "49.7%", 
+            st.metric("Muertes Evitables", "49.7%", 
                      help="Porcentaje de muertes maternas causadas por enfermedades PREVENIBLES según clasificación CIE-10. ¡Casi la mitad de las muertes podrían evitarse con intervención oportuna!")
         
         # Métricas del Modelo ML

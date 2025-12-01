@@ -28,14 +28,19 @@
 AlertaMaterna es un sistema de Machine Learning especializado para identificar y predecir riesgo de mortalidad materno-infantil en la región Orinoquía de Colombia. El sistema implementa dos modelos complementarios:
 
 - **Modelo 1 (Clasificación de Riesgo):** Sistema híbrido que combina percentiles estadísticos con umbrales críticos absolutos basados en literatura médica internacional.
-- **Modelo 2 (Predicción de Mortalidad):** XGBoost que predice probabilidad de alta mortalidad infantil con ROC-AUC de 0.7731 (+9.2% vs baseline).
+- **Modelo 2 (Predicción de Mortalidad):** XGBoost que predice probabilidad de alta mortalidad infantil con ROC-AUC de 0.7731.
+
+**Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros.
 
 **Resultados principales:**
 - 310 registros municipio-año analizados (2020-2024)
-- 251 registros válidos (≥10 nacimientos)
-- 53 registros clasificados como alto riesgo (21.1%)
-- 40 registros con mortalidad crítica (>50‰) correctamente identificados
-- En 2024: 13 municipios en alto riesgo (29% del total)
+- 251 registros válidos con ≥10 nacimientos/año (estándar OMS)
+- **63 registros clasificados como alto riesgo (25.1%)**
+- **137,780 nacimientos totales** en el periodo analizado
+- **Mortalidad fetal promedio: 23.4‰** (23.4 muertes por 1,000 nacimientos)
+- **49.7% de muertes maternas son PREVENIBLES** (causas evitables CIE-10)
+- 40 registros con mortalidad crítica (>50‰) correctamente identificados (100% sensibilidad)
+- **Modelo predictivo: ROC-AUC 0.7731 | Accuracy 87% | Precision 79% | Falsos Positivos: 3**
 
 ---
 
@@ -294,24 +299,24 @@ Umbral    Alto Riesgo    Críticos detectados    Especificidad
 
 **Razones:**
 1. **Detecta 100% de casos críticos** (mortalidad >50‰)
-2. **Equilibrio sensibilidad-especificidad:** 21% alto riesgo es manejable operacionalmente
+2. **Equilibrio sensibilidad-especificidad:** 25.1% alto riesgo es manejable operacionalmente
 3. **Coherencia médica:** 3+ factores de riesgo = intervención justificada
 4. **Validación con expertos:** Umbral aceptado en salud pública
 
 ### 5.6 Resultados del Modelo 1
 
-**Distribución final (251 registros válidos):**
-- Alto riesgo: 53 registros municipio-año (21.1%)
-- Bajo riesgo: 198 registros municipio-año (78.9%)
+**Distribución final (251 registros válidos con ≥10 nacimientos/año):**
+- Alto riesgo: **63 registros municipio-año (25.1%)**
+- Bajo riesgo: 188 registros municipio-año (74.9%)
 
 **Casos críticos identificados:**
 - 40 registros con mortalidad >50‰ (todos clasificados como ALTO RIESGO)
 - 100% de sensibilidad en casos críticos
 
-**Distribución 2024 (año más reciente):**
-- 45 municipios con datos válidos
-- 13 municipios clasificados alto riesgo (29%)
-- 11 municipios con mortalidad >50‰
+**Indicadores agregados periodo 2020-2024:**
+- **Nacimientos totales:** 137,780 nacimientos vivos
+- **Mortalidad fetal promedio:** 23.4‰ (23.4 muertes por 1,000 nacimientos)
+- **Mortalidad evitable:** 49.7% de muertes maternas son por causas PREVENIBLES
 
 **Promedios por grupo:**
 ```
@@ -601,18 +606,21 @@ defunciones_fetales                 0.0330       Correlación con mortalidad inf
 
 ### 7.1 Estadísticas Generales del Dataset
 
+**Nota**: Un "registro" = combinación municipio-año. Ejemplo: Villavicencio tiene 5 registros (años 2020-2024).
+
 ```
-Total registros procesados:        310
-Registros válidos (≥10 nac):       251 (81%)
-Registros excluidos (<10 nac):      59 (19%)
+Total registros procesados:        310 registros municipio-año
+Registros válidos (≥10 nac/año):   251 (81%) - cumple estándar OMS
+Registros excluidos (<10 nac/año): 59 (19%)
 
 Periodo:                           2020-2024 (5 años)
 Departamentos:                     5 (Meta, Arauca, Casanare, Guaviare, Vichada)
 Municipios únicos:                 55
 
-Total nacimientos 2024:            12,656
-Total defunciones fetales 2024:    802
-Tasa mortalidad fetal promedio:    63.4‰ (2024)
+DATOS AGREGADOS PERIODO 2020-2024:
+Total nacimientos:                 137,780 nacimientos vivos
+Mortalidad fetal promedio:         23.4‰ (23.4 muertes por 1,000 nacimientos)
+Mortalidad evitable:               49.7% de muertes maternas son PREVENIBLES
 ```
 
 ### 7.2 Distribución de Riesgo por Departamento (2024)
