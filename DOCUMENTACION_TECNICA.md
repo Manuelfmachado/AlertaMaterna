@@ -189,7 +189,234 @@ Las 29 variables fueron seleccionadas basándose en:
 
 **Nota:** Las features institucionales (C) ahora utilizan datos reales diferenciados por municipio del REPS, en lugar de promedios globales. Las features de acceso a servicios (D) son nuevas y provienen del procesamiento de los RIPS 2020-2024. Las features críticas avanzadas (G) fueron agregadas en noviembre 2025 y mejoraron el ROC-AUC de 0.71 a 0.7731 (+9.2%).
 
-### 4.2 Transformaciones Aplicadas
+### 4.2 Cálculo Detallado de Features Principales
+
+A continuación se detalla el proceso de cálculo de las 10 features más importantes según el modelo XGBoost:
+
+#### 1. **tasa_mortalidad_neonatal** (Importancia: 24.17%)
+
+Mide la tasa de mortalidad en el período más crítico (0-28 días de vida).
+
+```python
+# Fórmula:
+tasa_mortalidad_neonatal = (defunciones_neonatales / total_nacimientos) * 1000
+
+# Donde:
+# - defunciones_neonatales: muertes entre 0-28 días de vida
+# - Se obtiene del dataset defunciones no fetales del DANE
+# - Se filtra por edad gestacional y días de vida
+# - Expresado por cada 1,000 nacimientos vivos
+
+# Código (src/features.py línea 346):
+features['tasa_mortalidad_neonatal'] = (
+    features['defunciones_neonatales'] / 
+    features['total_nacimientos_temp'] * 1000
+).fillna(0)
+```
+
+**Fuente de datos:** Defunciones no fetales DANE 2020-2024  
+**Justificación:** El 40% de la mortalidad infantil ocurre en la primera semana de vida (WHO 2020). Detecta problemas en atención inmediata post-parto.
+
+#### 2. **num_instituciones** (Importancia: 9.24%)
+
+Cuenta el número de instituciones de salud por municipio.
+
+```python
+# Proceso:
+# 1. Del REPS (Registro Especial de Prestadores de Salud)
+# 2. Contar instituciones por código de municipio (5 dígitos)
+num_instituciones = df_REPS.groupby('COD_MUNIC').size()
+
+# Código (src/features.py línea 204):
+inst_count = df_inst.groupby('MunicipioSede').size().reset_index(name='num_instituciones')
+```
+
+**Fuente de datos:** REPS (Registro Especial de Prestadores) MinSalud  
+**Justificación:** Proxy de acceso a servicios de salud. Municipios con más instituciones tienen mejor cobertura.
+
+#### 3. **pct_mortalidad_evitable** (Importancia: 6.65%)
+
+Porcentaje de muertes causadas por enfermedades PREVENIBLES según clasificación CIE-10.
+
+```python
+# Fórmula:
+pct_mortalidad_evitable = (muertes_evitables / total_muertes) * 100
+
+# Identificación de causas evitables:
+# - Se usa el campo CAUSA_667 en defunciones DANE
+# - Códigos específicos de CIE-10 para causas evitables:
+#   * Códigos 401-410: Causas maternas evitables
+#   * Códigos 501-506: Causas perinatales evitables
+# - Requiere intervención médica oportuna
+
+# Código (src/features.py línea 367):
+causas_evitables = df_def_fet[
+    df_def_fet['CAUSA_667'].isin(causas_evitables_codes)
+].groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size()
+
+pct_mortalidad_evitable = (causas_evitables / total_defunciones) * 100
+```
+
+**Fuente de datos:** Defunciones fetales y no fetales DANE, campo CAUSA_667  
+**Justificación:** Identifica municipios donde las muertes podrían prevenirse con intervención oportuna. 49.7% promedio indica gran margen de mejora.
+
+#### 4. **pct_bajo_peso** (Importancia: 5.44%)
+
+Porcentaje de recién nacidos con bajo peso al nacer (<2,500 gramos).
+
+```python
+# Fórmula:
+pct_bajo_peso = (nacimientos_bajo_peso / total_nacimientos) * 100
+
+# Del dataset nacimientos DANE, campo PESO_NAC:
+# - Categorías 1-4 representan bajo peso (<2500g)
+# - Categoría 1: <1000g (extremo bajo peso)
+# - Categoría 2: 1000-1499g (muy bajo peso)
+# - Categoría 3: 1500-1999g (bajo peso)
+# - Categoría 4: 2000-2499g (bajo peso)
+
+# Código (src/features.py línea 160):
+pct_bajo_peso = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    pct_bajo_peso=('PESO_NAC', lambda x: 
+        (x.isin([1, 2, 3, 4])).sum() / len(x) if len(x) > 0 else 0
+    )
+)
+```
+
+**Fuente de datos:** Nacimientos DANE, campo PESO_NAC  
+**Justificación:** Predictor clásico de mortalidad neonatal. Asociado a complicaciones y mayor necesidad de cuidados intensivos (Wilcox 2001).
+
+#### 5. **procedimientos_per_nacimiento** (Importancia: 4.97%)
+
+Número promedio de procedimientos médicos realizados por cada nacimiento.
+
+```python
+# Fórmula:
+procedimientos_per_nacimiento = total_procedimientos_RIPS / total_nacimientos
+
+# Donde:
+# - total_procedimientos_RIPS: conteo de registros en RIPS 2020-2024
+# - Incluye: cirugías, procedimientos obstétricos, intervenciones
+# - Se agrupa por municipio y año
+
+# Código (src/features.py línea 240):
+procedimientos = df_rips.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size()
+procedimientos_per_nacimiento = procedimientos / total_nacimientos
+```
+
+**Fuente de datos:** RIPS (Registros Individuales de Prestación de Servicios)  
+**Justificación:** Indica intensidad de atención médica recibida. Valores altos sugieren embarazos de alto riesgo o buena cobertura de servicios.
+
+#### 6. **edad_materna_promedio** (Importancia: 4.59%)
+
+Edad promedio de las madres al momento del parto.
+
+```python
+# Fórmula simple:
+edad_materna_promedio = df_nacimientos.groupby('COD_MUNIC')['EDAD_MADRE'].mean()
+
+# Del campo EDAD_MADRE en nacimientos DANE (años enteros)
+
+# Código (src/features.py línea 179):
+edad_materna_promedio = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    edad_materna_promedio=('EDAD_MADRE', 'mean')
+)
+```
+
+**Fuente de datos:** Nacimientos DANE, campo EDAD_MADRE  
+**Justificación:** Embarazos en edades extremas (<18 años o >35 años) tienen mayor riesgo de complicaciones obstétricas (UNFPA 2013, ACOG 2014).
+
+#### 7. **pct_area_rural** (Importancia: 3.91%)
+
+Porcentaje de nacimientos ocurridos en área rural.
+
+```python
+# Fórmula:
+pct_area_rural = (nacimientos_rurales / total_nacimientos) * 100
+
+# Del campo AREA_NAC en nacimientos DANE:
+# - 1 = Cabecera municipal (urbano)
+# - 2 = Centro poblado / Rural disperso
+
+# Código (src/features.py línea 282):
+pct_area_rural = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    pct_area_rural=('AREA_NAC', lambda x: 
+        (x == 2).sum() / len(x) if len(x) > 0 else 0
+    )
+)
+```
+
+**Fuente de datos:** Nacimientos DANE, campo AREA_NAC  
+**Justificación:** Proxy de acceso geográfico a servicios de salud. Zonas rurales tienen mayor dificultad para acceder a atención especializada.
+
+#### 8. **consultas_promedio** (Importancia: 3.58%)
+
+Número promedio de consultas prenatales por embarazo.
+
+```python
+# Fórmula simple:
+consultas_promedio = df_nacimientos.groupby('COD_MUNIC')['NUMERO_CON'].mean()
+
+# Del campo NUMERO_CON en nacimientos DANE (número entero de consultas)
+
+# Código (src/features.py línea 256):
+consultas_promedio = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    consultas_promedio=('NUMERO_CON', 'mean')
+)
+```
+
+**Fuente de datos:** Nacimientos DANE, campo NUMERO_CON  
+**Justificación:** OMS recomienda mínimo 8 consultas prenatales. Atención prenatal adecuada previene complicaciones y reduce mortalidad (WHO 2016).
+
+#### 9. **pct_sin_seguridad_social** (Importancia: 3.34%)
+
+Porcentaje de madres sin afiliación al sistema de salud.
+
+```python
+# Fórmula:
+pct_sin_seguridad_social = (sin_afiliacion / total_nacimientos) * 100
+
+# Del campo ID_REGIMEN_SEG en nacimientos DANE:
+# - 1 = Régimen contributivo
+# - 2 = Régimen subsidiado
+# - 3 = Régimen especial
+# - 4 = Sin afiliación al SGSSS
+
+# Código (src/features.py línea 277):
+pct_sin_seguridad_social = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    pct_sin_seguridad_social=('ID_REGIMEN_SEG', lambda x: 
+        (x == 4).sum() / len(x) if len(x) > 0 else 0
+    )
+)
+```
+
+**Fuente de datos:** Nacimientos DANE, campo ID_REGIMEN_SEG  
+**Justificación:** Barrera crítica de acceso a servicios de salud. Madres sin seguridad social tienen menor probabilidad de recibir atención prenatal y obstétrica adecuada.
+
+#### 10. **defunciones_fetales** (Importancia: 3.30%)
+
+Número absoluto de defunciones fetales (muertes antes del nacimiento).
+
+```python
+# Fórmula simple - conteo directo:
+defunciones_fetales = df_def_fetales.groupby('COD_MUNIC').size()
+
+# Del dataset completo de defunciones fetales DANE 2020-2024
+
+# Código (src/features.py línea 174):
+defunciones_fet = df_def_fet.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().reset_index(
+    name='defunciones_fetales'
+)
+```
+
+**Fuente de datos:** Defunciones fetales DANE  
+**Justificación:** Indicador directo de problemas en atención obstétrica y calidad de servicios de salud. Correlación alta con mortalidad infantil general.
+
+---
+
+**Nota sobre importancias:** Los valores de importancia (24.17%, 9.24%, etc.) fueron calculados por el modelo XGBoost después del entrenamiento. El algoritmo evalúa automáticamente qué features mejor predicen la clasificación de alto/bajo riesgo mediante análisis de ganancia de información en cada split del árbol de decisión.
+
+### 4.3 Transformaciones Aplicadas
 
 ```python
 # Ejemplo: Tasa de mortalidad fetal
