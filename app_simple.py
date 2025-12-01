@@ -355,13 +355,13 @@ def main():
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("ROC-AUC", "0.7731", delta="+9.2%", help="Precisión del modelo. Mejora vs baseline 0.71")
+            st.metric("ROC-AUC", "0.7731", help="Área bajo la curva ROC. Mide capacidad discriminatoria del modelo")
         with col2:
-            st.metric("Accuracy", "87%", delta="+21pp", help="Precisión general. Mejora vs baseline 66%")
+            st.metric("Accuracy", "87%", help="Precisión general del modelo en clasificación")
         with col3:
-            st.metric("Precision", "79%", delta="+39pp", help="Confianza en alertas de alto riesgo")
+            st.metric("Precision", "79%", help="Porcentaje de alertas de alto riesgo correctas")
         with col4:
-            st.metric("Falsos Positivos", "3", delta="-80%", delta_color="inverse", help="Antes: 15. Reducción dramática")
+            st.metric("Falsos Positivos", "3", help="Municipios mal clasificados como alto riesgo")
         
         st.markdown("---")
         
@@ -411,11 +411,11 @@ def main():
             fig_mapa.update_layout(
                 mapbox=dict(
                     style='open-street-map',
-                    center=dict(lat=4.5, lon=-72.5),
-                    zoom=5.5
+                    center=dict(lat=5.0, lon=-71.5),
+                    zoom=5.8
                 ),
-                height=500,
-                margin=dict(l=0, r=0, t=0, b=0),
+                height=600,
+                margin=dict(l=0, r=0, t=30, b=0),
                 showlegend=False
             )
             
