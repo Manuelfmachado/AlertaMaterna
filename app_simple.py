@@ -549,8 +549,11 @@ def main():
             xaxis_title="Importancia Relativa (%)",
             yaxis_title="",
             yaxis={'categoryorder':'total ascending'},
-            showlegend=False
+            showlegend=False,
+            font=dict(size=14)
         )
+        
+        fig_features.update_traces(textfont_size=16)
         
         st.plotly_chart(fig_features, use_container_width=True)
         
@@ -617,8 +620,8 @@ def main():
             labels={'count': 'Cantidad', 'DEPARTAMENTO': 'Departamento'}
         )
         
-        fig1.update_layout(height=350, showlegend=True)
-        fig1.update_traces(textposition='inside')
+        fig1.update_layout(height=350, showlegend=True, font=dict(size=16))
+        fig1.update_traces(textposition='inside', textfont_size=18)
         st.plotly_chart(fig1, use_container_width=True)
         
         st.markdown("---")
