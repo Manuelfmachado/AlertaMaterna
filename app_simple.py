@@ -620,7 +620,12 @@ def main():
             labels={'count': 'Cantidad', 'DEPARTAMENTO': 'Departamento'}
         )
         
-        fig1.update_layout(height=350, showlegend=True, font=dict(size=16))
+        fig1.update_layout(
+            height=350, 
+            showlegend=True, 
+            font=dict(size=16),
+            xaxis_tickangle=0
+        )
         fig1.update_traces(textposition='inside', textfont_size=18)
         st.plotly_chart(fig1, use_container_width=True)
         
