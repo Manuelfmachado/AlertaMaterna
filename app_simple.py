@@ -357,16 +357,7 @@ def main():
         # KPIs principales
         st.subheader(f"Resumen - {depto_sel if depto_sel != 'Todos' else 'Orinoquía'} {anio_sel}")
         
-        # CSS para valores más compactos
-        st.markdown("""
-        <style>
-        [data-testid="stMetricValue"] {
-            font-size: 28px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
-        col1, col2, col3, col4, col5 = st.columns(5)
+        col1, col2, col3, col4, col5 = st.columns([1.2, 1.5, 1.3, 1.5, 1.5])
         
         # KPIs: Contar registros totales y registros en alto riesgo (no municipios únicos)
         total_registros = len(df_filtrado)
@@ -394,7 +385,7 @@ def main():
         st.markdown("---")
         st.subheader("Desempeño del Modelo de Predicción")
         
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns([1.2, 1.2, 1.2, 1.4])
         with col1:
             st.metric("ROC-AUC", "0.7731", help="Área bajo la curva ROC (Receiver Operating Characteristic). Mide la capacidad del modelo para distinguir entre municipios de alto y bajo riesgo. Valores: 0.5=aleatorio, 1.0=perfecto. Nuestro 0.77 indica BUENA discriminación")
         with col2:
