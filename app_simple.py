@@ -341,17 +341,18 @@ def main():
         
         col1, col2, col3, col4, col5 = st.columns(5)
         
-        total_mun = df_filtrado['NOMBRE_MUNICIPIO'].nunique()
-        alto_riesgo = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
+        # KPIs: Contar registros totales y registros en alto riesgo (no municipios únicos)
+        total_registros = len(df_filtrado)
+        registros_alto_riesgo = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
         total_nac = df_filtrado['total_nacimientos'].sum()
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
         
         with col1:
-            st.metric("Municipios", f"{total_mun}", help="Total de municipios analizados en la región. Solo se incluyen municipios con ≥10 nacimientos/año para garantizar validez estadística")
+            st.metric("Registros", f"{total_registros}", help="Total de registros municipio-año analizados. Cada municipio puede tener múltiples registros (uno por año). Solo se incluyen registros con ≥10 nacimientos/año")
         with col2:
-            pct_alto = (alto_riesgo/len(df_filtrado)*100) if len(df_filtrado) > 0 else 0
-            st.metric("Alto Riesgo", f"{alto_riesgo} ({pct_alto:.1f}%)", 
-                     help="Municipios clasificados como ALTO RIESGO. Criterios: ≥3 factores de riesgo o tasa de mortalidad fetal >50‰ (5%)")
+            pct_alto = (registros_alto_riesgo/total_registros*100) if total_registros > 0 else 0
+            st.metric("Alto Riesgo", f"{registros_alto_riesgo} ({pct_alto:.1f}%)", 
+                     help="Registros municipio-año clasificados como ALTO RIESGO. Criterios: ≥3 factores de riesgo o tasa de mortalidad fetal >50‰ (5%)")
         with col3:
             st.metric("Nacimientos", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo analizado según datos oficiales del DANE")
