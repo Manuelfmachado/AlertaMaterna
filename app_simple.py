@@ -326,6 +326,15 @@ def main():
         # KPIs principales
         st.subheader(f"Resumen - {depto_sel if depto_sel != 'Todos' else 'Orinoquía'} {anio_sel}")
         
+        # CSS para valores más compactos
+        st.markdown("""
+        <style>
+        [data-testid="stMetricValue"] {
+            font-size: 28px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
         col1, col2, col3, col4, col5 = st.columns(5)
         
         total_mun = df_filtrado['NOMBRE_MUNICIPIO'].nunique()
@@ -334,20 +343,20 @@ def main():
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
         
         with col1:
-            st.metric("Municipios", f"{total_mun}", help="Total de municipios analizados (≥10 nacimientos)")
+            st.metric("Municipios ℹ️", f"{total_mun}", help="Total de municipios analizados en la región. Solo se incluyen municipios con ≥10 nacimientos/año para garantizar validez estadística")
         with col2:
             pct_alto = (alto_riesgo/len(df_filtrado)*100) if len(df_filtrado) > 0 else 0
-            st.metric("Alto Riesgo", f"{alto_riesgo} ({pct_alto:.1f}%)", 
-                     help="Municipios con ≥3 puntos de riesgo o mortalidad >50‰")
+            st.metric("Alto Riesgo ℹ️", f"{alto_riesgo} ({pct_alto:.1f}%)", 
+                     help="Municipios clasificados como ALTO RIESGO. Criterios: ≥3 factores de riesgo o tasa de mortalidad fetal >50‰ (5%)")
         with col3:
-            st.metric("Nacimientos", f"{int(total_nac):,}", 
-                     help="Total de nacimientos registrados en el periodo")
+            st.metric("Nacimientos ℹ️", f"{int(total_nac):,}", 
+                     help="Total de nacimientos vivos registrados en el periodo analizado según datos oficiales del DANE")
         with col4:
-            st.metric("Mortalidad Fetal", f"{mort_prom:.1f}‰",
-                     help="Promedio de muertes fetales por 1,000 nacimientos. Normal: <10‰, Crítico: >50‰")
+            st.metric("Mortalidad Fetal ℹ️", f"{mort_prom:.1f}‰",
+                     help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10‰ (Normal), 10-30‰ (Moderado), 30-50‰ (Alto), >50‰ (Crítico)")
         with col5:
-            st.metric("Mortalidad Evitable", "49.7%", 
-                     help="% promedio de muertes por causas prevenibles (CIE-10). ¡LA MITAD ES EVITABLE!")
+            st.metric("Mortalidad Evitable ℹ️", "49.7%", 
+                     help="Porcentaje de muertes maternas causadas por enfermedades PREVENIBLES según clasificación CIE-10. ¡Casi la mitad de las muertes podrían evitarse con intervención oportuna!")
         
         # Métricas del Modelo ML
         st.markdown("---")
@@ -355,13 +364,13 @@ def main():
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("ROC-AUC", "0.7731", help="Área bajo la curva ROC. Mide capacidad discriminatoria del modelo")
+            st.metric("ROC-AUC ℹ️", "0.7731", help="Área bajo la curva ROC (Receiver Operating Characteristic). Mide la capacidad del modelo para distinguir entre municipios de alto y bajo riesgo. Valores: 0.5=aleatorio, 1.0=perfecto. Nuestro 0.77 indica BUENA discriminación")
         with col2:
-            st.metric("Accuracy", "87%", help="Precisión general del modelo en clasificación")
+            st.metric("Accuracy ℹ️", "87%", help="Precisión general del modelo. De cada 100 municipios clasificados, 87 son correctamente identificados (alto o bajo riesgo). Indica excelente rendimiento general del modelo")
         with col3:
-            st.metric("Precision", "79%", help="Porcentaje de alertas de alto riesgo correctas")
+            st.metric("Precision ℹ️", "79%", help="Confiabilidad de las alertas de ALTO RIESGO. Cuando el modelo predice alto riesgo, acierta en el 79% de los casos. Minimiza falsas alarmas y optimiza recursos")
         with col4:
-            st.metric("Falsos Positivos", "3", help="Municipios mal clasificados como alto riesgo")
+            st.metric("Falsos Positivos ℹ️", "3", help="Número de municipios incorrectamente clasificados como alto riesgo (cuando en realidad son bajo riesgo). Solo 3 de 45 municipios son falsos positivos = 6.7% de error")
         
         st.markdown("---")
         
@@ -421,16 +430,21 @@ def main():
             
             st.plotly_chart(fig_mapa, use_container_width=True)
             
-            # Leyenda del mapa
+            # Leyenda del mapa con tooltips
+            st.caption("Leyenda de Niveles de Riesgo por Mortalidad Fetal")
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.markdown("🟢 **< 10‰** (Normal)")
+                st.markdown("🟢 **< 10‰** ℹ️")
+                st.caption("Normal: Tasa aceptable según OMS")
             with col2:
-                st.markdown("🟡 **10-30‰** (Moderado)")
+                st.markdown("🟡 **10-30‰** ℹ️")
+                st.caption("Moderado: Requiere monitoreo")
             with col3:
-                st.markdown("🟠 **30-50‰** (Alto)")
+                st.markdown("🟠 **30-50‰** ℹ️")
+                st.caption("Alto: Intervención necesaria")
             with col4:
-                st.markdown("🔴 **> 50‰** (Crítico)")
+                st.markdown("🔴 **> 50‰** ℹ️")
+                st.caption("Crítico: Emergencia sanitaria")
         
         st.markdown("---")
         
@@ -539,12 +553,20 @@ def main():
             
             with col2:
                 st.markdown("### Multiplicadores")
+                
+                tooltips = {
+                    'Mortalidad Fetal (‰)': 'Factor por el cual se multiplica la mortalidad fetal en municipios de ALTO RIESGO vs BAJO RIESGO. Por ejemplo, 8.77x significa que hay casi 9 veces más muertes fetales',
+                    '% Sin Control Prenatal': 'Proporción de embarazadas sin controles prenatales en alto vs bajo riesgo. Mayor ausencia de controles = mayor mortalidad. 1.64x = 64% más embarazadas sin control',
+                    '% Bajo Peso al Nacer': 'Porcentaje de bebés con peso <2,500g en alto vs bajo riesgo. Indicador crítico de salud neonatal. 0.88x = ligeramente menor (otros factores son más determinantes)'
+                }
+                
                 for i, row in comparacion.iterrows():
+                    indicador = row['Indicador']
                     st.metric(
-                        row['Indicador'],
+                        f"{indicador} ℹ️",
                         f"{row['Multiplicador']:.2f}x",
                         delta=f"+{row['Diferencia']:.1f}",
-                        help=f"Alto Riesgo es {row['Multiplicador']:.2f} veces mayor que Bajo Riesgo"
+                        help=tooltips.get(indicador, f"Alto Riesgo es {row['Multiplicador']:.2f} veces mayor que Bajo Riesgo")
                     )
         
         st.markdown("---")
