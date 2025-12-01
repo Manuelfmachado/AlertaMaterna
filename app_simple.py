@@ -47,18 +47,18 @@ st.markdown("""
     
     /* Métricas más grandes */
     [data-testid="stMetricValue"] {
-        font-size: 3rem !important;
+        font-size: 2.2rem !important;
     }
     
     [data-testid="stMetricLabel"] {
-        font-size: 1.5rem !important;
+        font-size: 1.1rem !important;
         font-weight: 600 !important;
     }
     
     /* Texto de alertas más grande */
     .stAlert {
-        font-size: 1.4rem !important;
-        line-height: 1.8 !important;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
     }
     
     /* Sidebar más legible */
