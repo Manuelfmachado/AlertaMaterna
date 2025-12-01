@@ -28,136 +28,83 @@ st.markdown("""
     /* Aumentar tamaño de texto general */
     .main .block-container {
         font-size: 1.3rem;
-        padding-top: 2rem;
     }
     
     /* Título principal más grande */
     h1 {
         font-size: 3.5rem !important;
         font-weight: 700 !important;
-        padding-bottom: 1rem;
-        border-bottom: 4px solid #e74c3c;
-        margin-bottom: 1.5rem !important;
     }
     
-    /* Subtítulos más grandes con línea inferior */
+    /* Subtítulos más grandes */
     h2 {
         font-size: 2.5rem !important;
-        padding-bottom: 0.5rem;
-        border-bottom: 3px solid #3498db;
-        margin-top: 2rem !important;
-        margin-bottom: 1rem !important;
     }
     
     h3 {
         font-size: 2rem !important;
-        color: #2c3e50 !important;
-        margin-top: 1.5rem !important;
     }
     
-    /* Métricas con bordes sutiles */
-    div[data-testid="metric-container"] {
-        background-color: #f8f9fa;
-        border: 2px solid #dee2e6;
-        border-radius: 10px;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
+    /* Métricas más grandes */
     [data-testid="stMetricValue"] {
         font-size: 3rem !important;
-        color: #2c3e50 !important;
     }
     
     [data-testid="stMetricLabel"] {
         font-size: 1.5rem !important;
         font-weight: 600 !important;
-        color: #34495e !important;
     }
     
-    /* Texto de alertas con borde */
+    /* Texto de alertas más grande */
     .stAlert {
         font-size: 1.4rem !important;
         line-height: 1.8 !important;
-        border-left: 5px solid #e74c3c;
-        border-radius: 5px;
     }
     
-    /* Sidebar con separador */
-    [data-testid="stSidebar"] {
+    /* Sidebar más legible */
+    .css-1d391kg, [data-testid="stSidebar"] {
         font-size: 1.3rem;
-        border-right: 3px solid #dee2e6;
     }
     
-    /* Botones con bordes */
+    /* Botones más grandes */
     .stButton button {
         font-size: 1.4rem !important;
         padding: 0.8rem 2rem !important;
-        border-radius: 8px;
-        border: 2px solid #3498db;
     }
     
-    /* Selectbox con bordes */
-    .stSelectbox div[data-baseweb="select"] {
-        font-size: 1.3rem !important;
-        border-radius: 8px;
-    }
-    
+    /* Selectbox y inputs más grandes */
     .stSelectbox label, .stNumberInput label, .stSlider label {
         font-size: 1.4rem !important;
         font-weight: 600 !important;
     }
     
-    /* Tabs con separación */
-    .stTabs [data-baseweb="tab-list"] {
-        border-bottom: 3px solid #dee2e6;
-        padding-bottom: 0.5rem;
+    /* Valores de selectbox más grandes */
+    .stSelectbox div[data-baseweb="select"] {
+        font-size: 1.3rem !important;
     }
     
+    /* Tabs más grandes */
     .stTabs [data-baseweb="tab-list"] button {
         font-size: 1.5rem !important;
         padding: 1rem 2rem !important;
-        border-radius: 8px 8px 0 0;
     }
     
-    .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        border-bottom: 4px solid #e74c3c;
-    }
-    
-    /* Expander con borde */
+    /* Expander más grande */
     .streamlit-expanderHeader {
         font-size: 1.4rem !important;
         font-weight: 600 !important;
-        background-color: #f8f9fa;
-        border: 2px solid #dee2e6;
-        border-radius: 8px;
-        padding: 0.5rem;
     }
     
-    /* Separadores más visibles */
-    hr {
-        border: none;
-        height: 2px;
-        background-color: #dee2e6;
-        margin: 2rem 0;
-    }
-    
-    /* Párrafos */
+    /* Párrafos más grandes */
     p {
         font-size: 1.3rem !important;
         line-height: 1.8 !important;
     }
     
-    /* Listas */
+    /* Listas más grandes */
     li {
         font-size: 1.3rem !important;
         line-height: 1.8 !important;
-    }
-    
-    /* Info boxes con borde */
-    .stInfo {
-        border-left: 5px solid #3498db;
-        border-radius: 5px;
     }
     </style>
 """, unsafe_allow_html=True)
