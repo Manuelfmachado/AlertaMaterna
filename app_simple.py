@@ -218,8 +218,8 @@ def main():
         st.header("Filtros")
         
         # Filtro de año
-        anios = sorted(df['ANO'].unique(), reverse=True)
-        anio_sel = st.selectbox("Año", anios)
+        anios = ['Todos'] + sorted(df['ANO'].unique(), reverse=True)
+        anio_sel = st.selectbox("Año", anios, index=0)
         
         # Filtro de departamento
         deptos = ['Todos'] + sorted(df['DEPARTAMENTO'].unique().tolist())
@@ -283,7 +283,11 @@ def main():
         st.markdown("**Región:** Orinoquía")
     
     # Aplicar filtros
-    df_filtrado = df[df['ANO'] == anio_sel].copy()
+    if anio_sel == 'Todos':
+        df_filtrado = df.copy()
+    else:
+        df_filtrado = df[df['ANO'] == anio_sel].copy()
+    
     if depto_sel != 'Todos':
         df_filtrado = df_filtrado[df_filtrado['DEPARTAMENTO'] == depto_sel]
     
