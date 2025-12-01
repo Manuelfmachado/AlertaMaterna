@@ -112,6 +112,18 @@ st.markdown("""
         border-right: 2px solid #dee2e6;
         padding-right: 1.5rem;
         padding-left: 1.5rem;
+        min-width: 180px !important;
+        flex: 1 1 auto !important;
+    }
+    
+    /* Evitar truncamiento de valores de métricas */
+    [data-testid="stMetricValue"] {
+        white-space: nowrap !important;
+        overflow: visible !important;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        white-space: normal !important;
     }
     
     /* Línea horizontal más visible */
