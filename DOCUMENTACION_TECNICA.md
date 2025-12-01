@@ -32,11 +32,13 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 
 **Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros.
 
+**Aclaración datos**: Los datos brutos del DANE contienen **2,789,391 nacimientos** en toda Orinoquía (2020-2024), pero el análisis se realiza sobre **137,780 nacimientos** en los 251 registros que cumplen el estándar OMS (≥10 nacimientos/año). Se excluyen municipios-año con datos insuficientes para garantizar validez estadística.
+
 **Resultados principales:**
 - 310 registros municipio-año analizados (2020-2024)
 - 251 registros válidos con ≥10 nacimientos/año (estándar OMS)
 - **63 registros clasificados como alto riesgo (25.1%)**
-- **137,780 nacimientos totales** en el periodo analizado
+- **137,780 nacimientos analizados** en registros válidos
 - **Mortalidad fetal promedio: 23.4‰** (23.4 muertes por 1,000 nacimientos)
 - **49.7% de muertes maternas son PREVENIBLES** (causas evitables CIE-10)
 - 40 registros con mortalidad crítica (>50‰) correctamente identificados (100% sensibilidad)

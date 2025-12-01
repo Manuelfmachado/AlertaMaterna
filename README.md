@@ -54,19 +54,23 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
 - **Modelo predictivo XGBoost**: ROC-AUC 0.7731, prioriza sensibilidad sobre especificidad
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
-- **Basado en datos oficiales**: DANE - 2,789,391 nacimientos y 138,385 defunciones fetales (2020-2024)
+- **Basado en datos oficiales DANE (2020-2024)**: 
+  - **Datos brutos**: 2,789,391 nacimientos y 138,385 defunciones fetales en toda Orinoquía
+  - **Datos analizados**: 137,780 nacimientos en 251 registros válidos (≥10 nacimientos/año)
 - **Código abierto**: Disponible en GitHub bajo licencia MIT
 
 ## Resultados Principales
 
 **Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio tiene 5 registros (2020-2024).
 
+**Aclaración datos**: El DANE registra **2,789,391 nacimientos** en toda Orinoquía (2020-2024), pero el sistema analiza solo **137,780 nacimientos** en los 251 registros válidos (≥10 nacimientos/año), excluyendo municipios-año con datos insuficientes.
+
 | Métrica                             | Valor                                               |
 | ------------------------------------ | --------------------------------------------------- |
 | **Registros analizados**       | 310 registros municipio-año (2020-2024)                      |
 | **Registros válidos**         | 251 registros con ≥10 nacimientos/año (estándar OMS)                              |
 | **Registros alto riesgo**      | 63 de 251 (25.1%)                                   |
-| **Nacimientos totales**        | 137,780 nacimientos vivos (periodo analizado)       |
+| **Nacimientos analizados**     | 137,780 nacimientos vivos en registros válidos      |
 | **Mortalidad fetal promedio**  | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)     |
 | **Mortalidad evitable**        | 49.7% de muertes maternas son PREVENIBLES           |
 | **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
