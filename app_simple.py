@@ -397,7 +397,7 @@ def main():
             total_items = df_filtrado['NOMBRE_MUNICIPIO'].nunique()
             items_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
             etiqueta1 = f"Municipios {anio_sel}"
-            etiqueta2 = f"Municipios Alto Riesgo"
+            etiqueta2 = f"Alto Riesgo"
             help1 = f"Municipios analizados en {anio_sel} con ≥10 nacimientos (estándar OMS)"
             help2 = f"Municipios clasificados como ALTO RIESGO en {anio_sel}. Criterios: ≥3 factores de riesgo o mortalidad fetal >50‰"
         
@@ -410,13 +410,13 @@ def main():
             pct_alto = (items_alto_riesgo/total_items*100) if total_items > 0 else 0
             st.metric(etiqueta2, f"{items_alto_riesgo} ({pct_alto:.1f}%)", help=help2)
         with col3:
-            st.metric("Nacimientos Totales", f"{int(total_nac):,}", 
+            st.metric("Nacimientos", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
         with col4:
-            st.metric("Mortalidad Fetal Promedio", f"{mort_prom:.1f}‰",
+            st.metric("Mort. Fetal ‰", f"{mort_prom:.1f}‰",
                      help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10‰ (Normal), 10-30‰ (Moderado), 30-50‰ (Alto), >50‰ (Crítico)")
         with col5:
-            st.metric("Muertes Evitables", "49.7%", 
+            st.metric("% Evitables", "49.7%", 
                      help="Porcentaje de muertes maternas causadas por enfermedades PREVENIBLES según clasificación CIE-10. ¡Casi la mitad de las muertes podrían evitarse con intervención oportuna!")
         
         # Métricas del Modelo ML
