@@ -112,11 +112,11 @@ st.markdown("""
         border-right: 2px solid #dee2e6;
         padding-right: 1.5rem;
         padding-left: 1.5rem;
-        min-width: 180px !important;
+        min-width: 200px !important;
         flex: 1 1 auto !important;
     }
     
-    /* Evitar truncamiento de valores de métricas */
+    /* Evitar truncamiento de valores y etiquetas de métricas */
     [data-testid="stMetricValue"] {
         white-space: nowrap !important;
         overflow: visible !important;
@@ -124,6 +124,8 @@ st.markdown("""
     
     [data-testid="stMetricLabel"] {
         white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow: visible !important;
     }
     
     /* Línea horizontal más visible */
@@ -556,76 +558,46 @@ def main():
         
         st.markdown("---")
         
-        # COMPARACIÓN ALTO VS BAJO RIESGO CON MULTIPLIERS
-        st.subheader("Comparación Detallada: Alto Riesgo vs Bajo Riesgo")
-        st.caption("Diferencias promedio entre municipios de alto y bajo riesgo")
+        # MULTIPLICADORES DE IMPACTO - Versión simplificada
+        st.subheader("Impacto del Alto Riesgo: Multiplicadores Críticos")
+        st.caption("¿Cuántas veces mayor es el problema en municipios de alto riesgo?")
         
         if len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO']) > 0 and len(df_filtrado[df_filtrado['RIESGO'] == 'BAJO']) > 0:
             alto = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']
             bajo = df_filtrado[df_filtrado['RIESGO'] == 'BAJO']
             
-            comparacion = pd.DataFrame({
-                'Indicador': ['Mortalidad Fetal (‰)', '% Sin Control Prenatal', '% Bajo Peso al Nacer'],
-                'Alto Riesgo': [
-                    alto['tasa_mortalidad_fetal'].mean(),
-                    alto['pct_sin_control_prenatal'].mean() * 100,
-                    alto['pct_bajo_peso'].mean() * 100
-                ],
-                'Bajo Riesgo': [
-                    bajo['tasa_mortalidad_fetal'].mean(),
-                    bajo['pct_sin_control_prenatal'].mean() * 100,
-                    bajo['pct_bajo_peso'].mean() * 100
-                ]
-            })
+            # Calcular multiplicadores
+            mult_mort_fetal = alto['tasa_mortalidad_fetal'].mean() / bajo['tasa_mortalidad_fetal'].mean()
+            mult_sin_prenatal = (alto['pct_sin_control_prenatal'].mean() * 100) / (bajo['pct_sin_control_prenatal'].mean() * 100)
+            mult_bajo_peso = (alto['pct_bajo_peso'].mean() * 100) / (bajo['pct_bajo_peso'].mean() * 100)
             
-            comparacion['Multiplicador'] = comparacion['Alto Riesgo'] / comparacion['Bajo Riesgo']
-            comparacion['Diferencia'] = comparacion['Alto Riesgo'] - comparacion['Bajo Riesgo']
-            
-            col1, col2 = st.columns([2, 1])
+            # Mostrar en 3 columnas grandes
+            col1, col2, col3 = st.columns(3)
             
             with col1:
-                fig_comp = go.Figure()
-                fig_comp.add_trace(go.Bar(
-                    name='Alto Riesgo',
-                    x=comparacion['Indicador'],
-                    y=comparacion['Alto Riesgo'],
-                    marker_color='#E74C3C',
-                    text=comparacion['Alto Riesgo'].apply(lambda x: f'{x:.1f}'),
-                    textposition='outside'
-                ))
-                fig_comp.add_trace(go.Bar(
-                    name='Bajo Riesgo',
-                    x=comparacion['Indicador'],
-                    y=comparacion['Bajo Riesgo'],
-                    marker_color='#27AE60',
-                    text=comparacion['Bajo Riesgo'].apply(lambda x: f'{x:.1f}'),
-                    textposition='outside'
-                ))
-                
-                fig_comp.update_layout(
-                    barmode='group',
-                    height=350,
-                    yaxis_title="Valor",
-                    showlegend=True
+                st.metric(
+                    "Mortalidad Fetal",
+                    f"{mult_mort_fetal:.1f}x",
+                    help=f"Los municipios de ALTO RIESGO tienen {mult_mort_fetal:.1f} veces MÁS mortalidad fetal que los de bajo riesgo. Alto: {alto['tasa_mortalidad_fetal'].mean():.1f}‰ vs Bajo: {bajo['tasa_mortalidad_fetal'].mean():.1f}‰"
                 )
-                st.plotly_chart(fig_comp, use_container_width=True)
+                if mult_mort_fetal > 3:
+                    st.error("⚠️ CRÍTICO: >3x el valor normal")
             
             with col2:
-                st.markdown("### Multiplicadores")
-                
-                tooltips = {
-                    'Mortalidad Fetal (‰)': 'Factor por el cual se multiplica la mortalidad fetal en municipios de ALTO RIESGO vs BAJO RIESGO. Por ejemplo, 8.77x significa que hay casi 9 veces más muertes fetales',
-                    '% Sin Control Prenatal': 'Proporción de embarazadas sin controles prenatales en alto vs bajo riesgo. Mayor ausencia de controles = mayor mortalidad. 1.64x = 64% más embarazadas sin control',
-                    '% Bajo Peso al Nacer': 'Porcentaje de bebés con peso <2,500g en alto vs bajo riesgo. Indicador crítico de salud neonatal. 0.88x = ligeramente menor (otros factores son más determinantes)'
-                }
-                
-                for i, row in comparacion.iterrows():
-                    indicador = row['Indicador']
-                    st.metric(
-                        f"{indicador}",
-                        f"{row['Multiplicador']:.2f}x",
-                        help=tooltips.get(indicador, f"Alto Riesgo es {row['Multiplicador']:.2f} veces mayor que Bajo Riesgo")
-                    )
+                st.metric(
+                    "Sin Control Prenatal",
+                    f"{mult_sin_prenatal:.1f}x",
+                    help=f"Los municipios de alto riesgo tienen {mult_sin_prenatal:.1f} veces más embarazadas sin controles prenatales. Alto: {alto['pct_sin_control_prenatal'].mean()*100:.1f}% vs Bajo: {bajo['pct_sin_control_prenatal'].mean()*100:.1f}%"
+                )
+                if mult_sin_prenatal > 1.5:
+                    st.warning("⚠️ ALTO: >1.5x más embarazadas sin atención")
+            
+            with col3:
+                st.metric(
+                    "Bajo Peso al Nacer",
+                    f"{mult_bajo_peso:.2f}x",
+                    help=f"Proporción de bebés con peso <2,500g. Alto: {alto['pct_bajo_peso'].mean()*100:.1f}% vs Bajo: {bajo['pct_bajo_peso'].mean()*100:.1f}%"
+                )
         
         st.markdown("---")
         
