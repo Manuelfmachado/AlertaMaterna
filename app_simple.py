@@ -18,164 +18,93 @@ warnings.filterwarnings('ignore')
 # ============================================================================
 
 st.set_page_config(
-    page_title="AlertaMaterna - Clasificación de Riesgo Obstétrico",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="AlertaMaterna - Clasificación de Riesgo Obstétrico y Predicción de Mortalidad",
+    layout="wide"
 )
 
-# CSS personalizado profesional
+# CSS personalizado para texto más grande
 st.markdown("""
     <style>
-    /* Fondo y colores elegantes */
+    /* Aumentar tamaño de texto general */
     .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1400px;
+        font-size: 1.3rem;
     }
     
-    /* Título principal elegante con gradiente */
+    /* Título principal más grande */
     h1 {
-        font-size: 3.2rem !important;
+        font-size: 3.5rem !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem !important;
     }
     
-    /* Subtítulos elegantes */
+    /* Subtítulos más grandes */
     h2 {
-        font-size: 1.8rem !important;
-        font-weight: 600 !important;
-        color: #1f2937 !important;
-        border-bottom: 3px solid #667eea;
-        padding-bottom: 0.5rem;
-        margin-top: 2rem !important;
+        font-size: 2.5rem !important;
     }
     
     h3 {
-        font-size: 1.4rem !important;
-        font-weight: 600 !important;
-        color: #374151 !important;
+        font-size: 2rem !important;
     }
     
-    /* Métricas con cards elegantes */
+    /* Métricas más grandes */
     [data-testid="stMetricValue"] {
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        color: #667eea !important;
+        font-size: 3rem !important;
     }
     
     [data-testid="stMetricLabel"] {
-        font-size: 1rem !important;
+        font-size: 1.5rem !important;
         font-weight: 600 !important;
-        color: #6b7280 !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
     
-    div[data-testid="metric-container"] {
-        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 1.2rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    div[data-testid="metric-container"]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
-    }
-    
-    /* Alertas elegantes */
+    /* Texto de alertas más grande */
     .stAlert {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-        font-size: 1rem !important;
+        font-size: 1.4rem !important;
+        line-height: 1.8 !important;
     }
     
-    /* Sidebar elegante */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
-        border-right: 2px solid #e5e7eb;
+    /* Sidebar más legible */
+    .css-1d391kg, [data-testid="stSidebar"] {
+        font-size: 1.3rem;
     }
     
-    [data-testid="stSidebar"] h2 {
-        color: #667eea !important;
-        border-bottom: 2px solid #667eea;
-    }
-    
-    /* Botones elegantes */
+    /* Botones más grandes */
     .stButton button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 0.6rem 1.5rem;
-        transition: transform 0.2s, box-shadow 0.2s;
+        font-size: 1.4rem !important;
+        padding: 0.8rem 2rem !important;
     }
     
-    .stButton button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    /* Selectbox y inputs más grandes */
+    .stSelectbox label, .stNumberInput label, .stSlider label {
+        font-size: 1.4rem !important;
+        font-weight: 600 !important;
     }
     
-    /* Tabs elegantes */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: #f9fafb;
-        padding: 0.5rem;
-        border-radius: 12px;
+    /* Valores de selectbox más grandes */
+    .stSelectbox div[data-baseweb="select"] {
+        font-size: 1.3rem !important;
     }
     
+    /* Tabs más grandes */
     .stTabs [data-baseweb="tab-list"] button {
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        border-radius: 8px;
-        padding: 0.8rem 1.5rem !important;
-        transition: all 0.2s;
+        font-size: 1.5rem !important;
+        padding: 1rem 2rem !important;
     }
     
-    .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white !important;
-    }
-    
-    /* Selectbox elegante */
-    .stSelectbox > div > div {
-        border-radius: 8px;
-        border: 2px solid #e5e7eb;
-        transition: border-color 0.2s;
-    }
-    
-    .stSelectbox > div > div:focus-within {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    /* Expander elegante */
+    /* Expander más grande */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        border-radius: 8px;
+        font-size: 1.4rem !important;
         font-weight: 600 !important;
-        border: 1px solid #e5e7eb;
     }
     
-    /* Líneas separadoras sutiles */
-    hr {
-        border: none;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-        margin: 2rem 0;
+    /* Párrafos más grandes */
+    p {
+        font-size: 1.3rem !important;
+        line-height: 1.8 !important;
     }
     
-    /* Captions elegantes */
-    .css-10trblm, [data-testid="stCaptionContainer"] {
-        color: #6b7280 !important;
-        font-style: italic;
+    /* Listas más grandes */
+    li {
+        font-size: 1.3rem !important;
+        line-height: 1.8 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -349,15 +278,9 @@ def main():
             """)
         
         st.markdown("---")
-        
-        # Footer elegante
-        st.markdown("""
-        <div style='text-align: center; padding: 2rem 0; color: #6b7280; font-size: 0.9rem;'>
-            <strong style='color: #667eea;'>Fuentes:</strong> www.datos.gov.co y DANE • 
-            <strong style='color: #667eea;'>Período:</strong> 2020-2024 • 
-            <strong style='color: #667eea;'>Región:</strong> Orinoquía
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**Fuentes:** www.datos.gov.co y DANE")
+        st.markdown("**Período:** 2020-2024")
+        st.markdown("**Región:** Orinoquía")
     
     # Aplicar filtros
     if anio_sel == 'Todos':
@@ -407,7 +330,14 @@ def main():
         # KPIs principales
         st.subheader(f"Resumen - {depto_sel if depto_sel != 'Todos' else 'Orinoquía'} {anio_sel}")
         
-        # CSS para valores más compactos (eliminar este bloque duplicado)
+        # CSS para valores más compactos
+        st.markdown("""
+        <style>
+        [data-testid="stMetricValue"] {
+            font-size: 28px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         
         col1, col2, col3, col4, col5 = st.columns(5)
         
