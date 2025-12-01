@@ -793,7 +793,7 @@ def main():
                 presion_obs = st.number_input("Presión Obstétrica", 0.0, 500.0, 100.0, 5.0)
         
         if st.button("Calcular Riesgo", type="primary"):
-            # Preparar features (29 variables del modelo)
+            # Preparar features (28 variables del modelo - orden alfabético)
             features = {
                 'apgar_bajo_promedio': apgar_bajo / 100,
                 'atenciones_per_nacimiento': 12.0,
@@ -821,7 +821,6 @@ def main():
                 'procedimientos_per_nacimiento': 4.0,
                 'tasa_mortalidad_fetal': mort_fetal,
                 'tasa_mortalidad_neonatal': mort_neonatal,
-                'total_defunciones': 0,
                 'total_nacimientos': nac,
                 'urgencias_per_nacimiento': 2.0
             }
