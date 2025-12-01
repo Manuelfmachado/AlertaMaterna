@@ -381,7 +381,7 @@ def main():
         
         # MAPA INTERACTIVO DE RIESGO
         st.subheader("Mapa Interactivo de Riesgo - Región Orinoquía")
-        st.caption("Visualización geográfica de municipios por nivel de mortalidad fetal. Tamaño = nacimientos, Color = nivel de riesgo")
+        st.caption("Visualización geográfica de municipios por nivel de mortalidad fetal. Color indica el nivel de riesgo")
         
         coords = cargar_coordenadas()
         if coords is not None:
@@ -400,7 +400,6 @@ def main():
                     return '#E74C3C'  # Rojo
             
             df_mapa['color'] = df_mapa['tasa_mortalidad_fetal'].apply(get_color)
-            df_mapa['size'] = df_mapa['total_nacimientos'] / 50  # Escalar tamaño
             
             fig_mapa = go.Figure()
             
@@ -409,17 +408,18 @@ def main():
                 lon=df_mapa['LONGITUD'],
                 mode='markers',
                 marker=dict(
-                    size=df_mapa['size'],
+                    size=10,  # Tamaño uniforme pequeño
                     color=df_mapa['color'],
-                    opacity=0.7,
-                    sizemode='diameter'
+                    opacity=0.8
                 ),
                 text=df_mapa.apply(lambda row: f"<b>{row['NOMBRE_MUNICIPIO_y']}</b><br>" +
                                                 f"Departamento: {row['DEPARTAMENTO']}<br>" +
+                                                f"Año: {int(row['ANO'])}<br>" +
                                                 f"Mortalidad: {row['tasa_mortalidad_fetal']:.1f}‰<br>" +
                                                 f"Nacimientos: {int(row['total_nacimientos']):,}<br>" +
-                                                f"Riesgo: {row['RIESGO']}", axis=1),
-                hoverinfo='text'
+                                                f"Clasificación: {row['RIESGO']}", axis=1),
+                hoverinfo='text',
+                name='Municipios'
             ))
             
             fig_mapa.update_layout(
