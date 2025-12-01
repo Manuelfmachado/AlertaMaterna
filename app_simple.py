@@ -271,13 +271,13 @@ def main():
             
             **Alto Riesgo**: Municipios con ≥3 puntos de riesgo
             - Sistema híbrido: percentiles + umbrales críticos
-            - Mortalidad >50‰ → Alto riesgo automático
+            - Mortalidad >50% → Alto riesgo automático
             
             **Nacimientos**: Total de nacimientos en el periodo
             
-            **Mortalidad Fetal**: Promedio de muertes fetales por cada 1,000 nacimientos (‰)
-            - Normal: <10‰
-            - Crítico: >50‰
+            **Mortalidad Fetal**: Promedio de muertes fetales por cada 1,000 nacimientos (%)
+            - Normal: <10%
+            - Crítico: >50%
             
             ### Sistema de Clasificación de Riesgo
             
@@ -289,7 +289,7 @@ def main():
               4. Prematuridad (>percentil 75)
               5. Baja cobertura cesáreas (<percentil 25)
               6. Presión obstétrica alta (>percentil 75)
-            - **O** mortalidad fetal >50‰ (automático)
+            - **O** mortalidad fetal >50% (automático)
             
             ### Visualizaciones
             
@@ -333,18 +333,18 @@ def main():
         if anio_sel == 'Todos':
             num_criticos = len(municipios_criticos)
             num_alto_riesgo_total = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
-            texto_alerta = f"URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
+            texto_alerta = f"URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >50%)"
             texto_expander = "Ver registros en alerta crítica"
         else:
             num_municipios_criticos = municipios_criticos['NOMBRE_MUNICIPIO'].nunique()
             num_municipios_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
-            texto_alerta = f"URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
+            texto_alerta = f"URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >50%)"
             texto_expander = f"Ver municipios en alerta crítica {anio_sel}"
         
         st.error(f"""
         **{texto_alerta}**
         
-        Estos valores son extremadamente altos (10x la tasa normal de 5‰) y requieren:
+        Estos valores son extremadamente altos (10x la tasa normal de 5%) y requieren:
         - Verificación inmediata con autoridades de salud locales
         - Validación de datos con DANE
         - Intervención urgente si los datos son correctos
@@ -355,7 +355,7 @@ def main():
             for _, row in municipios_criticos.iterrows():
                 st.markdown(f"""
                 **{row['NOMBRE_MUNICIPIO']}** ({row['DEPARTAMENTO']})
-                - Mortalidad fetal: **{row['tasa_mortalidad_fetal']:.1f}‰**
+                - Mortalidad fetal: **{row['tasa_mortalidad_fetal']:.1f}%**
                 - Nacimientos: {int(row['total_nacimientos'])}
                 - Clasificación: {'ALTO RIESGO' if row['RIESGO'] == 'ALTO' else 'BAJO RIESGO'}
                 - Puntaje: {int(row['puntos_riesgo'])}/8
@@ -391,15 +391,15 @@ def main():
             etiqueta1 = "Registros (Municipio-Año)"
             etiqueta2 = "Registros Alto Riesgo"
             help1 = f"Total de registros municipio-año analizados en el periodo 2020-2024. Un registro = 1 municipio en 1 año. Solo incluye registros con ≥10 nacimientos/año (estándar OMS)"
-            help2 = f"Registros municipio-año clasificados como ALTO RIESGO en el periodo. Criterios: ≥3 factores de riesgo o mortalidad fetal >50‰"
+            help2 = f"Registros municipio-año clasificados como ALTO RIESGO en el periodo. Criterios: ≥3 factores de riesgo o mortalidad fetal >50%"
         else:
             # Vista por año específico: mostrar municipios únicos
             total_items = df_filtrado['NOMBRE_MUNICIPIO'].nunique()
             items_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
-            etiqueta1 = f"Municipios {anio_sel}"
+            etiqueta1 = f"Municipios"
             etiqueta2 = f"Alto Riesgo"
             help1 = f"Municipios analizados en {anio_sel} con ≥10 nacimientos (estándar OMS)"
-            help2 = f"Municipios clasificados como ALTO RIESGO en {anio_sel}. Criterios: ≥3 factores de riesgo o mortalidad fetal >50‰"
+            help2 = f"Municipios clasificados como ALTO RIESGO en {anio_sel}. Criterios: ≥3 factores de riesgo o mortalidad fetal >50%"
         
         total_nac = df_filtrado['total_nacimientos'].sum()
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
@@ -413,8 +413,8 @@ def main():
             st.metric("Nacimientos", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
         with col4:
-            st.metric("Mort. Fetal ‰", f"{mort_prom:.1f}‰",
-                     help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10‰ (Normal), 10-30‰ (Moderado), 30-50‰ (Alto), >50‰ (Crítico)")
+            st.metric("Mortalidad. Fetal %", f"{mort_prom:.1f}%",
+                     help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10% (Normal), 10-30% (Moderado), 30-50% (Alto), >50% (Crítico)")
         with col5:
             st.metric("% Evitables", "49.7%", 
                      help="Porcentaje de muertes maternas causadas por enfermedades PREVENIBLES según clasificación CIE-10. ¡Casi la mitad de las muertes podrían evitarse con intervención oportuna!")
@@ -471,7 +471,7 @@ def main():
                 text=df_mapa.apply(lambda row: f"<b>{row['NOMBRE_MUNICIPIO_y']}</b><br>" +
                                                 f"Departamento: {row['DEPARTAMENTO']}<br>" +
                                                 f"Año: {int(row['ANO'])}<br>" +
-                                                f"Mortalidad: {row['tasa_mortalidad_fetal']:.1f}‰<br>" +
+                                                f"Mortalidad: {row['tasa_mortalidad_fetal']:.1f}%<br>" +
                                                 f"Nacimientos: {int(row['total_nacimientos']):,}<br>" +
                                                 f"Clasificación: {row['RIESGO']}", axis=1),
                 hoverinfo='text',
@@ -495,16 +495,16 @@ def main():
             st.caption("Leyenda de Niveles de Riesgo por Mortalidad Fetal")
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.markdown("🟢 **< 10‰**")
+                st.markdown("🟢 **< 10%**")
                 st.caption("Normal: Tasa aceptable según OMS")
             with col2:
-                st.markdown("🟡 **10-30‰**")
+                st.markdown("🟡 **10-30%**")
                 st.caption("Moderado: Requiere monitoreo")
             with col3:
-                st.markdown("🟠 **30-50‰**")
+                st.markdown("🟠 **30-50%**")
                 st.caption("Alto: Intervención necesaria")
             with col4:
-                st.markdown("🔴 **> 50‰**")
+                st.markdown("🔴 **> 50%**")
                 st.caption("Crítico: Emergencia sanitaria")
         
         st.markdown("---")
@@ -581,7 +581,7 @@ def main():
                 st.metric(
                     "Mortalidad Fetal",
                     f"{mult_mort_fetal:.1f}x",
-                    help=f"Los municipios de ALTO RIESGO tienen {mult_mort_fetal:.1f} veces MÁS mortalidad fetal que los de bajo riesgo. Alto: {alto['tasa_mortalidad_fetal'].mean():.1f}‰ vs Bajo: {bajo['tasa_mortalidad_fetal'].mean():.1f}‰"
+                    help=f"Los municipios de ALTO RIESGO tienen {mult_mort_fetal:.1f} veces MÁS mortalidad fetal que los de bajo riesgo. Alto: {alto['tasa_mortalidad_fetal'].mean():.1f}% vs Bajo: {bajo['tasa_mortalidad_fetal'].mean():.1f}%"
                 )
                 if mult_mort_fetal > 3:
                     st.error("⚠️ CRÍTICO: >3x el valor normal")
@@ -654,7 +654,7 @@ def main():
                 ),
                 text=df_alto['puntos_riesgo'],
                 textposition='inside',
-                hovertemplate='<b>%{y}</b><br>Puntaje: %{x}/6<br>Nacimientos: %{customdata[0]}<br>Mort. Fetal: %{customdata[1]:.1f}‰<extra></extra>',
+                hovertemplate='<b>%{y}</b><br>Puntaje: %{x}/6<br>Nacimientos: %{customdata[0]}<br>Mort. Fetal: %{customdata[1]:.1f}%<extra></extra>',
                 customdata=df_alto[['total_nacimientos', 'tasa_mortalidad_fetal']]
             ))
             
@@ -677,11 +677,11 @@ def main():
                 
                 df_tabla.columns = [
                     'Municipio', 'Departamento',
-                    'Nacimientos', 'Mort. Fetal (‰)',
+                    'Nacimientos', 'Mort. Fetal (%)',
                     '% Sin Prenatal', 'Puntaje'
                 ]
                 
-                df_tabla['Mort. Fetal (‰)'] = df_tabla['Mort. Fetal (‰)'].round(1)
+                df_tabla['Mort. Fetal (%)'] = df_tabla['Mort. Fetal (%)'].round(1)
                 df_tabla['% Sin Prenatal'] = (df_tabla['% Sin Prenatal'] * 100).round(1)
                 
                 st.dataframe(df_tabla, use_container_width=True, hide_index=True)
@@ -720,7 +720,7 @@ def main():
     with tab2:
         st.header("Predictor de Riesgo de Mortalidad Infantil")
         st.markdown("""
-        Ingresa los indicadores de un municipio para estimar la **probabilidad de alta mortalidad infantil (>6.42‰)**.
+        Ingresa los indicadores de un municipio para estimar la **probabilidad de alta mortalidad infantil (>6.42%)**.
         
         **¿Qué predice?** Probabilidad de que el municipio tenga mortalidad infantil (<1 año) superior al percentil 75 nacional.
         
@@ -757,9 +757,9 @@ def main():
             with col1:
                 st.markdown("#### Indicadores Críticos")
                 nac = st.number_input("Total Nacimientos", 1, 5000, 800, help="Número anual de nacimientos")
-                mort_neonatal = st.slider("Tasa Mort. Neonatal 0-7 días (‰)", 0.0, 50.0, 3.5, 0.5, help="Feature #1 (24% importancia). Normal: <5‰")
+                mort_neonatal = st.slider("Tasa Mort. Neonatal 0-7 días (%)", 0.0, 50.0, 3.5, 0.5, help="Feature #1 (24% importancia). Normal: <5%")
                 bajo_peso = st.slider("% Bajo Peso (<2500g)", 0.0, 30.0, 8.5, 0.5, help="Feature #4. Normal: 8-10%")
-                mort_fetal = st.slider("Tasa Mort. Fetal (‰)", 0.0, 100.0, 7.0, 0.5, help="Normal: 5-10‰, Crítico: >50‰")
+                mort_fetal = st.slider("Tasa Mort. Fetal (%)", 0.0, 100.0, 7.0, 0.5, help="Normal: 5-10%, Crítico: >50%")
             
             with col2:
                 st.markdown("#### Infraestructura y Acceso")
@@ -794,8 +794,8 @@ def main():
             
             with col2:
                 st.markdown("#### Clínicos")
-                mort_neonatal = st.slider("Tasa Mort. Neonatal (‰)", 0.0, 50.0, 3.5, 0.5)
-                mort_fetal = st.slider("Tasa Mort. Fetal (‰)", 0.0, 100.0, 7.0, 0.5)
+                mort_neonatal = st.slider("Tasa Mort. Neonatal (%)", 0.0, 50.0, 3.5, 0.5)
+                mort_fetal = st.slider("Tasa Mort. Fetal (%)", 0.0, 100.0, 7.0, 0.5)
                 bajo_peso = st.slider("% Bajo Peso", 0.0, 30.0, 8.5, 0.5)
                 prematuro = st.slider("% Prematuros", 0.0, 30.0, 9.5, 0.5)
                 apgar_bajo = st.slider("% APGAR Bajo", 0.0, 20.0, 1.0, 0.5)
