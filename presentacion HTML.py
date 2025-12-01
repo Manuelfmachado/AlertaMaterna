@@ -19,27 +19,22 @@
 
         .presentation {
             width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
         }
 
         .slide {
             width: 100%;
             min-height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: relative;
             display: none;
-            padding: 60px;
+            padding: 60px 60px 120px 60px;
             background: white;
             animation: slideIn 0.5s ease-out;
-            overflow-y: auto;
         }
 
         .slide.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            display: block;
         }
 
         @keyframes slideIn {
