@@ -602,23 +602,23 @@ def main():
     print("=" * 80)
     
     if 'tasa_mortalidad_neonatal' in features_final.columns:
-        print(f"\n📊 Mortalidad Neonatal:")
+        print(f"\n Mortalidad Neonatal:")
         print(f"   Media: {features_final['tasa_mortalidad_neonatal'].mean():.2f} por 1000 nacidos vivos")
         print(f"   Rango: {features_final['tasa_mortalidad_neonatal'].min():.2f} - {features_final['tasa_mortalidad_neonatal'].max():.2f}")
         print(f"   Municipios con tasa >15: {(features_final['tasa_mortalidad_neonatal'] > 15).sum()}")
     
     if 'pct_mortalidad_evitable' in features_final.columns:
-        print(f"\n📊 Mortalidad Evitable:")
+        print(f"\n Mortalidad Evitable:")
         print(f"   Media: {features_final['pct_mortalidad_evitable'].mean():.1f}%")
         print(f"   Municipios con >50% evitable: {(features_final['pct_mortalidad_evitable'] > 50).sum()}")
     
     if 'pct_embarazos_alto_riesgo' in features_final.columns:
-        print(f"\n📊 Embarazos Alto Riesgo:")
+        print(f"\n Embarazos Alto Riesgo:")
         print(f"   Media: {features_final['pct_embarazos_alto_riesgo'].mean():.1f}%")
         print(f"   Municipios con >30% alto riesgo: {(features_final['pct_embarazos_alto_riesgo'] > 30).sum()}")
     
     if 'indice_fragilidad_sistema' in features_final.columns:
-        print(f"\n📊 Índice de Fragilidad:")
+        print(f"\n Índice de Fragilidad:")
         print(f"   Media: {features_final['indice_fragilidad_sistema'].mean():.1f}")
         print(f"   Municipios críticos (>80): {(features_final['indice_fragilidad_sistema'] > 80).sum()}")
         print(f"   Municipios muy críticos (>90): {(features_final['indice_fragilidad_sistema'] > 90).sum()}")

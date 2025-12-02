@@ -69,7 +69,7 @@ def crear_indice_riesgo_obstetrico(df):
     UMBRAL_CRITICO_SIN_PRENATAL = 0.5  # 50% sin atención prenatal
     MIN_NACIMIENTOS = 10  # Filtrar municipios muy pequeños
     
-    print("\n🚨 UMBRALES CRÍTICOS (alertas automáticas):")
+    print("\n UMBRALES CRÍTICOS (alertas automáticas):")
     print(f"  - Mortalidad fetal > {UMBRAL_CRITICO_MORTALIDAD}‰ → ALTO RIESGO AUTOMÁTICO")
     print(f"  - Sin atención prenatal > {UMBRAL_CRITICO_SIN_PRENATAL:.0%} → +2 puntos")
     print(f"  - Municipios con < {MIN_NACIMIENTOS} nacimientos → EXCLUIDOS del análisis")
@@ -79,7 +79,7 @@ def crear_indice_riesgo_obstetrico(df):
     excluidos = len(df) - len(df_filtrado)
     
     if excluidos > 0:
-        print(f"\n⚠️ {excluidos} registros excluidos (< {MIN_NACIMIENTOS} nacimientos)")
+        print(f"\n {excluidos} registros excluidos (< {MIN_NACIMIENTOS} nacimientos)")
     
     # Calcular percentiles sobre datos filtrados
     p25_cesarea = df_filtrado['pct_cesarea'].quantile(0.25)
@@ -89,7 +89,7 @@ def crear_indice_riesgo_obstetrico(df):
     p75_prematuro = df_filtrado['pct_prematuro'].quantile(0.75)
     p75_presion_obs = df_filtrado['presion_obstetrica'].quantile(0.75)
     
-    print("\n📊 Criterios basados en percentiles:")
+    print("\n Criterios basados en percentiles:")
     print(f"  - Tasa mortalidad fetal > {p75_mort_fetal:.2f}‰")
     print(f"  - % sin control prenatal > {p75_sin_prenatal:.2%}")
     print(f"  - % bajo peso > {p75_bajo_peso:.2%}")
@@ -129,7 +129,7 @@ def crear_indice_riesgo_obstetrico(df):
     alto_riesgo = (df['riesgo_obstetrico'] == 1).sum()
     bajo_riesgo = (df['riesgo_obstetrico'] == 0).sum()
     
-    print(f"\n✅ Resultados:")
+    print(f"\n Resultados:")
     print(f"  - Total registros válidos: {total_validos:,}")
     print(f"  - Excluidos (< {MIN_NACIMIENTOS} nac): {excluidos:,}")
     print(f"  - Alto riesgo: {alto_riesgo:,} ({alto_riesgo/total_validos:.1%})")
@@ -138,7 +138,7 @@ def crear_indice_riesgo_obstetrico(df):
     # Mostrar municipios con mortalidad crítica
     criticos = df[df['tasa_mortalidad_fetal'] > UMBRAL_CRITICO_MORTALIDAD]
     if len(criticos) > 0:
-        print(f"\n🚨 ALERTA: {len(criticos)} municipios con mortalidad >50‰:")
+        print(f"\n ALERTA: {len(criticos)} municipios con mortalidad >50‰:")
         for _, row in criticos.iterrows():
             print(f"    - Código {int(row['COD_DPTO'])}-{int(row['COD_MUNIC'])} ({int(row['ANO'])}): "
                   f"{row['tasa_mortalidad_fetal']:.1f}‰ | {int(row['total_nacimientos'])} nac | "
@@ -284,7 +284,7 @@ def entrenar_modelo_mortalidad(X, y, feature_cols):
     with open(f'{MODEL_DIR}scaler_mortalidad.pkl', 'wb') as f:
         pickle.dump(scaler, f)
     
-    print(f"\n✅ Modelo guardado en {MODEL_DIR}modelo_mortalidad_xgb.pkl")
+    print(f"\n Modelo guardado en {MODEL_DIR}modelo_mortalidad_xgb.pkl")
     
     return model, scaler, importances
 
@@ -307,7 +307,7 @@ def main():
     # Verificar valores faltantes
     nulos = df.isnull().sum().sum()
     if nulos > 0:
-        print(f"\n⚠️  Advertencia: {nulos} valores nulos detectados. Rellenando con 0...")
+        print(f"\n  Advertencia: {nulos} valores nulos detectados. Rellenando con 0...")
         df = df.fillna(0)
     
     # MODELO 1: Índice de riesgo obstétrico
@@ -318,7 +318,7 @@ def main():
     
     # Guardar dataset con labels (incluyendo alta_mortalidad)
     df.to_csv(f'{DATA_DIR}features_alerta_materna.csv', index=False)
-    print(f"\n✅ Dataset con labels guardado en {DATA_DIR}features_alerta_materna.csv")
+    print(f"\n Dataset con labels guardado en {DATA_DIR}features_alerta_materna.csv")
     model, scaler, importances = entrenar_modelo_mortalidad(X, y, feature_cols)
     
     # Guardar umbral
@@ -326,7 +326,7 @@ def main():
         pickle.dump(umbral, f)
     
     print("\n" + "="*80)
-    print("✅ ENTRENAMIENTO COMPLETADO")
+    print(" ENTRENAMIENTO COMPLETADO")
     print("="*80)
     print(f"\nArchivos generados:")
     print(f"  - {DATA_DIR}features_alerta_materna.csv")
