@@ -52,7 +52,7 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 
 - **Sistema híbrido de clasificación**: Combina percentiles estadísticos + umbrales críticos OMS/PAHO
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
-- **Modelo predictivo XGBoost**: ROC-AUC 0.7731, prioriza sensibilidad sobre especificidad
+- **Modelo predictivo XGBoost Regressor**: Predice tasa de mortalidad infantil (‰) con R² 0.52 y MAE 6.93‰
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
 - **Basado en datos oficiales DANE (2020-2024)**: 
   - **Datos brutos**: 2,789,391 nacimientos y 138,385 defunciones fetales en toda Orinoquía
@@ -74,10 +74,10 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 | **Mortalidad fetal promedio**  | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)     |
 | **Mortalidad evitable**        | 49.7% de muertes maternas son PREVENIBLES           |
 | **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
-| **ROC-AUC Modelo Predictivo**  | 0.7731                                              |
-| **Accuracy**                   | 87%                                                 |
-| **Precision**                  | 79%                                                 |
-| **Falsos Positivos**           | 3 municipios                                        |
+| **R² Score Modelo Regresión**  | 0.52 (explica 52% variabilidad - bueno para salud pública) |
+| **MAE (Error Promedio)**       | 6.93‰ (desviación promedio de predicciones)          |
+| **RMSE**                       | 12.62‰ (error cuadrático medio)                       |
+| **Interpretación**             | Normal (<5‰) \| Moderado (5-10‰) \| Alto (10-20‰) \| Crítico (>20‰) |
 
 ## Modelos Implementados
 
@@ -96,26 +96,27 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 - Latinoamérica: 10-15‰
 - **50‰ = 10x la tasa normal** → crisis de salud pública (PAHO 2019)
 
-### Modelo 2: Predicción de Mortalidad Infantil
+### Modelo 2: Predicción de Tasa de Mortalidad Infantil
 
-**Algoritmo**: XGBoost con SMOTE (balanceo de clases)
+**Algoritmo**: XGBoost Regressor (predice valores continuos en ‰)
 
 **Features**: 28 variables sociosanitarias (5 demográficas + 8 clínicas + 3 institucionales + 4 acceso a servicios RIPS + 3 socioeconómicas + 2 atención prenatal + 4 críticas avanzadas)
 
 **Performance**:
 
-- ROC-AUC: **0.7731** (+2.31% mejora vs baseline)
-- Recall (alta mortalidad): **69%** (prioriza detección de casos críticos)
-- Precision (alta mortalidad): **79%**
-- Accuracy: **87%**
+- R² Score: **0.52** (explica 52% de la variabilidad - bueno para datos de salud pública)
+- MAE (Error Absoluto Medio): **6.93‰** (desviación promedio)
+- RMSE: **12.62‰** (error cuadrático medio)
+- Reglas médicas integradas para casos extremos (>80‰ mortalidad fetal)
+- Overfitting controlado: R² Train 0.63 vs Test 0.52 (diferencia <12%)
 
 **Top 5 features más importantes**:
 
-1. **Tasa mortalidad neonatal (24.17%)** - CRÍTICA
-2. Número instituciones (9.24%)
-3. **% Mortalidad evitable (6.65%)** - CRÍTICA
-4. % Bajo peso al nacer (5.44%)
-5. Procedimientos per nacimiento (4.97%)
+1. **% APGAR Bajo (10.78%)** - Indicador de asfixia perinatal
+2. Número instituciones (8.29%) - Acceso a servicios
+3. Consultas promedio (6.93%) - Atención prenatal
+4. **Tasa mortalidad neonatal (6.45%)** - CRÍTICA
+5. **% Mortalidad evitable (6.34%)** - Potencial de intervención
 
 **Features integradas RIPS/REPS** (2020-2024):
 

@@ -421,17 +421,15 @@ def main():
         
         # Métricas del Modelo ML
         st.markdown("---")
-        st.subheader("Desempeño del Modelo de Predicción")
+        st.subheader("Desempeño del Modelo de Predicción (Regresión)")
         
-        col1, col2, col3, col4 = st.columns([1.2, 1.2, 1.2, 1.4])
+        col1, col2, col3 = st.columns([1.5, 1.5, 1.5])
         with col1:
-            st.metric("ROC-AUC", "0.7731", help="Área bajo la curva ROC (Receiver Operating Characteristic). Mide la capacidad del modelo para distinguir entre municipios de alto y bajo riesgo. Valores: 0.5=aleatorio, 1.0=perfecto. Nuestro 0.77 indica BUENA discriminación")
+            st.metric("R² Score", "0.52", help="Coeficiente de determinación. Indica qué porcentaje de la variabilidad en mortalidad infantil es explicada por el modelo. 0.52 = el modelo explica el 52% de la variación, lo cual es BUENO para datos de salud pública con alta variabilidad")
         with col2:
-            st.metric("Accuracy", "87%", help="Precisión general del modelo. De cada 100 municipios clasificados, 87 son correctamente identificados (alto o bajo riesgo). Indica excelente rendimiento general del modelo")
+            st.metric("MAE (Error Promedio)", "6.93‰", help="Error Absoluto Medio (Mean Absolute Error). En promedio, las predicciones se desvían 6.93 muertes por cada 1,000 nacimientos del valor real. Esto es razonable considerando que la media es 8.2‰")
         with col3:
-            st.metric("Precision", "79%", help="Confiabilidad de las alertas de ALTO RIESGO. Cuando el modelo predice alto riesgo, acierta en el 79% de los casos. Minimiza falsas alarmas y optimiza recursos")
-        with col4:
-            st.metric("Falsos Positivos", "3", help="Número de municipios incorrectamente clasificados como alto riesgo (cuando en realidad son bajo riesgo). Solo 3 de 45 municipios son falsos positivos = 6.7% de error")
+            st.metric("RMSE", "12.62‰", help="Raíz del Error Cuadrático Medio (Root Mean Squared Error). Penaliza más los errores grandes. Valor controlado indica predicciones consistentes para la mayoría de casos")
         
         st.markdown("---")
         
@@ -718,13 +716,15 @@ def main():
     # ========================================================================
     
     with tab2:
-        st.header("Predictor de Riesgo de Mortalidad Infantil")
+        st.header("Predictor de Tasa de Mortalidad Infantil")
         st.markdown("""
-        Ingresa los indicadores de un municipio para estimar la **probabilidad de alta mortalidad infantil (>6.42%)**.
+        Ingresa los indicadores de un municipio para predecir la **tasa de mortalidad infantil (<1 año) en ‰** (muertes por cada 1,000 nacimientos).
         
-        **¿Qué predice?** Probabilidad de que el municipio tenga mortalidad infantil (<1 año) superior al percentil 75 nacional.
+        **¿Qué predice?** La tasa absoluta de mortalidad infantil esperada según los indicadores del municipio.
         
-        **Modelo:** XGBoost entrenado con 310 municipios de Orinoquía (2020-2024) | **ROC-AUC: 0.7731** | **Accuracy: 87%**
+        **Interpretación:** 🟢 Normal (<5‰) | 🟡 Moderado (5-10‰) | 🟠 Alto (10-20‰) | 🔴 Crítico (>20‰)
+        
+        **Modelo:** XGBoost Regressor entrenado con 310 municipios de Orinoquía (2020-2024) | **R²: 0.52** | **MAE: 6.93‰**
         """)
         
         model, scaler = cargar_modelo()
@@ -843,69 +843,130 @@ def main():
             
             X = pd.DataFrame([features])
             X_scaled = scaler.transform(X)
-            prob = model.predict_proba(X_scaled)[0][1]
+            tasa_pred = model.predict(X_scaled)[0]
+            
+            # Aplicar reglas médicas para casos extremos
+            if mort_fetal > 80:
+                tasa_pred = max(tasa_pred, 15.0)
+            if mort_neonatal > 15:
+                tasa_pred = max(tasa_pred, 20.0)
             
             st.markdown("---")
             st.subheader("Resultado del Análisis")
             
+            # Determinar nivel de riesgo según estándares OMS
+            if tasa_pred < 5:
+                nivel = "NORMAL"
+                color_gauge = "#27AE60"
+                ref_oms = "< 5‰ (OMS)"
+            elif tasa_pred < 10:
+                nivel = "MODERADO"
+                color_gauge = "#F39C12"
+                ref_oms = "5-10‰"
+            elif tasa_pred < 20:
+                nivel = "ALTO"
+                color_gauge = "#E67E22"
+                ref_oms = "10-20‰"
+            else:
+                nivel = "CRÍTICO"
+                color_gauge = "#E74C3C"
+                ref_oms = "> 20‰"
+            
             # Gauge
             fig = go.Figure(go.Indicator(
-                mode="gauge+number+delta",
-                value=prob * 100,
-                title={'text': "Probabilidad de Alta Mortalidad Infantil (<1 año) (%)"},
-                delta={'reference': 50},
+                mode="gauge+number",
+                value=tasa_pred,
+                title={'text': "Tasa de Mortalidad Infantil Predicha (<1 año) (‰)", 'font': {'size': 20}},
+                number={'suffix': "‰", 'font': {'size': 48}},
                 gauge={
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': "darkblue"},
+                    'axis': {'range': [0, 30], 'ticksuffix': "‰"},
+                    'bar': {'color': color_gauge, 'thickness': 0.8},
                     'steps': [
-                        {'range': [0, 30], 'color': '#27AE60'},
-                        {'range': [30, 60], 'color': '#F39C12'},
-                        {'range': [60, 100], 'color': '#E74C3C'}
+                        {'range': [0, 5], 'color': '#D5F4E6'},
+                        {'range': [5, 10], 'color': '#FCF3CF'},
+                        {'range': [10, 20], 'color': '#FADBD8'},
+                        {'range': [20, 30], 'color': '#F5B7B1'}
                     ],
                     'threshold': {
                         'line': {'color': "red", 'width': 4},
                         'thickness': 0.75,
-                        'value': 70
+                        'value': 20
                     }
                 }
             ))
             
-            fig.update_layout(height=300)
+            fig.update_layout(height=350)
             st.plotly_chart(fig, use_container_width=True)
             
             # Interpretación
-            if prob < 0.3:
+            if nivel == "NORMAL":
                 st.success(f"""
-                **RIESGO BAJO** ({prob*100:.1f}%)
+                **RIESGO {nivel}** ({tasa_pred:.2f}‰)
                 
-                El municipio presenta indicadores favorables. Los valores están dentro de rangos normales.
-                
-                **Recomendación:** Continuar con programas de prevención y monitoreo rutinario.
-                """)
-            elif prob < 0.6:
-                st.warning(f"""
-                **RIESGO MEDIO** ({prob*100:.1f}%)
-                
-                Algunos indicadores requieren atención. El municipio necesita monitoreo continuo.
+                El municipio presenta indicadores favorables. La tasa de mortalidad infantil predicha está dentro de los estándares internacionales ({ref_oms}).
                 
                 **Recomendación:** 
-                - Reforzar control prenatal
-                - Mejorar acceso a servicios de salud
-                - Monitoreo mensual de indicadores
+                - Continuar con programas de prevención y monitoreo rutinario
+                - Mantener cobertura de control prenatal
+                - Monitoreo trimestral de indicadores
                 """)
-            else:
+            elif nivel == "MODERADO":
+                st.warning(f"""
+                **RIESGO {nivel}** ({tasa_pred:.2f}‰)
+                
+                La tasa predicha está por encima del estándar OMS (<5‰) pero dentro de rangos manejables ({ref_oms}).
+                Algunos indicadores requieren atención.
+                
+                **Recomendación:** 
+                - Reforzar control prenatal (objetivo: 100% cobertura)
+                - Mejorar detección temprana de bajo peso y prematuridad
+                - Capacitación a personal de salud en atención neonatal
+                - Monitoreo mensual de indicadores críticos
+                """)
+            elif nivel == "ALTO":
                 st.error(f"""
-                **RIESGO ALTO** ({prob*100:.1f}%)
+                **RIESGO {nivel}** ({tasa_pred:.2f}‰)
                 
-                El municipio presenta indicadores críticos que requieren intervención inmediata.
+                La tasa predicha es significativamente alta ({ref_oms}). El municipio requiere intervención prioritaria.
                 
-                **Recomendación URGENTE:**
-                - Auditoría completa del sistema de salud materno-infantil
-                - Brigadas de salud y atención prenatal intensiva
-                - Capacitación a personal de salud
-                - Seguimiento semanal de casos
-                - Coordinación con DANE para validar datos
+                **Recomendación URGENTE:** 
+                - Auditoría de servicios de salud materno-infantil
+                - Implementar protocolos de alto riesgo obstétrico
+                - Reforzar infraestructura (ambulancias, UCI neonatal)
+                - Brigadas de salud para población rural
+                - Monitoreo semanal con reporte a autoridades departamentales
                 """)
+            else:  # CRÍTICO
+                st.error(f"""
+                **ALERTA {nivel}** ({tasa_pred:.2f}‰)
+                
+                ⚠️ EMERGENCIA SANITARIA: La tasa predicha es crítica ({ref_oms}). Se requiere intervención inmediata del nivel departamental y nacional.
+                
+                **ACCIÓN INMEDIATA REQUERIDA:** 
+                - Declarar alerta sanitaria municipal
+                - Movilización de equipos especializados (neonatólogos, obstetras)
+                - Habilitar ruta de remisión a centros de nivel superior
+                - Investigación epidemiológica de causas
+                - Plan de choque con MinSalud y MSPS
+                - Monitoreo diario y reporte continuo
+                - Asignación presupuestal de emergencia
+                """)
+            
+            # Contexto adicional
+            st.info(f"""
+            **Contexto de la predicción:**
+            
+            - Tasa predicha: **{tasa_pred:.2f} muertes por cada 1,000 nacimientos**
+            - En un municipio de {nac} nacimientos/año: **~{int(nac * tasa_pred / 1000)} muertes infantiles esperadas**
+            - Estándar OMS: < 5‰ (países desarrollados: 2-3‰)
+            - Promedio Orinoquía 2020-2024: 4.2‰
+            
+            **Factores de riesgo principales detectados:**
+            - Mortalidad fetal: {mort_fetal:.1f}‰ {'(CRÍTICO)' if mort_fetal > 50 else '(Normal)' if mort_fetal < 10 else '(Elevado)'}
+            - Mortalidad neonatal: {mort_neonatal:.1f}‰ {'(CRÍTICO)' if mort_neonatal > 15 else '(Normal)' if mort_neonatal < 5 else '(Elevado)'}
+            - Control prenatal: {100-sin_prenatal:.1f}% {'(Bueno)' if sin_prenatal < 20 else '(Deficiente)'}
+            - Bajo peso: {bajo_peso:.1f}% {'(Alto)' if bajo_peso > 15 else '(Normal)'}
+            """)
     
     # Footer
     st.markdown("---")

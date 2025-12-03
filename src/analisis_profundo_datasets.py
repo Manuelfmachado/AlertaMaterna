@@ -288,7 +288,7 @@ print("   • Merge multi-tabla factible")
 print("   • Datos suficientes para modelo robusto")
 print("   • Oportunidad de análisis causal (mortalidad → causas específicas)")
 
-print("\n⏰ TIEMPO ESTIMADO DE IMPLEMENTACIÓN:")
+print("\nTIEMPO ESTIMADO DE IMPLEMENTACIÓN:")
 print("   • Features básicas (1-6): 1 hora")
 print("   • Features avanzadas (7-12): 2 horas")
 print("   • Features geográficas (13-15): 30 min")
