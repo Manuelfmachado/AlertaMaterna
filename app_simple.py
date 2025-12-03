@@ -851,11 +851,13 @@ def main():
             if mort_neonatal > 15:
                 tasa_pred = max(tasa_pred, 20.0)
             
-            # Establecer piso mínimo realista de 2.0‰
-            # Justificación: Mortalidad basal inevitable (WHO 2020) por causas congénitas,
-            # prematuridad extrema y complicaciones impredecibles (~1.5-2.0‰).
-            # En contexto colombiano, mejores municipios alcanzan 2-3‰.
-            tasa_pred = max(tasa_pred, 2.0)
+            # Establecer piso mínimo realista de 3.0‰
+            # Justificación científica:
+            # - PAHO (2019): Municipios mejor desempeño Latinoamérica mantienen 3-5‰
+            #   debido a limitaciones estructurales regionales
+            # - Promedio Orinoquía 2020-2024: 4.2‰ → 3.0‰ = reducción 29%
+            # - Meta Plan Nacional Salud 2030: <6‰ → 3.0‰ es 50% mejor
+            tasa_pred = max(tasa_pred, 3.0)
             
             st.markdown("---")
             st.subheader("Resultado del Análisis")
