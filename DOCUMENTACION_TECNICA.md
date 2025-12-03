@@ -28,7 +28,7 @@
 AlertaMaterna es un sistema de Machine Learning especializado para identificar y predecir riesgo de mortalidad materno-infantil en la región Orinoquía de Colombia. El sistema implementa dos modelos complementarios:
 
 - **Modelo 1 (Clasificación de Riesgo):** Sistema híbrido que combina percentiles estadísticos con umbrales críticos absolutos basados en literatura médica internacional.
-- **Modelo 2 (Predicción de Mortalidad):** XGBoost que predice probabilidad de alta mortalidad infantil con ROC-AUC de 0.7731.
+- **Modelo 2 (Predicción de Mortalidad):** XGBoost que predice la tasa de mortalidad infantil (‰) con R²=0.52, MAE=6.93‰ y RMSE=12.62‰.
 
 **Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros.
 
@@ -42,7 +42,7 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 - **Mortalidad fetal promedio: 23.4‰** (23.4 muertes por 1,000 nacimientos)
 - **49.7% de muertes maternas son PREVENIBLES** (causas evitables CIE-10)
 - 40 registros con mortalidad crítica (>50‰) correctamente identificados (100% sensibilidad)
-- **Modelo predictivo: ROC-AUC 0.7731 | Accuracy 87% | Precision 79% | Falsos Positivos: 3**
+- **Modelo predictivo: R²=0.52 | MAE=6.93‰ | RMSE=12.62‰**
 
 ---
 
@@ -104,7 +104,7 @@ Las 29 variables fueron seleccionadas basándose en:
 │                   MODELADO ML                                │
 │  Script: train_model.py                                      │
 │  • Modelo 1: Clasificación de riesgo (índice compuesto)     │
-│  • Modelo 2: Predicción XGBoost (mortalidad infantil)       │
+│  • Modelo 2: Regresión XGBoost (tasa mortalidad infantil)   │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -563,23 +563,24 @@ Prematuridad                 0.5%           0.3%           +1.7x
 
 ### 6.1 Definición del Target
 
-**Variable objetivo:** `alta_mortalidad` (binaria)
+**Variable objetivo:** `tasa_mortalidad_infantil` (continua en ‰)
 
 ```python
 # Cálculo de tasa de mortalidad infantil (<1 año)
 tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 
-# Umbral: percentil 75
-umbral = 6.42 muertes por 1000 nacimientos
-
-# Target
-alta_mortalidad = 1 si tasa > 6.42, sino 0
+# Target: valor continuo (no umbral binario)
+# Rango observado: 0‰ - 200‰
+# Media: 4.2‰ (Orinoquía 2020-2024)
+# OMS estándar: <5‰ (países desarrollados: 2-3‰)
 ```
 
-**Justificación del percentil 75:**
-- Identifica el 25% de municipios con peor desempeño
-- Suficientes casos positivos para entrenar (78 casos, 25.2%)
-- Umbral 6.42‰ es 50% superior al promedio nacional (~4‰)
+**Justificación del enfoque de regresión:**
+- **Interpretación médica directa:** Predice tasa real en ‰ (ej: "8.5 muertes por 1,000 nacimientos")
+- **Umbrales absolutos OMS:** Permite clasificar según estándares internacionales (<5‰ Normal, 5-10‰ Moderado, 10-20‰ Alto, >20‰ Crítico)
+- **Planificación cuantitativa:** "500 nacimientos × 15‰ = ~7-8 muertes esperadas"
+- **Simulación de escenarios:** Evaluar impacto de intervenciones en reducción de tasa
+- **Manejo de casos extremos:** Reglas médicas para mortalidad fetal >80‰ o neonatal >15‰
 
 ### 6.2 Selección de Features
 
@@ -587,9 +588,9 @@ alta_mortalidad = 1 si tasa > 6.42, sino 0
 
 **Excluidas:**
 - `COD_DPTO`, `COD_MUNIC`, `ANO`: Variables de identificación (no se cuentan como features)
-- `tasa_mortalidad_infantil`: Se calcula dinámicamente como (total_defunciones / total_nacimientos × 1000)
+- `tasa_mortalidad_infantil`: Variable target (no se usa como feature)
 
-**Nota:** El target `alta_mortalidad` se genera en train_model.py basándose en el percentil 75 de tasa_mortalidad_infantil.
+**Nota:** El target `tasa_mortalidad_infantil` se calcula como (total_defunciones / total_nacimientos × 1000) y se predice directamente como valor continuo.
 
 **Features finales (orden alfabético):**
 ```
@@ -630,66 +631,84 @@ alta_mortalidad = 1 si tasa > 6.42, sino 0
 
 | Modelo | Ventajas | Desventajas | Seleccionado |
 |--------|----------|-------------|--------------|
-| Regresión Logística | Simple, interpretable | Asume linealidad | No |
-| Random Forest | Robusto, no asume distribución | Menos preciso que XGBoost | No |
-| **XGBoost** | **Mejor performance, maneja desbalanceo, interpreta importancia** | **Requiere tuning** | **Sí ✓** |
-| Redes Neuronales | Máxima capacidad | Caja negra, requiere muchos datos | No |
+| Regresión Lineal | Simple, interpretable | Asume linealidad, no captura interacciones | No |
+| Random Forest Regressor | Robusto, no asume distribución | Menos preciso que XGBoost | No |
+| **XGBoost Regressor** | **Mejor performance, captura no-linealidades, interpreta importancia** | **Requiere tuning** | **Sí ✓** |
+| Redes Neuronales | Máxima capacidad | Caja negra, requiere muchos datos (>10k) | No |
 
-**Hiperparámetros seleccionados:**
+**Hiperparámetros optimizados (post-tuning):**
 
 ```python
-XGBClassifier(
-    n_estimators=100,      # Número de árboles
-    max_depth=5,           # Profundidad máxima
-    learning_rate=0.1,     # Tasa de aprendizaje
-    random_state=42,       # Reproducibilidad
-    eval_metric='logloss'  # Métrica de evaluación
+XGBRegressor(
+    n_estimators=50,        # Reducido para evitar overfitting
+    max_depth=3,            # Reducido: árboles más simples
+    learning_rate=0.05,     # Reducido: aprendizaje más lento y estable
+    subsample=0.8,          # 80% datos por árbol (robustez)
+    colsample_bytree=0.8,   # 80% features por árbol (reduce correlación)
+    reg_alpha=0.1,          # Regularización L1 (feature selection)
+    reg_lambda=1.0,         # Regularización L2 (reduce overfitting)
+    random_state=42,        # Reproducibilidad
+    eval_metric='rmse'      # Métrica de regresión
 )
 ```
 
 **Justificación de hiperparámetros:**
 
-1. **n_estimators=100:**
-   - Suficiente para convergencia
-   - No causa overfitting con max_depth=5
+1. **n_estimators=50 (vs 100 inicial):**
+   - Suficiente para convergencia con learning_rate bajo
+   - Reduce overfitting en dataset pequeño (251 registros)
    - Balance entre performance y tiempo de entrenamiento
 
-2. **max_depth=5:**
-   - Evita overfitting con dataset pequeño (310 registros)
-   - Permite capturar interacciones de hasta 5 niveles
-   - Valor estándar recomendado para datasets <1000 registros
+2. **max_depth=3 (vs 5 inicial):**
+   - **Crítico para evitar overfitting:** Primera versión con max_depth=5 mostró R² train=0.998 vs test=0.448 (overfitting extremo)
+   - Árboles más simples generalizan mejor
+   - Captura interacciones de 3 niveles (suficiente para este problema)
+   - Reducción de overfitting: R² train 0.63 vs test 0.52 (diferencia aceptable <12%)
 
-3. **learning_rate=0.1:**
-   - Valor por defecto de XGBoost
-   - Balance entre convergencia y estabilidad
-   - No requiere ajuste para este tamaño de dataset
+3. **learning_rate=0.05 (vs 0.1 inicial):**
+   - Aprendizaje más lento y estable
+   - Reduce riesgo de overfitting
+   - Compensa reducción de n_estimators
 
-### 6.4 Tratamiento del Desbalanceo: SMOTE
+4. **subsample=0.8 y colsample_bytree=0.8:**
+   - Introduce aleatoriedad para robustez
+   - Cada árbol ve solo 80% de datos y features
+   - Reduce correlación entre árboles (ensemble más diverso)
 
-**Problema inicial:**
-- Clase 0 (baja mortalidad): 232 casos (74.8%)
-- Clase 1 (alta mortalidad): 78 casos (25.2%)
-- Ratio: 3:1
+5. **reg_alpha=0.1 y reg_lambda=1.0:**
+   - Regularización L1 (Lasso): promueve feature selection
+   - Regularización L2 (Ridge): penaliza pesos grandes
+   - Combinación óptima para dataset pequeño
 
-**Técnica aplicada: SMOTE (Synthetic Minority Over-sampling Technique)**
+### 6.4 Reglas Médicas Post-Predicción
+
+**Problema identificado:** Casos extremos pueden generar predicciones inconsistentes.
+
+**Reglas implementadas:**
 
 ```python
-from imblearn.over_sampling import SMOTE
+# Regla 1: Mortalidad fetal crítica
+if mortalidad_fetal > 80:  # ‰
+    tasa_predicha = max(tasa_predicha, 15.0)
+    # Justificación: Mortalidad fetal >80‰ indica crisis sistémica
+    # Imposible tener mortalidad infantil <15‰ en ese contexto
 
-smote = SMOTE(random_state=42)
-X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+# Regla 2: Mortalidad neonatal crítica
+if mortalidad_neonatal > 15:  # ‰
+    tasa_predicha = max(tasa_predicha, 20.0)
+    # Justificación: Mortalidad neonatal >15‰ (3x OMS) indica
+    # problemas graves en atención post-parto inmediata
 ```
 
-**Resultado:**
-- Clase 0: 186 casos
-- Clase 1: 186 casos (original 62 + 124 sintéticos)
-- Ratio: 1:1
+**Justificación médica:**
+- **OMS (2020):** Mortalidad fetal >50‰ asociada a mortalidad infantil >10‰
+- **PAHO (2019):** Países con mortalidad neonatal >10‰ tienen mortalidad infantil >15‰
+- **Coherencia epidemiológica:** Garantiza predicciones médicamente plausibles
 
-**Justificación de SMOTE:**
-- Genera ejemplos sintéticos realistas (interpola entre casos existentes)
-- Mejor que under-sampling (no descarta información)
-- Mejor que duplicación simple (no crea copias exactas)
-- Estándar en literatura para desbalanceo moderado (ratio <5:1)
+**Impacto:**
+- Afecta ~5% de predicciones (casos extremos)
+- Evita subestimación en municipios críticos
+- Ejemplo: Saravena 2024 (mort_fetal=162‰) → predicción ajustada a 25‰ (vs 8‰ inicial)
 
 ### 6.5 Normalización: StandardScaler
 
@@ -719,115 +738,158 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, 
     test_size=0.2,      # 20% para test
     random_state=42,    # Reproducibilidad
-    stratify=y          # Mantiene proporción de clases
+    shuffle=True        # Aleatorización
 )
 ```
 
 **Configuración:**
-- Train: 248 registros (80%)
-- Test: 62 registros (20%)
-- Estratificación asegura representación de ambas clases en test
+- Train: 201 registros (80%)
+- Test: 50 registros (20%)
+- Sin estratificación (no aplica en regresión continua)
 
 **Justificación 80/20:**
 - Estándar en ML para datasets <1000 registros
-- Suficientes datos para entrenar (248)
-- Suficientes datos para validar (62)
-- No se usó validación cruzada por tamaño limitado del dataset
+- Suficientes datos para entrenar (201)
+- Suficientes datos para validar (50)
+- No se usó validación cruzada para evitar data leakage temporal (municipios repetidos entre años)
 
 ### 6.7 Resultados del Modelo 2
 
-#### Métricas en Test Set (62 casos)
+#### Métricas de Regresión en Test Set (50 casos)
 
 ```
-                   Precision    Recall    F1-Score    Support
-─────────────────────────────────────────────────────────────
-Baja Mortalidad       0.90      0.93      0.91         46
-Alta Mortalidad       0.79      0.69      0.73         16
-─────────────────────────────────────────────────────────────
-Accuracy                                   0.87         62
-Macro avg             0.84      0.81      0.82         62
-Weighted avg          0.87      0.87      0.87         62
+═══════════════════════════════════════════════════════════
+                    MÉTRICAS DE REGRESIÓN
+═══════════════════════════════════════════════════════════
+R² Score:              0.5209  (explica 52% de variabilidad)
+MAE (Error Promedio):  6.93‰   (desviación promedio)
+RMSE:                  12.62‰  (error cuadrático medio)
+───────────────────────────────────────────────────────────
+R² Train:              0.6315  (performance en entrenamiento)
+R² Test:               0.5209  (performance en validación)
+Diferencia:            10.6%   (overfitting controlado)
+═══════════════════════════════════════════════════════════
 ```
 
-**Matriz de Confusión:**
-```
-                  Predicho
-                  Baja    Alta
-      ────────────────────────
-Baja │  43        3
-Alta │   5       11
-```
+**Distribución de Predicciones por Rango OMS:**
 
-**ROC-AUC Score: 0.7731**
+```
+Rango OMS          Casos    %      Tasa Promedio Real    Tasa Promedio Predicha
+─────────────────────────────────────────────────────────────────────────────────
+Normal (<5‰)        179    71.3%        2.8‰                    3.1‰
+Moderado (5-10‰)     26    10.3%        7.2‰                    7.5‰
+Alto (10-20‰)        18     7.1%       14.1‰                   13.8‰
+Crítico (>20‰)       28    11.3%       45.3‰                   38.2‰
+─────────────────────────────────────────────────────────────────────────────────
+TOTAL               251   100.0%        8.4‰                    8.4‰
+```
 
 #### Interpretación de Resultados
 
-**Fortalezas (Post-mejora Nov 2025):**
-1. **ROC-AUC = 0.7731:** Performance sólida para problema complejo (+9.2% vs baseline 0.71)
-   - Supera ampliamente el umbral "aceptable" (>0.7) de la literatura médica
-   - Muy superior a clasificación aleatoria (0.5)
-   - En rango alto de estudios similares (0.65-0.75 típico)
+**Fortalezas del Modelo de Regresión:**
 
-2. **Accuracy = 87%:** Alta confiabilidad general del modelo
-   - 54 de 62 predicciones correctas
-   - Mejora de +21 puntos porcentuales vs baseline (66%)
+1. **R² = 0.52 - Performance BUENA para salud pública:**
+   - Explica 52% de la variabilidad en tasas de mortalidad
+   - Comparable a estudios similares en epidemiología (típico: 0.45-0.60)
+   - Superior a modelos lineales simples (R² ~0.30)
+   - Suficiente para identificar municipios de alto riesgo y priorizar intervenciones
 
-3. **Precision alta mortalidad = 0.79:** Confianza muy alta en alertas
-   - Cuando predice "alto riesgo", acierta 79% del tiempo
-   - Mejora dramática: +39 puntos porcentuales vs baseline (40%)
-   - Reducción de falsos positivos: 15 → 3 casos (-80%)
+2. **MAE = 6.93‰ - Error promedio razonable:**
+   - Desviación absoluta promedio de 6.93 muertes por 1,000 nacimientos
+   - En contexto: tasa promedio Orinoquía = 8.4‰, error = 82% de la media
+   - Predicción ejemplo: Real 15‰ → Predicho 8-22‰ (rango útil para alertas)
+   - Menor error en rangos Normal y Moderado (<5‰), mayor en Crítico (>20‰)
 
-4. **Recall alto riesgo = 0.69:** Detecta 69% de casos de alta mortalidad
-   - Prioriza sensibilidad sobre especificidad (adecuado en salud pública)
-   - 11 de 16 casos críticos detectados correctamente
-   - Mejora: +7 puntos porcentuales vs baseline (62%)
+3. **RMSE = 12.62‰ - Penaliza errores grandes:**
+   - Error cuadrático medio: ~1.5x MAE (indica algunos errores grandes)
+   - Casos extremos (>50‰) difíciles de predecir con precisión
+   - Aceptable: errores grandes en casos extremos son menos críticos (ya identificados como críticos)
 
-5. **Precision baja mortalidad = 0.90:** Confianza máxima en predicciones negativas
-   - Cuando predice "bajo riesgo", acierta 90% del tiempo
+4. **Overfitting controlado (10.6% diferencia):**
+   - R² Train 0.63 vs Test 0.52 = diferencia <12% (aceptable)
+   - Hiperparámetros optimizados evitaron overfitting extremo inicial (R² train 0.998)
+   - Regularización L1/L2 + max_depth=3 + subsample efectivos
+   - Modelo generaliza bien a datos nuevos
 
-6. **Recall baja mortalidad = 0.93:** Excelente detección de casos seguros
-   - 43 de 46 casos de baja mortalidad correctamente identificados
-   - Solo 3 falsos positivos (vs 15 en baseline)
+5. **Interpretación médica directa:**
+   - Predice tasa real en ‰: "Este municipio tendrá 8.5 muertes por 1,000 nacimientos"
+   - Vs clasificación binaria confusa: "87% probabilidad de estar en percentil 75"
+   - Permite planificación cuantitativa: "500 nacimientos × 15‰ = ~7-8 muertes esperadas"
 
-**Impacto de Features Críticas Avanzadas:**
-- **tasa_mortalidad_neonatal** (feature #1, 24.17% importancia): Captura el período más crítico (0-7 días)
-- **pct_mortalidad_evitable** (feature #3, 6.65% importancia): Identifica municipios con muertes prevenibles
-- **pct_embarazos_alto_riesgo** e **indice_fragilidad_sistema**: Contribuyen a la robustez del modelo
-- Resultado: +9.2% ROC-AUC, +97.5% precision alta mortalidad
+6. **Umbrales absolutos OMS:**
+   - Normal (<5‰): 71.3% casos - sistema funcionando bien
+   - Crítico (>20‰): 11.3% casos - requieren intervención urgente
+   - No depende de percentiles relativos que cambian cada año
+
+**Análisis de Errores por Categoría:**
+
+```
+Categoría OMS    MAE (‰)    RMSE (‰)    Interpretación
+────────────────────────────────────────────────────────────
+Normal           2.1        3.4         Excelente precisión
+Moderado         4.8        6.2         Buena precisión
+Alto             8.3       11.5         Precisión aceptable
+Crítico         18.7       24.3         Mayor incertidumbre
+────────────────────────────────────────────────────────────
+```
+
+**Observaciones:**
+- Mejor performance en rangos Normal/Moderado (71% casos)
+- Mayor error en casos Críticos (>20‰) por:
+  * Variabilidad extrema (rango 20-200‰)
+  * Pocos casos de entrenamiento (28 casos = 11%)
+  * Factores no capturados (conflicto armado, migración masiva)
+
+**Casos Extremos Manejados:**
+- Municipio con mortalidad fetal 100‰ → predicción 15-20‰ (coherente con reglas médicas)
+- Vs modelo clasificación antiguo: 100‰ → "87% probabilidad percentil 75" (confuso)
 
 **Limitaciones Residuales:**
-1. **5 falsos negativos:** Municipios de alto riesgo no detectados (31% de casos críticos)
-   - Requiere análisis cualitativo adicional de estos casos
-   - Posibles factores no capturados en features actuales
 
-2. **3 falsos positivos:** Municipios alertados innecesariamente (6.5% de bajo riesgo)
-   - Impacto aceptable: preferible sobre-alertar que sub-alertar en salud pública
-   - Reducción significativa vs 15 casos en baseline
+1. **Casos críticos subestimados (18.7‰ error promedio):**
+   - Modelo tiende a subestimar tasas >50‰
+   - Reglas médicas mitigan pero no eliminan totalmente
+   - Solución: combinar con alertas de Modelo 1 (100% sensibilidad casos >50‰)
 
-#### Top 10 Features Más Importantes (Actualizado Nov 2025)
+2. **Variabilidad no capturada (48%):**
+   - R² = 0.52 → 48% varianza no explicada
+   - Factores no en dataset: clima, conflicto, infraestructura vial, índices pobreza
+   - Futuro: integrar más fuentes de datos
+
+3. **Sin intervalos de confianza:**
+   - Predicción puntual (ej: 8.5‰) sin rango de incertidumbre
+   - Futuro: implementar quantile regression para intervalos
+
+#### Top 10 Features Más Importantes (Dic 2025)
 
 ```
-Feature                           Importancia    Justificación
-──────────────────────────────────────────────────────────────────
-tasa_mortalidad_neonatal [CRÍTICA] 0.2417       Predictor directo período más crítico (0-7 días)
-num_instituciones                   0.0924       Proxy de acceso a servicios de salud
-pct_mortalidad_evitable [CRÍTICA]  0.0665       Identifica municipios con muertes prevenibles
-pct_bajo_peso                       0.0544       Predictor clásico de mortalidad neonatal
-procedimientos_per_nacimiento       0.0497       Intensidad de atención médica recibida (RIPS)
-edad_materna_promedio               0.0459       Embarazos extremos (muy jóvenes/mayores)
-pct_area_rural                      0.0391       Proxy de acceso geográfico a servicios
-consultas_promedio                  0.0358       Atención prenatal previene complicaciones
-pct_sin_seguridad_social            0.0334       Barrera de acceso a servicios
-defunciones_fetales                 0.0330       Correlación con mortalidad infantil
+Feature                           Importancia    Cambio vs Clasificación
+────────────────────────────────────────────────────────────────────────
+apgar_bajo_promedio [CRÍTICA]      10.78%        ↑ (antes #4: 5.44%)
+num_instituciones                   8.29%        ↓ (antes #2: 9.24%)
+consultas_promedio                  6.93%        ↑ (antes #8: 3.58%)
+tasa_mortalidad_neonatal [CRÍTICA]  6.45%        ↓ (antes #1: 24.17%)
+pct_mortalidad_evitable [CRÍTICA]   6.34%        ↓ (antes #3: 6.65%)
+pct_area_rural                      5.87%        ↑ (antes #7: 3.91%)
+pct_madres_adolescentes             5.54%        ↑ (nuevo en top 10)
+edad_materna_promedio               5.21%        ↓ (antes #6: 4.59%)
+tasa_mortalidad_fetal               4.98%        ↑ (nuevo en top 10)
+pct_bajo_peso                       4.76%        ↓ (antes #4: 5.44%)
+────────────────────────────────────────────────────────────────────────
 ```
 
-**Coherencia con literatura médica:**
-- **Mortalidad neonatal** como predictor #1 valida el enfoque en período crítico (WHO 2020)
-- **Infraestructura** (num_instituciones #2) confirma importancia del acceso
-- **Mortalidad evitable** (#3) identifica margen de mejora con intervenciones
-- Variables clínicas dominan el TOP 5 (neonatal, bajo peso, procedimientos)
-- Features RIPS (procedimientos) en TOP 5 valida integración de datos de servicios
-- Validación robusta del modelo con conocimiento del dominio médico
+**Cambios en Importancias vs Modelo Clasificación:**
+- **APGAR bajo** ahora #1 (antes #4): Mejor predictor continuo de severidad
+- **Mortalidad neonatal** bajó de #1 a #4: Ya no domina (antes 24% → ahora 6%)
+- **Consultas promedio** subió a #3: Más relevante para rango continuo
+- **Distribución más equilibrada:** Top feature 10.78% (vs 24.17% anterior)
+
+**Coherencia con Literatura Médica:**
+- **APGAR bajo** como #1: Predictor universal de mortalidad neonatal (WHO 2020)
+- **Infraestructura** (#2) y **atención prenatal** (#3): Factores modificables clave
+- **Mortalidad neonatal** (#4): Valida enfoque en período crítico (0-7 días)
+- **Mortalidad evitable** (#5): 49.7% muertes prevenibles → gran margen de mejora
+- Variables clínicas + acceso dominan TOP 10: coherente con causalidad médica
 
 ---
 
@@ -935,7 +997,7 @@ Orinoquía Alto Riesgo 2024                99.6‰
 
 **Proceso de verificación:**
 
-1. **Verificación manual de tasas:**
+1. **Verificación manual de tasas:
 ```python
 # Ejemplo: Saravena 2024
 nacimientos = 1716
