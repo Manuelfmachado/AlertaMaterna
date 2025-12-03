@@ -698,16 +698,30 @@ if mortalidad_neonatal > 15:  # ‰
     tasa_predicha = max(tasa_predicha, 20.0)
     # Justificación: Mortalidad neonatal >15‰ (3x OMS) indica
     # problemas graves en atención post-parto inmediata
+
+# Regla 3: Piso mínimo realista de 2.0‰
+tasa_predicha = max(tasa_predicha, 2.0)
+# Justificación médica (WHO 2020, UNICEF 2019):
+# - Mortalidad basal inevitable por malformaciones congénitas letales: ~0.5-1.0‰
+# - Prematuridad extrema <28 semanas (supervivencia <50%): ~0.3-0.5‰
+# - Complicaciones obstétricas impredecibles: ~0.2-0.5‰
+# - TOTAL: ~1.5-2.0‰ incluso con infraestructura óptima
+# Contexto colombiano (DANE 2023):
+# - Mejores municipios Colombia alcanzan 2-3‰ (límite técnico realista)
+# - Tasa 0‰ no existe en ningún sistema de salud mundial
 ```
 
 **Justificación médica:**
 - **OMS (2020):** Mortalidad fetal >50‰ asociada a mortalidad infantil >10‰
 - **PAHO (2019):** Países con mortalidad neonatal >10‰ tienen mortalidad infantil >15‰
-- **Coherencia epidemiológica:** Garantiza predicciones médicamente plausibles
+- **WHO (2020) / UNICEF (2019):** Mortalidad basal inevitable por causas congénitas y complicaciones impredecibles (~1.5-2.0‰)
+- **Coherencia epidemiológica:** Garantiza predicciones médicamente plausibles y realistas para contexto colombiano
 
 **Impacto:**
 - Afecta ~5% de predicciones (casos extremos)
 - Evita subestimación en municipios críticos
+- Evita predicciones irreales de 0‰ (no existe en ningún país)
+- Establece límite técnico alcanzable para Colombia (~2-3‰)
 - Ejemplo: Saravena 2024 (mort_fetal=162‰) → predicción ajustada a 25‰ (vs 8‰ inicial)
 
 ### 6.5 Normalización: StandardScaler
