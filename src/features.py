@@ -136,13 +136,34 @@ def generar_features_demograficas(df_nac):
     """Genera features demográficas por municipio-año"""
     print("\nGenerando features demográficas...")
     
-    features = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
+    # DECODIFICAR EDAD_MADRE de códigos a edades reales (punto medio del rango)
+    # Códigos DANE: 1=10-14, 2=15-19, 3=20-24, 4=25-29, 5=30-34, 6=35-39, 7=40-44, 8=45-49, 9=50-54, 99=Sin info
+    edad_map = {
+        1: 12,   # 10-14 años → punto medio 12
+        2: 17,   # 15-19 años → punto medio 17
+        3: 22,   # 20-24 años → punto medio 22
+        4: 27,   # 25-29 años → punto medio 27
+        5: 32,   # 30-34 años → punto medio 32
+        6: 37,   # 35-39 años → punto medio 37
+        7: 42,   # 40-44 años → punto medio 42
+        8: 47,   # 45-49 años → punto medio 47
+        9: 52,   # 50-54 años → punto medio 52
+        99: np.nan  # Sin información
+    }
+    
+    df_nac_temp = df_nac.copy()
+    df_nac_temp['edad_madre_real'] = df_nac_temp['EDAD_MADRE'].map(edad_map)
+    
+    features = df_nac_temp.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
         total_nacimientos=('ANO', 'size'),
-        edad_materna_promedio=('EDAD_MADRE', 'mean'),
-        pct_madres_adolescentes=('EDAD_MADRE', lambda x: (x < 20).sum() / len(x)),
-        pct_madres_edad_avanzada=('EDAD_MADRE', lambda x: (x >= 35).sum() / len(x)),
-        pct_bajo_nivel_educativo=('NIV_EDUM', lambda x: (x.isin([1, 2, 3, 4, 99])).sum() / len(x))
+        edad_materna_promedio=('edad_madre_real', 'mean'),
+        pct_madres_adolescentes=('edad_madre_real', lambda x: (x < 20).sum() / len(x) if len(x) > 0 else 0),
+        pct_madres_edad_avanzada=('edad_madre_real', lambda x: (x >= 35).sum() / len(x) if len(x) > 0 else 0),
+        pct_bajo_nivel_educativo=('NIV_EDUM', lambda x: (x.isin([1, 2, 3, 4, 99])).sum() / len(x) if len(x) > 0 else 0)
     ).reset_index()
+    
+    # Rellenar NaN en edad_materna_promedio con la mediana
+    features['edad_materna_promedio'] = features['edad_materna_promedio'].fillna(features['edad_materna_promedio'].median())
     
     print(f"  → {len(features)} registros municipio-año generados")
     return features
@@ -271,11 +292,51 @@ def generar_features_rips(df_nac, df_rips):
     features['total_urgencias'] = features['total_urgencias'].astype(float)
     features['total_procedimientos'] = features['total_procedimientos'].astype(float)
     
-    # Calcular ratios per cápita (por nacimiento), reemplazar inf y NaN con 0
-    features['atenciones_per_nacimiento'] = (features['total_atenciones'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
-    features['consultas_per_nacimiento'] = (features['total_consultas'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
-    features['urgencias_per_nacimiento'] = (features['total_urgencias'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
-    features['procedimientos_per_nacimiento'] = (features['total_procedimientos'] / features['total_nacimientos_temp']).replace([float('inf'), -float('inf')], 0).fillna(0)
+    # VALIDACIÓN: Reemplazar valores extremos en totales ANTES de calcular ratios
+    # Problema identificado: total_atenciones puede tener valores absurdos (ej. 3e+218)
+    # que generan ratios >1000 incluso sin división por cero
+    max_razonable = 100000  # Máximo razonable de atenciones por municipio-año
+    features['total_atenciones'] = features['total_atenciones'].clip(upper=max_razonable)
+    features['total_consultas'] = features['total_consultas'].clip(upper=max_razonable)
+    features['total_urgencias'] = features['total_urgencias'].clip(upper=max_razonable)
+    features['total_procedimientos'] = features['total_procedimientos'].clip(upper=max_razonable)
+    
+    # Calcular ratios per cápita (por nacimiento)
+    # Usar np.where para evitar división por cero
+    features['atenciones_per_nacimiento'] = np.where(
+        features['total_nacimientos_temp'] > 0,
+        features['total_atenciones'] / features['total_nacimientos_temp'],
+        0
+    )
+    features['consultas_per_nacimiento'] = np.where(
+        features['total_nacimientos_temp'] > 0,
+        features['total_consultas'] / features['total_nacimientos_temp'],
+        0
+    )
+    features['urgencias_per_nacimiento'] = np.where(
+        features['total_nacimientos_temp'] > 0,
+        features['total_urgencias'] / features['total_nacimientos_temp'],
+        0
+    )
+    features['procedimientos_per_nacimiento'] = np.where(
+        features['total_nacimientos_temp'] > 0,
+        features['total_procedimientos'] / features['total_nacimientos_temp'],
+        0
+    )
+    
+    # VALIDACIÓN FINAL: Clip ratios a valores razonables (máx 500 atenciones/nacimiento)
+    # Contexto: OMS recomienda ~8 consultas prenatales, pero puede haber múltiples atenciones
+    # 500 es extremadamente alto pero posible en casos con complicaciones graves
+    features['atenciones_per_nacimiento'] = features['atenciones_per_nacimiento'].clip(upper=500)
+    features['consultas_per_nacimiento'] = features['consultas_per_nacimiento'].clip(upper=100)
+    features['urgencias_per_nacimiento'] = features['urgencias_per_nacimiento'].clip(upper=50)
+    features['procedimientos_per_nacimiento'] = features['procedimientos_per_nacimiento'].clip(upper=100)
+    
+    # Reemplazar inf/NaN residuales
+    features['atenciones_per_nacimiento'] = features['atenciones_per_nacimiento'].replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['consultas_per_nacimiento'] = features['consultas_per_nacimiento'].replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['urgencias_per_nacimiento'] = features['urgencias_per_nacimiento'].replace([float('inf'), -float('inf')], 0).fillna(0)
+    features['procedimientos_per_nacimiento'] = features['procedimientos_per_nacimiento'].replace([float('inf'), -float('inf')], 0).fillna(0)
     
     # Eliminar columnas temporales
     features = features.drop(['total_nacimientos_temp', 'total_atenciones', 'total_consultas', 
@@ -381,8 +442,15 @@ def generar_features_causas_evitables(df_def_fet, df_def_nofet, df_nac):
         defunciones_evitables=('es_evitable', 'sum')
     ).reset_index()
     
-    # Calcular proporción
-    features_temp['pct_mortalidad_evitable'] = (features_temp['defunciones_evitables'] / features_temp['total_defunciones_temp'] * 100)
+    # Calcular proporción con validación
+    features_temp['pct_mortalidad_evitable'] = np.where(
+        features_temp['total_defunciones_temp'] > 0,
+        (features_temp['defunciones_evitables'] / features_temp['total_defunciones_temp'] * 100),
+        0
+    )
+    
+    # VALIDACIÓN: Clip entre 0 y 100%
+    features_temp['pct_mortalidad_evitable'] = features_temp['pct_mortalidad_evitable'].clip(0, 100)
     
     # Crear esqueleto con TODOS los municipios-años (desde nacimientos)
     esqueleto = df_nac[['COD_DPTO', 'COD_MUNIC', 'ANO']].drop_duplicates().reset_index(drop=True)
@@ -439,8 +507,15 @@ def generar_features_embarazo_alto_riesgo(df_nac):
         embarazos_alto_riesgo=('es_alto_riesgo', 'sum')
     ).reset_index()
     
-    # Calcular proporción
-    features['pct_embarazos_alto_riesgo'] = (features['embarazos_alto_riesgo'] / features['total_nacimientos_temp'] * 100).fillna(0)
+    # Calcular proporción con validación
+    features['pct_embarazos_alto_riesgo'] = np.where(
+        features['total_nacimientos_temp'] > 0,
+        (features['embarazos_alto_riesgo'] / features['total_nacimientos_temp'] * 100),
+        0
+    )
+    
+    # VALIDACIÓN: Clip entre 0 y 100% (algunos cálculos pueden dar >100 por errores de datos)
+    features['pct_embarazos_alto_riesgo'] = features['pct_embarazos_alto_riesgo'].clip(0, 100).fillna(0)
     
     # Limpiar columnas temporales
     features = features[['COD_DPTO', 'COD_MUNIC', 'ANO', 'pct_embarazos_alto_riesgo']]
@@ -480,20 +555,34 @@ def generar_features_fragilidad_sistema(feat_demograficas, feat_institucionales,
     features['tasa_mortalidad_neonatal'] = features['tasa_mortalidad_neonatal'].fillna(0)
     
     # Calcular densidad institucional (instituciones per capita, ajustado por 1000 nacimientos)
-    features['densidad_institucional'] = features['num_instituciones'] / (features['total_nacimientos'] / 1000 + 1)
+    # VALIDACIÓN: Evitar división por cero
+    features['densidad_institucional'] = np.where(
+        features['total_nacimientos'] > 0,
+        features['num_instituciones'] / (features['total_nacimientos'] / 1000 + 1),
+        0
+    )
     
     # Calcular índice de fragilidad
     # Normalizar presión obstétrica para evitar valores extremos
     presion_norm = features['presion_obstetrica'] / features['presion_obstetrica'].quantile(0.75)
     presion_norm = presion_norm.clip(upper=3)  # Cap en 3x el percentil 75
     
-    features['indice_fragilidad_sistema'] = (
-        features['tasa_mortalidad_neonatal'] * presion_norm / (features['densidad_institucional'] + 0.1)
+    # VALIDACIÓN: Evitar división por cero en índice de fragilidad
+    features['indice_fragilidad_sistema'] = np.where(
+        features['densidad_institucional'] > 0,
+        (features['tasa_mortalidad_neonatal'] * presion_norm / (features['densidad_institucional'] + 0.1)),
+        0
     )
+    
+    # VALIDACIÓN: Reemplazar inf/NaN antes de normalizar
+    features['indice_fragilidad_sistema'] = features['indice_fragilidad_sistema'].replace([float('inf'), -float('inf')], 0).fillna(0)
     
     # Normalizar a escala 0-100
     max_fragilidad = features['indice_fragilidad_sistema'].quantile(0.95)
-    features['indice_fragilidad_sistema'] = (features['indice_fragilidad_sistema'] / max_fragilidad * 100).clip(upper=100)
+    if max_fragilidad > 0:
+        features['indice_fragilidad_sistema'] = (features['indice_fragilidad_sistema'] / max_fragilidad * 100).clip(0, 100)
+    else:
+        features['indice_fragilidad_sistema'] = 0
     
     # Limpiar columnas temporales
     features = features[['COD_DPTO', 'COD_MUNIC', 'ANO', 'indice_fragilidad_sistema']]

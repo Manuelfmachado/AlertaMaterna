@@ -735,129 +735,148 @@ def main():
         
         st.markdown("---")
         
-        # MODO DUAL: Rápido o Completo
-        modo = st.radio(
-            "Selecciona modo de predicción:",
-            ["🚀 Rápido (8 variables clave - Recomendado)", "🔬 Completo (14 variables - Máxima precisión)"],
-            index=0,
-            help="Modo Rápido: ideal para usuarios finales. Modo Completo: para análisis detallado"
-        )
+        # MODO COMPLETO ÚNICO: Control total de variables
+        st.subheader("Variables del Modelo Predictivo")
+        st.caption("Ingresa los indicadores del municipio para obtener la predicción de mortalidad infantil")
         
-        st.markdown("---")
+        col1, col2, col3 = st.columns(3)
         
-        es_modo_rapido = "Rápido" in modo
+        with col1:
+            st.markdown("#### 📊 Demográficos")
+            nac = st.number_input("Total Nacimientos", 1, 5000, 800, help="Número anual de nacimientos en el municipio")
+            edad_materna = st.slider("Edad Materna Promedio", 15.0, 45.0, 26.5, 0.5, help="Edad promedio de las madres")
+            adolesc = st.slider("% Madres Adolescentes (<18)", 0.0, 50.0, 12.0, 0.5, help="Porcentaje de madres menores de 18 años")
+            edad_avanz = st.slider("% Madres Edad Avanzada (>35)", 0.0, 30.0, 10.0, 0.5, help="Porcentaje de madres mayores de 35 años")
+            bajo_educ = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 22.0, 1.0, help="Porcentaje de madres sin educación formal")
         
-        if es_modo_rapido:
-            # MODO RÁPIDO: 8 variables críticas
-            st.subheader("Modo Rápido - Variables Críticas")
-            st.caption("Ingresa solo las 8 variables más importantes. Las demás usarán valores típicos de Orinoquía.")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("#### Indicadores Críticos")
-                nac = st.number_input("Total Nacimientos", 1, 5000, 800, help="Número anual de nacimientos")
-                mort_neonatal = st.slider("Tasa Mort. Neonatal 0-7 días (%)", 0.0, 50.0, 3.5, 0.5, help="Feature #1 (24% importancia). Normal: <5%")
-                bajo_peso = st.slider("% Bajo Peso (<2500g)", 0.0, 30.0, 8.5, 0.5, help="Feature #4. Normal: 8-10%")
-                mort_fetal = st.slider("Tasa Mort. Fetal (%)", 0.0, 100.0, 7.0, 0.5, help="Normal: 5-10%, Crítico: >50%")
-            
-            with col2:
-                st.markdown("#### Infraestructura y Acceso")
-                num_inst = st.number_input("Nº Instituciones de Salud", 0, 50, 8, help="Feature #2 (9% importancia)")
-                sin_prenatal = st.slider("% Sin Control Prenatal", 0.0, 100.0, 12.0, 1.0, help="Nacional: ~15%, Crítico: >40%")
-                prematuro = st.slider("% Prematuros (<37 sem)", 0.0, 30.0, 9.5, 0.5, help="Normal: 9-10%")
-                edad_materna = st.slider("Edad Materna Promedio", 15.0, 45.0, 26.5, 0.5, help="Normal: 24-28 años")
-            
-            # Valores fijos para modo rápido
-            adolesc = 12.0
-            edad_avanz = 10.0
-            apgar_bajo = 1.0
-            consultas = 6.0
-            cesarea = 38.0
-            presion_obs = nac / num_inst if num_inst > 0 else 100.0
-            bajo_educ = 22.0
-            
-        else:
-            # MODO COMPLETO: 14 variables
-            st.subheader("Modo Completo - Máxima Precisión")
-            st.caption("Control total sobre todas las variables del modelo")
-            
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.markdown("#### Demográficos")
-                nac = st.number_input("Total Nacimientos", 1, 5000, 800)
-                edad_materna = st.slider("Edad Materna Promedio", 15.0, 45.0, 26.5, 0.5)
-                adolesc = st.slider("% Madres Adolescentes", 0.0, 50.0, 12.0, 0.5)
-                edad_avanz = st.slider("% Madres Edad Avanzada (>35)", 0.0, 30.0, 10.0, 0.5)
-                bajo_educ = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 22.0, 1.0)
-            
-            with col2:
-                st.markdown("#### Clínicos")
-                mort_neonatal = st.slider("Tasa Mort. Neonatal (%)", 0.0, 50.0, 3.5, 0.5)
-                mort_fetal = st.slider("Tasa Mort. Fetal (%)", 0.0, 100.0, 7.0, 0.5)
-                bajo_peso = st.slider("% Bajo Peso", 0.0, 30.0, 8.5, 0.5)
-                prematuro = st.slider("% Prematuros", 0.0, 30.0, 9.5, 0.5)
-                apgar_bajo = st.slider("% APGAR Bajo", 0.0, 20.0, 1.0, 0.5)
-            
-            with col3:
-                st.markdown("#### Acceso a Salud")
-                sin_prenatal = st.slider("% Sin Control Prenatal", 0.0, 100.0, 12.0, 1.0)
-                consultas = st.slider("Consultas Promedio", 0.0, 15.0, 6.5, 0.5)
-                cesarea = st.slider("% Cesáreas", 0.0, 100.0, 38.0, 1.0)
-                num_inst = st.number_input("Nº Instituciones", 0, 50, 8)
-                presion_obs = st.number_input("Presión Obstétrica", 0.0, 500.0, 100.0, 5.0)
+        with col2:
+            st.markdown("#### 🏥 Clínicos")
+            mort_neonatal = st.slider("Tasa Mort. Neonatal 0-7 días (‰)", 0.0, 50.0, 3.5, 0.5, help="Feature más importante (10.8%). Normal: <5‰")
+            mort_fetal = st.slider("Tasa Mort. Fetal (‰)", 0.0, 100.0, 7.0, 0.5, help="Muertes fetales por 1,000 nacimientos. Normal: <10‰, Crítico: >50‰")
+            bajo_peso = st.slider("% Bajo Peso (<2500g)", 0.0, 30.0, 8.5, 0.5, help="Porcentaje de recién nacidos con bajo peso")
+            prematuro = st.slider("% Prematuros (<37 sem)", 0.0, 30.0, 9.5, 0.5, help="Porcentaje de nacimientos prematuros")
+            apgar_bajo = st.slider("% APGAR Bajo (<7)", 0.0, 20.0, 1.0, 0.5, help="Porcentaje con APGAR bajo a los 5 minutos")
+        
+        with col3:
+            st.markdown("#### 💊 Acceso a Salud")
+            sin_prenatal = st.slider("% Sin Control Prenatal", 0.0, 100.0, 12.0, 1.0, help="Porcentaje de madres sin control prenatal. OMS recomienda <5%")
+            consultas = st.slider("Consultas Promedio", 0.0, 15.0, 6.5, 0.5, help="OMS recomienda mínimo 8 consultas")
+            cesarea = st.slider("% Cesáreas", 0.0, 100.0, 38.0, 1.0, help="OMS recomienda 10-15%. Valores >30% indican sobreuso")
+            num_inst = st.number_input("Nº Instituciones de Salud", 0, 50, 8, help="Feature importante (8.3%). Más instituciones = mejor cobertura")
+            presion_obs = st.number_input("Presión Obstétrica (nacim/inst)", 0.0, 500.0, 100.0, 5.0, help="Nacimientos por institución. >200 indica saturación")
         
         if st.button("Calcular Riesgo", type="primary"):
+            # CÁLCULO ADAPTATIVO: Ajustar variables ocultas basadas en indicadores ingresados
+            # Esto hace que la predicción sea consistente con la realidad del municipio
+            
+            # Índice de fragilidad basado en cobertura y resultados
+            # Si mort_neonatal es baja y hay buenas instituciones → fragilidad baja
+            fragilidad_base = 15.0  # Máximo para Orinoquía
+            if mort_neonatal < 3 and num_inst >= 15:
+                fragilidad_base = 6.0  # Sistema fuerte
+            elif mort_neonatal < 5 and num_inst >= 10:
+                fragilidad_base = 9.0  # Sistema moderado
+            elif mort_neonatal < 10:
+                fragilidad_base = 12.0  # Sistema medio
+            
+            # % Embarazos alto riesgo inferido de mortalidad neonatal
+            # Si mort_neonatal es baja → pocos embarazos de alto riesgo
+            if mort_neonatal < 2:
+                pct_alto_riesgo = 0.10  # 10% - sistema identifica y maneja bien riesgos
+            elif mort_neonatal < 5:
+                pct_alto_riesgo = 0.18  # 18% - manejo aceptable
+            elif mort_neonatal < 10:
+                pct_alto_riesgo = 0.25  # 25% - promedio regional
+            else:
+                pct_alto_riesgo = 0.35  # 35% - muchos riesgos no controlados
+            
+            # % Mortalidad evitable inferida de combinación mort_fetal + mort_neonatal
+            # Mortalidad evitable alta indica fallos en el sistema
+            mortalidad_combinada = mort_fetal + mort_neonatal
+            if mortalidad_combinada < 8:
+                pct_evitable = 0.20  # 20% - sistema eficiente
+            elif mortalidad_combinada < 15:
+                pct_evitable = 0.30  # 30% - sistema aceptable
+            elif mortalidad_combinada < 25:
+                pct_evitable = 0.40  # 40% - promedio regional
+            else:
+                pct_evitable = 0.55  # 55% - muchas muertes evitables
+            
             # Preparar features (28 variables del modelo - orden alfabético)
             features = {
                 'apgar_bajo_promedio': apgar_bajo / 100,
-                'atenciones_per_nacimiento': 12.0,
-                'consultas_per_nacimiento': 8.0,
+                'atenciones_per_nacimiento': 12.0,  # Promedio regional
+                'consultas_per_nacimiento': max(consultas, 6.0),  # Mínimo 6 consultas
                 'consultas_promedio': consultas,
                 'defunciones_fetales': int(nac * mort_fetal / 1000),
                 'edad_materna_promedio': edad_materna,
-                'indice_fragilidad_sistema': 15.0,
+                'indice_fragilidad_sistema': fragilidad_base,  # ADAPTATIVO
                 'num_instituciones': num_inst,
-                'pct_area_rural': 0.35,
+                'pct_area_rural': 0.35,  # 35% población rural Orinoquía
                 'pct_bajo_nivel_educativo': bajo_educ / 100,
                 'pct_bajo_peso': bajo_peso / 100,
                 'pct_cesarea': cesarea / 100,
-                'pct_embarazo_multiple': 0.02,
-                'pct_embarazos_alto_riesgo': 0.90,
-                'pct_instituciones_publicas': 0.60,
+                'pct_embarazo_multiple': 0.02,  # 2% constante nacional
+                'pct_embarazos_alto_riesgo': pct_alto_riesgo,  # ADAPTATIVO
+                'pct_instituciones_publicas': 0.60,  # 60% públicas Orinoquía
                 'pct_madres_adolescentes': adolesc / 100,
                 'pct_madres_edad_avanzada': edad_avanz / 100,
-                'pct_mortalidad_evitable': 0.50,
+                'pct_mortalidad_evitable': pct_evitable,  # ADAPTATIVO
                 'pct_prematuro': prematuro / 100,
-                'pct_regimen_subsidiado': 0.50,
+                'pct_regimen_subsidiado': 0.50,  # 50% régimen subsidiado
                 'pct_sin_control_prenatal': sin_prenatal / 100,
-                'pct_sin_seguridad_social': 0.10,
+                'pct_sin_seguridad_social': 0.08,  # 8% sin seguridad social
                 'presion_obstetrica': presion_obs,
-                'procedimientos_per_nacimiento': 4.0,
+                'procedimientos_per_nacimiento': 4.0,  # Promedio procedimientos
                 'tasa_mortalidad_fetal': mort_fetal,
                 'tasa_mortalidad_neonatal': mort_neonatal,
                 'total_nacimientos': nac,
-                'urgencias_per_nacimiento': 2.0
+                'urgencias_per_nacimiento': 2.0  # Promedio urgencias
             }
             
             X = pd.DataFrame([features])
+            
+            # MODO DEBUG: Mostrar valores usados
+            st.expander("🔍 Ver valores usados por el modelo").dataframe(
+                pd.DataFrame(features, index=[0]).T.rename(columns={0: 'Valor'}),
+                use_container_width=True
+            )
+            
             X_scaled = scaler.transform(X)
             tasa_pred = model.predict(X_scaled)[0]
             
-            # Aplicar reglas médicas para casos extremos
+            # ============================================================
+            # REGLAS MÉDICAS POST-PREDICCIÓN (coherencia epidemiológica)
+            # ============================================================
+            
+            # Regla 1: Coherencia con mortalidad neonatal
+            # Si mort_neonatal es baja, la mort_infantil NO puede ser muy alta
+            # Justificación: La mortalidad infantil INCLUYE la neonatal
+            if mort_neonatal <= 3 and mort_fetal <= 10:
+                # Contexto excelente: ambas bajas
+                # Mortalidad infantil máxima realista: ~5‰
+                tasa_pred = min(tasa_pred, 5.0)
+            elif mort_neonatal <= 5 and mort_fetal <= 15:
+                # Contexto bueno
+                # Mortalidad infantil máxima realista: ~8‰
+                tasa_pred = min(tasa_pred, 8.0)
+            
+            # Regla 2: Casos extremos - mortalidad fetal crítica
             if mort_fetal > 80:
                 tasa_pred = max(tasa_pred, 15.0)
             if mort_neonatal > 15:
                 tasa_pred = max(tasa_pred, 20.0)
             
-            # Establecer piso mínimo realista de 3.0‰
+            # Regla 3: Piso mínimo realista de 3.0‰
             # Justificación científica:
             # - PAHO (2019): Municipios mejor desempeño Latinoamérica mantienen 3-5‰
             #   debido a limitaciones estructurales regionales
             # - Promedio Orinoquía 2020-2024: 4.2‰ → 3.0‰ = reducción 29%
             # - Meta Plan Nacional Salud 2030: <6‰ → 3.0‰ es 50% mejor
-            tasa_pred = max(tasa_pred, 3.0)
+            # EXCEPCIÓN: Si contexto es EXCELENTE (mort_neonatal ≤2 y mort_fetal ≤5)
+            #            permitir predicciones más bajas (2-3‰ es posible)
+            if not (mort_neonatal <= 2 and mort_fetal <= 5):
+                tasa_pred = max(tasa_pred, 3.0)
             
             st.markdown("---")
             st.subheader("Resultado del Análisis")
