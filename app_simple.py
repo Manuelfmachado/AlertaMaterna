@@ -417,11 +417,15 @@ def main():
         total_nac = df_filtrado['total_nacimientos'].sum()
         mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
         
+        # Calcular muertes evitables dinámicamente
+        total_defunciones = df_filtrado['total_defunciones'].sum()
+        pct_evitable_prom = df_filtrado['pct_mortalidad_evitable'].mean()
+        muertes_evitables = int(total_defunciones * pct_evitable_prom)
+        
         with col1:
             st.metric(etiqueta1, f"{total_items}", help=help1)
         with col2:
-            pct_alto = (items_alto_riesgo/total_items*100) if total_items > 0 else 0
-            st.metric(etiqueta2, f"{items_alto_riesgo} ({pct_alto:.1f}%)", help=help2)
+            st.metric(etiqueta2, f"{items_alto_riesgo}", help=help2)
         with col3:
             st.metric("Nacimientos", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
@@ -429,8 +433,8 @@ def main():
             st.metric("Mortalidad. Fetal %", f"{mort_prom:.1f}%",
                      help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10% (Normal), 10-30% (Moderado), 30-50% (Alto), >50% (Crítico)")
         with col5:
-            st.metric("% Evitables", "49.7%", 
-                     help="Porcentaje de muertes maternas causadas por enfermedades PREVENIBLES según clasificación CIE-10. ¡Casi la mitad de las muertes podrían evitarse con intervención oportuna!")
+            st.metric("Muertes Evitables", f"{muertes_evitables:,}", 
+                     help=f"Número estimado de muertes que podrían prevenirse con intervención oportuna según clasificación CIE-10 ({pct_evitable_prom*100:.1f}% de {int(total_defunciones):,} defunciones totales). Estas muertes son causadas por enfermedades PREVENIBLES.")
         
         # Métricas del Modelo ML
         st.markdown("---")
