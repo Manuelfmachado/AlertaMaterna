@@ -846,6 +846,25 @@ def main():
             feature_order = sorted(X.columns)
             X = X[feature_order]
             
+            # Adaptar X a las columnas exactas que espera el scaler
+            try:
+                scaler_cols = list(scaler.feature_names_in_)
+            except AttributeError:
+                scaler_cols = list(X.columns)
+
+            # Crear columnas faltantes con 0.0 y eliminar extras
+            for col in scaler_cols:
+                if col not in X.columns:
+                    X[col] = 0.0
+            X = X[scaler_cols]
+
+            # DEBUG en Streamlit: ver columnas del scaler y de X
+            with st.expander("🧪 Debug columnas modelo", expanded=False):
+                st.write("Columns scaler (", len(scaler_cols), "):")
+                st.write(sorted(scaler_cols))
+                st.write("Columns X (", X.shape[1], "):")
+                st.write(list(X.columns))
+
             # MODO DEBUG: Mostrar valores usados
             st.expander("🔍 Ver valores usados por el modelo").dataframe(
                 pd.DataFrame(features, index=[0]).T.rename(columns={0: 'Valor'}),
