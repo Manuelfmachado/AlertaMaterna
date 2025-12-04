@@ -203,16 +203,16 @@ def preparar_datos(df):
     p75_mort_fetal = df['tasa_mortalidad_fetal'].quantile(0.75)
     p75_sin_prenatal = df['pct_sin_control_prenatal'].quantile(0.75)
     p75_bajo_peso = df['pct_bajo_peso'].quantile(0.75)
-    p75_prematuro = df['pct_prematuro'].quantile(0.75)
-    p25_cesarea = df['pct_cesarea'].quantile(0.25)
+    p75_prematuro = df['pct_prematuros'].quantile(0.75)
+    p25_cesarea = df['pct_cesareas'].quantile(0.25)
     p75_presion_obs = df['presion_obstetrica'].quantile(0.75)
     
     # Calcular puntuación (0-8 puntos máximo)
     df['puntos_riesgo'] = 0
     df.loc[df['tasa_mortalidad_fetal'] > p75_mort_fetal, 'puntos_riesgo'] += 1
     df.loc[df['pct_bajo_peso'] > p75_bajo_peso, 'puntos_riesgo'] += 1
-    df.loc[df['pct_prematuro'] > p75_prematuro, 'puntos_riesgo'] += 1
-    df.loc[df['pct_cesarea'] < p25_cesarea, 'puntos_riesgo'] += 1
+    df.loc[df['pct_prematuros'] > p75_prematuro, 'puntos_riesgo'] += 1
+    df.loc[df['pct_cesareas'] < p25_cesarea, 'puntos_riesgo'] += 1
     df.loc[df['presion_obstetrica'] > p75_presion_obs, 'puntos_riesgo'] += 1
     df.loc[df['pct_sin_control_prenatal'] > p75_sin_prenatal, 'puntos_riesgo'] += 1
     df.loc[df['pct_sin_control_prenatal'] > UMBRAL_CRITICO_SIN_PRENATAL, 'puntos_riesgo'] += 1
@@ -802,10 +802,14 @@ def main():
             else:
                 pct_evitable = 0.55  # 55% - muchas muertes evitables
             
-            # Preparar features (28 variables del modelo - orden alfabético)
+            # Preparar features (33 variables del modelo - orden alfabético)
+            total_def = int(nac * (mort_fetal + mort_neonatal) / 1000)
             features = {
+                'ANO': 2024,  # Año actual por defecto
                 'apgar_bajo_promedio': apgar_bajo / 100,
                 'atenciones_per_nacimiento': 12.0,  # Promedio regional
+                'COD_DPTO': 50,  # Meta por defecto (puede cambiarse)
+                'COD_MUNIC': 1,  # Código municipio
                 'consultas_per_nacimiento': max(consultas, 6.0),  # Mínimo 6 consultas
                 'consultas_promedio': consultas,
                 'defunciones_fetales': int(nac * mort_fetal / 1000),
@@ -815,7 +819,7 @@ def main():
                 'pct_area_rural': 0.35,  # 35% población rural Orinoquía
                 'pct_bajo_nivel_educativo': bajo_educ / 100,
                 'pct_bajo_peso': bajo_peso / 100,
-                'pct_cesarea': cesarea / 100,
+                'pct_cesareas': cesarea / 100,
                 'pct_embarazo_multiple': 0.02,  # 2% constante nacional
                 'pct_embarazos_alto_riesgo': pct_alto_riesgo,  # ADAPTATIVO
                 'pct_instituciones_publicas': 0.60,  # 60% públicas Orinoquía
@@ -830,11 +834,16 @@ def main():
                 'procedimientos_per_nacimiento': 4.0,  # Promedio procedimientos
                 'tasa_mortalidad_fetal': mort_fetal,
                 'tasa_mortalidad_neonatal': mort_neonatal,
+                'total_defunciones': total_def,
                 'total_nacimientos': nac,
                 'urgencias_per_nacimiento': 2.0  # Promedio urgencias
             }
             
             X = pd.DataFrame([features])
+            
+            # Asegurar que las columnas estén en el orden correcto (alfabético)
+            feature_order = sorted(X.columns)
+            X = X[feature_order]
             
             # MODO DEBUG: Mostrar valores usados
             st.expander("🔍 Ver valores usados por el modelo").dataframe(
