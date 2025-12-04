@@ -5,7 +5,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-ecvrk9pbx8zmaezvwkgidv.streamlit.app/)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
 
 ---
 
@@ -54,7 +54,7 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
 - **Modelo predictivo XGBoost Regressor**: Predice tasa de mortalidad infantil (‰) con R² 0.52 y MAE 6.93‰
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
-- **Basado en datos oficiales DANE (2020-2024)**: 
+- **Basado en datos oficiales DANE (2020-2024)**:
   - **Datos brutos**: 2,789,391 nacimientos y 138,385 defunciones fetales en toda Orinoquía
   - **Datos analizados**: 137,780 nacimientos en 251 registros válidos (≥10 nacimientos/año)
 - **Código abierto**: Disponible en GitHub bajo licencia MIT
@@ -65,19 +65,19 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 
 **Aclaración datos**: El DANE registra **2,789,391 nacimientos** en toda Orinoquía (2020-2024), pero el sistema analiza solo **137,780 nacimientos** en los 251 registros válidos (≥10 nacimientos/año), excluyendo municipios-año con datos insuficientes.
 
-| Métrica                             | Valor                                               |
-| ------------------------------------ | --------------------------------------------------- |
-| **Registros analizados**       | 310 registros municipio-año (2020-2024)                      |
-| **Registros válidos**         | 251 registros con ≥10 nacimientos/año (estándar OMS)                              |
-| **Registros alto riesgo**      | 63 de 251 (25.1%)                                   |
-| **Nacimientos analizados**     | 137,780 nacimientos vivos en registros válidos      |
-| **Mortalidad fetal promedio**  | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)     |
-| **Mortalidad evitable**        | 49.7% de muertes maternas son PREVENIBLES           |
-| **Casos críticos detectados** | 40 registros (mortalidad >50‰) - 100% sensibilidad |
-| **R² Score Modelo Regresión**  | 0.52 (explica 52% variabilidad - bueno para salud pública) |
-| **MAE (Error Promedio)**       | 6.93‰ (desviación promedio de predicciones)          |
-| **RMSE**                       | 12.62‰ (error cuadrático medio)                       |
-| **Interpretación**             | Normal (<5‰) \| Moderado (5-10‰) \| Alto (10-20‰) \| Crítico (>20‰) |
+| Métrica                              | Valor                                                                   |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| **Registros analizados**        | 310 registros municipio-año (2020-2024)                                |
+| **Registros válidos**          | 251 registros con ≥10 nacimientos/año (estándar OMS)                 |
+| **Registros alto riesgo**       | 63 de 251 (25.1%)                                                       |
+| **Nacimientos analizados**      | 137,780 nacimientos vivos en registros válidos                         |
+| **Mortalidad fetal promedio**   | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)                        |
+| **Mortalidad evitable**         | 49.7% de muertes maternas son PREVENIBLES                               |
+| **Casos críticos detectados**  | 40 registros (mortalidad >50‰) - 100% sensibilidad                     |
+| **R² Score Modelo Regresión** | 0.52 (explica 52% variabilidad - bueno para salud pública)             |
+| **MAE (Error Promedio)**        | 6.93‰ (desviación promedio de predicciones)                           |
+| **RMSE**                        | 12.62‰ (error cuadrático medio)                                       |
+| **Interpretación**             | Normal (<5‰)\| Moderado (5-10‰) \| Alto (10-20‰) \| Crítico (>20‰) |
 
 ## Modelos Implementados
 
@@ -431,7 +431,7 @@ de Mortalidad Infantil en la Región Orinoquía. GitHub: Manuelfmachado/AlertaMa
 
 **Accede a la aplicación web en vivo:**
 
-### [Ir a AlertaMaterna Dashboard](https://alertamaterna-kvrpcaccn3stwgxq5fzjoy.streamlit.app)
+### [Ir a AlertaMaterna Dashboard](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
 
 Explora el sistema de clasificación de riesgo obstétrico en la región Orinoquía y utiliza el predictor de mortalidad infantil directamente desde tu navegador.
 
