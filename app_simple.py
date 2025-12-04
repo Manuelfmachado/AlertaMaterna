@@ -231,11 +231,12 @@ def preparar_datos(df):
 
 def main():
     # Header
-    col1, col2 = st.columns([1, 4])
+    col1, col2 = st.columns([1, 3])
     with col1:
-        st.image("ALERTAMATERNA.png", width=220)
+        st.image("ALERTAMATERNA.png", width=280)
     with col2:
-        st.title("AlertaMaterna")
+        st.markdown("<h1 style='font-size: 4.5rem; margin-top: 30px;'>AlertaMaterna</h1>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 2px solid #FF69B4; margin: 20px 0;'>", unsafe_allow_html=True)
     st.markdown("### Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil")
     st.markdown("**Región Orinoquía** | Meta, Arauca, Casanare, Guaviare, Vichada")
     st.markdown("---")
@@ -422,11 +423,12 @@ def main():
         with col2:
             st.metric(etiqueta2, f"{items_alto_riesgo}", help=help2)
         with col3:
+            periodo_texto = f"{anio_sel}" if anio_sel != 'Todos' else "periodo 2020-2024"
             st.metric("Nacimientos", f"{int(total_nac):,}", 
-                     help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
+                     help=f"Total de nacimientos vivos registrados en {periodo_texto} según datos oficiales del DANE")
         with col4:
             st.metric("Defunciones", f"{int(total_defunciones):,}", 
-                     help="Total de defunciones (fetales, neonatales e infantiles <1 año) registradas en el periodo/año seleccionado. Incluye todas las causas de muerte.")
+                     help=f"Total de defunciones (fetales, neonatales e infantiles <1 año) registradas en {periodo_texto}. Incluye todas las causas de muerte.")
         
         st.markdown("---")
         
