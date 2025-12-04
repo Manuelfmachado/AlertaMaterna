@@ -723,7 +723,7 @@ def main():
         
         **Interpretación:** 🟢 Normal (<5‰) | 🟡 Moderado (5-10‰) | 🟠 Alto (10-20‰) | 🔴 Crítico (>20‰)
         
-        **Modelo:** XGBoost Regressor entrenado con 310 municipios de Orinoquía (2020-2024) | **R²: 0.52** | **MAE: 6.93‰**
+        **Modelo:** XGBoost Regressor entrenado con 310 registros municipio-año de Orinoquía (2020-2024). 251 registros válidos (≥10 nacimientos/año, estándar OMS).
         """)
         
         model, scaler = cargar_modelo()
