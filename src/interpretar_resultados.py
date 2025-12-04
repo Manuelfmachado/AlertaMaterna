@@ -149,7 +149,7 @@ def decodificar_features(df):
         lambda x: interpretar_porcentaje(x, "bajo_peso")
     )
     
-    df_output['prematuros_categoria'] = df_output['pct_prematuro'].apply(
+    df_output['prematuros_categoria'] = df_output['pct_prematuros'].apply(
         lambda x: interpretar_porcentaje(x, "prematuros")
     )
     
@@ -157,7 +157,7 @@ def decodificar_features(df):
         lambda x: interpretar_porcentaje(x, "sin_control_prenatal")
     )
     
-    df_output['cesareas_categoria'] = df_output['pct_cesarea'].apply(
+    df_output['cesareas_categoria'] = df_output['pct_cesareas'].apply(
         lambda x: interpretar_porcentaje(x, "cesareas")
     )
     
