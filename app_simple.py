@@ -954,6 +954,17 @@ def main():
             fig.update_layout(height=350)
             st.plotly_chart(fig, use_container_width=True)
             
+            # Texto explicativo breve bajo el gauge
+            st.markdown(f"""
+            **¿Qué representa este valor?**
+
+            - Esta es una **estimación de la tasa de mortalidad infantil (0–11 meses) por 1.000 nacidos vivos**.
+            - Como referencia, la **OMS** reporta alrededor de **5‰** a nivel global, mientras que **Colombia** se sitúa entre **8–12‰** (DANE 2023).
+            - Un valor de **{tasa_pred:.2f}‰** en este municipio sugiere un nivel de riesgo **{nivel}** frente a estos estándares internacionales.
+
+            _Este indicador se calcula con datos y patrones aprendidos de fuentes oficiales (DANE 2020–2024) y se interpreta según referencias de **OMS/OPS/MinSalud**. Es una estimación para **apoyo a la decisión**, no un valor oficial de vigilancia._
+            """)
+
             # Interpretación
             if nivel == "NORMAL":
                 st.success(f"""
