@@ -366,7 +366,7 @@ def main():
     # TAB 1: PANORAMA GENERAL
     # ========================================================================
     
-    tab1, tab2 = st.tabs(["Panorama General", "Predictor de Riesgo"])
+    tab1, tab2 = st.tabs(["Panorama General", "Predecir Mortalidad Infantil"])
     
     with tab1:
         # KPIs principales - Título dinámico según filtros
