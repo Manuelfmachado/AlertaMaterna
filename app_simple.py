@@ -802,32 +802,37 @@ def main():
             else:
                 pct_evitable = 0.55  # 55% - muchas muertes evitables
             
-            # Preparar features (28 variables del modelo - SIN ANO, COD_DPTO, COD_MUNIC, total_defunciones)
+            # Preparar features (33 variables exactas que espera el scaler)
             features = {
                 'apgar_bajo_promedio': apgar_bajo / 100,
                 'atenciones_per_nacimiento': 12.0,  # Promedio regional
-                'consultas_per_nacimiento': max(consultas, 6.0),  # Mínimo 6 consultas
+                'consultas_per_nacimiento': max(consultas / nac * 1000, 0.01) if nac > 0 else 0.01,
                 'consultas_promedio': consultas,
                 'defunciones_fetales': int(nac * mort_fetal / 1000),
                 'edad_materna_promedio': edad_materna,
                 'indice_fragilidad_sistema': fragilidad_base,  # ADAPTATIVO
+                'instituciones_per_1000nac': (num_inst / nac * 1000) if nac > 0 else 0,
                 'num_instituciones': num_inst,
-                'pct_area_rural': 0.35,  # 35% población rural Orinoquía
-                'pct_bajo_nivel_educativo': bajo_educ / 100,
+                'pct_apgar_bajo': apgar_bajo / 100,
                 'pct_bajo_peso': bajo_peso / 100,
                 'pct_cesareas': cesarea / 100,
-                'pct_embarazo_multiple': 0.02,  # 2% constante nacional
+                'pct_consultas_insuficientes': sin_prenatal / 100,  # Aproximación
+                'pct_educacion_baja': bajo_educ / 100,
                 'pct_embarazos_alto_riesgo': pct_alto_riesgo,  # ADAPTATIVO
                 'pct_instituciones_publicas': 0.60,  # 60% públicas Orinoquía
                 'pct_madres_adolescentes': adolesc / 100,
-                'pct_madres_edad_avanzada': edad_avanz / 100,
+                'pct_madres_solteras': 0.35,  # 35% promedio regional
                 'pct_mortalidad_evitable': pct_evitable,  # ADAPTATIVO
+                'pct_multiparidad': 0.30,  # 30% promedio
+                'pct_partos_multiples': 0.02,  # 2% constante nacional
                 'pct_prematuros': prematuro / 100,
                 'pct_regimen_subsidiado': 0.50,  # 50% régimen subsidiado
                 'pct_sin_control_prenatal': sin_prenatal / 100,
-                'pct_sin_seguridad_social': 0.08,  # 8% sin seguridad social
+                'pct_sin_seguridad': 0.08,  # 8% sin seguridad social
+                'pct_urgencias': 0.15,  # 15% promedio
                 'presion_obstetrica': presion_obs,
                 'procedimientos_per_nacimiento': 4.0,  # Promedio procedimientos
+                't_ges_promedio': 38.0,  # 38 semanas promedio
                 'tasa_mortalidad_fetal': mort_fetal,
                 'tasa_mortalidad_neonatal': mort_neonatal,
                 'total_nacimientos': nac,
