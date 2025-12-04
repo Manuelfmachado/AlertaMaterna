@@ -1,6 +1,7 @@
 """
 AlertaMaterna: Sistema de Clasificación de Riesgo Obstétrico 
 y Predicción de Mortalidad Infantil en la Región Orinoquía
+Version: 2.0 - Updated: 2025-12-04
 """
 
 import streamlit as st
