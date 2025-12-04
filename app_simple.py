@@ -301,12 +301,19 @@ def main():
             
             **Municipios Alto Riesgo**: Top 10 con mayor puntaje de riesgo
             
-            ### Predictor de Riesgo
+            ### Predictor de Mortalidad Infantil
             
-            Ingresa indicadores de un municipio para estimar probabilidad de alta mortalidad:
-            - Verde (<30%): Riesgo bajo
-            - Amarillo (30-60%): Riesgo medio
-            - Rojo (>60%): Riesgo alto
+            Ingresa indicadores de un municipio para predecir la **tasa de mortalidad infantil (<1 año) en ‰** (muertes por cada 1,000 nacimientos).
+            
+            **Clasificación según estándares OMS/Colombia:**
+            - 🟢 Normal (<5‰): Estándar OMS
+            - 🟡 Moderado (5-10‰): Por encima de OMS, dentro de rango Colombia
+            - 🟠 Alto (10-20‰): Requiere intervención prioritaria
+            - 🔴 Crítico (>20‰): Emergencia sanitaria
+            
+            **Modelo:** XGBoost Regressor | R²: 0.52 | MAE: 6.93‰
+            
+            **Interpretación:** Los valores se contrastan con referencias de OMS (~5‰ global) y Colombia (8-12‰ según DANE 2023). Se calculan con datos abiertos de www.datos.gov.co.
             """)
         
         st.markdown("---")
