@@ -802,14 +802,10 @@ def main():
             else:
                 pct_evitable = 0.55  # 55% - muchas muertes evitables
             
-            # Preparar features (33 variables del modelo - orden alfabético)
-            total_def = int(nac * (mort_fetal + mort_neonatal) / 1000)
+            # Preparar features (28 variables del modelo - SIN ANO, COD_DPTO, COD_MUNIC, total_defunciones)
             features = {
-                'ANO': 2024,  # Año actual por defecto
                 'apgar_bajo_promedio': apgar_bajo / 100,
                 'atenciones_per_nacimiento': 12.0,  # Promedio regional
-                'COD_DPTO': 50,  # Meta por defecto (puede cambiarse)
-                'COD_MUNIC': 1,  # Código municipio
                 'consultas_per_nacimiento': max(consultas, 6.0),  # Mínimo 6 consultas
                 'consultas_promedio': consultas,
                 'defunciones_fetales': int(nac * mort_fetal / 1000),
@@ -834,7 +830,6 @@ def main():
                 'procedimientos_per_nacimiento': 4.0,  # Promedio procedimientos
                 'tasa_mortalidad_fetal': mort_fetal,
                 'tasa_mortalidad_neonatal': mort_neonatal,
-                'total_defunciones': total_def,
                 'total_nacimientos': nac,
                 'urgencias_per_nacimiento': 2.0  # Promedio urgencias
             }
