@@ -394,7 +394,7 @@ def main():
         st.subheader(titulo_resumen)
         st.caption("Indicadores calculados con datos abiertos directos de www.datos.gov.co, DANE 2020–2024 y referenciados contra estándares de OMS/OPS/MinSalud.")
         
-        col1, col2, col3, col4, col5 = st.columns([1.2, 1.5, 1.3, 1.5, 1.5])
+        col1, col2, col3, col4 = st.columns(4)
         
         # KPIs: Contar municipios únicos en año seleccionado o registros si es "Todos"
         if anio_sel == 'Todos':
@@ -415,13 +415,7 @@ def main():
             help2 = f"Municipios clasificados como ALTO RIESGO en {anio_sel}. Criterios: ≥3 factores de riesgo o mortalidad fetal >50%"
         
         total_nac = df_filtrado['total_nacimientos'].sum()
-        mort_prom = df_filtrado['tasa_mortalidad_fetal'].mean()
-        
-        # Calcular muertes evitables dinámicamente
         total_defunciones = df_filtrado['total_defunciones'].sum()
-        pct_evitable_prom = df_filtrado['pct_mortalidad_evitable'].mean()
-        # pct_mortalidad_evitable está como porcentaje (0-100), convertir a decimal
-        muertes_evitables = int(total_defunciones * pct_evitable_prom / 100)
         
         with col1:
             st.metric(etiqueta1, f"{total_items}", help=help1)
@@ -431,11 +425,8 @@ def main():
             st.metric("Nacimientos", f"{int(total_nac):,}", 
                      help="Total de nacimientos vivos registrados en el periodo/año seleccionado según datos oficiales del DANE")
         with col4:
-            st.metric("Mortalidad. Fetal %", f"{mort_prom:.1f}%",
-                     help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10% (Normal), 10-30% (Moderado), 30-50% (Alto), >50% (Crítico)")
-        with col5:
-            st.metric("Muertes Evitables", f"{muertes_evitables:,}", 
-                     help=f"Número estimado de muertes que podrían prevenirse con intervención oportuna según clasificación CIE-10 ({pct_evitable_prom:.1f}% de {int(total_defunciones):,} defunciones totales). Estas muertes son causadas por enfermedades PREVENIBLES.")
+            st.metric("Defunciones", f"{int(total_defunciones):,}", 
+                     help="Total de defunciones (fetales, neonatales e infantiles <1 año) registradas en el periodo/año seleccionado. Incluye todas las causas de muerte.")
         
         # Métricas del Modelo ML
         st.markdown("---")
