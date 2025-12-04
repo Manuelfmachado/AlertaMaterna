@@ -755,7 +755,7 @@ def main():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown("#### 📈 Demográficos")
+            st.markdown("#### Demográficos")
             nac = st.number_input("Total Nacimientos", 1, 5000, 800, help="Número anual de nacimientos en el municipio")
             edad_materna = st.slider("Edad Materna Promedio", 15.0, 45.0, 26.5, 0.5, help="Edad promedio de las madres")
             adolesc = st.slider("% Madres Adolescentes (<18)", 0.0, 50.0, 12.0, 0.5, help="Porcentaje de madres menores de 18 años")
@@ -763,7 +763,7 @@ def main():
             bajo_educ = st.slider("% Bajo Nivel Educativo", 0.0, 100.0, 22.0, 1.0, help="Porcentaje de madres sin educación formal")
         
         with col2:
-            st.markdown("#### ⚕️ Clínicos")
+            st.markdown("#### Clínicos")
             mort_neonatal = st.slider("Tasa Mort. Neonatal 0-7 días (‰)", 0.0, 50.0, 3.5, 0.5, help="Feature más importante (10.8%). Normal: <5‰")
             mort_fetal = st.slider("Tasa Mort. Fetal (‰)", 0.0, 100.0, 7.0, 0.5, help="Muertes fetales por 1,000 nacimientos. Normal: <10‰, Crítico: >50‰")
             bajo_peso = st.slider("% Bajo Peso (<2500g)", 0.0, 30.0, 8.5, 0.5, help="Porcentaje de recién nacidos con bajo peso")
@@ -771,7 +771,7 @@ def main():
             apgar_bajo = st.slider("% APGAR Bajo (<7)", 0.0, 20.0, 1.0, 0.5, help="Porcentaje con APGAR bajo a los 5 minutos")
         
         with col3:
-            st.markdown("#### 🏥 Acceso a Salud")
+            st.markdown("#### Acceso a Salud")
             sin_prenatal = st.slider("% Sin Control Prenatal", 0.0, 100.0, 12.0, 1.0, help="Porcentaje de madres sin control prenatal. OMS recomienda <5%")
             consultas = st.slider("Consultas Promedio", 0.0, 15.0, 6.5, 0.5, help="OMS recomienda mínimo 8 consultas")
             cesarea = st.slider("% Cesáreas", 0.0, 100.0, 38.0, 1.0, help="OMS recomienda 10-15%. Valores >30% indican sobreuso")
