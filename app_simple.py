@@ -1043,7 +1043,7 @@ def main():
         """
         <div style='text-align: center'>
             <p><b>AlertaMaterna</b> - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil</p>
-            <p>Región Orinoquía | Datos abiertos directos de <b>www.datos.gov.co</b> (DANE 2020–2024) | Referencias: OMS / OPS / MinSalud | 2025</p>
+            <p>Región Orinoquía | Datos abiertos directos de <b>www.datos.gov.co</b> y DANE 2020–2024 | Referencias: OMS / OPS / MinSalud | 2025</p>
         </div>
         """,
         unsafe_allow_html=True
