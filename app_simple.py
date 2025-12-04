@@ -382,7 +382,7 @@ def main():
             titulo_resumen = f"Resumen - {depto_sel} {anio_sel}"
         
         st.subheader(titulo_resumen)
-        st.caption("Indicadores calculados con datos abiertos directos de www.datos.gov.co (DANE 2020–2024) y referenciados contra estándares de OMS/OPS/MinSalud.")
+        st.caption("Indicadores calculados con datos abiertos directos de www.datos.gov.co y DANE 2020–2024 y referenciados contra estándares de OMS/OPS/MinSalud.")
         
         col1, col2, col3, col4, col5 = st.columns([1.2, 1.5, 1.3, 1.5, 1.5])
         
