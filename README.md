@@ -96,7 +96,7 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 
 **Algoritmo**: XGBoost Regressor (predice valores continuos en ‰)
 
-**Features**: 28 variables sociosanitarias (5 demográficas + 8 clínicas + 3 institucionales + 4 acceso a servicios RIPS + 3 socioeconómicas + 2 atención prenatal + 4 críticas avanzadas)
+**Features**: 34 indicadores sociosanitarios (5 demográficas + 7 clínicas + 3 institucionales + 5 acceso a servicios RIPS + 3 socioeconómicas + 3 atención prenatal + 1 mortalidad neonatal + 2 mortalidad fetal + 2 presión obstétrica + 1 mortalidad evitable + 1 embarazo alto riesgo + 1 índice fragilidad)
 
 **Performance**:
 
@@ -179,10 +179,10 @@ AlertaMaterna/
 │   │   ├── BD-EEVV-Defunciones*.csv
 │   │   └── codigos_*.csv
 │   └── processed/                        # Datos procesados
-│       ├── features_municipio_anio.csv   # 310 registros con 29 features
+│       ├── features_municipio_anio.csv   # 310 registros con 34 indicadores
 │       └── features_alerta_materna.csv   # Con targets y clasificación
 ├── src/
-│   ├── features.py                       # Generación de 29 features
+│   ├── features.py                       # Generación de 34 indicadores
 │   └── train_model.py                    # Entrenamiento de modelos
 ├── models/                                # Modelos entrenados (.pkl)
 │   ├── modelo_mortalidad_xgb.pkl
