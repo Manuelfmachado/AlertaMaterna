@@ -203,16 +203,16 @@ def preparar_datos(df):
     p75_mort_fetal = df['tasa_mortalidad_fetal'].quantile(0.75)
     p75_sin_prenatal = df['pct_sin_control_prenatal'].quantile(0.75)
     p75_bajo_peso = df['pct_bajo_peso'].quantile(0.75)
-    p75_prematuro = df['pct_prematuros'].quantile(0.75)
-    p25_cesarea = df['pct_cesareas'].quantile(0.25)
+    p75_prematuro = df['pct_prematuro'].quantile(0.75)
+    p25_cesarea = df['pct_cesarea'].quantile(0.25)
     p75_presion_obs = df['presion_obstetrica'].quantile(0.75)
     
     # Calcular puntuación (0-8 puntos máximo)
     df['puntos_riesgo'] = 0
     df.loc[df['tasa_mortalidad_fetal'] > p75_mort_fetal, 'puntos_riesgo'] += 1
     df.loc[df['pct_bajo_peso'] > p75_bajo_peso, 'puntos_riesgo'] += 1
-    df.loc[df['pct_prematuros'] > p75_prematuro, 'puntos_riesgo'] += 1
-    df.loc[df['pct_cesareas'] < p25_cesarea, 'puntos_riesgo'] += 1
+    df.loc[df['pct_prematuro'] > p75_prematuro, 'puntos_riesgo'] += 1
+    df.loc[df['pct_cesarea'] < p25_cesarea, 'puntos_riesgo'] += 1
     df.loc[df['presion_obstetrica'] > p75_presion_obs, 'puntos_riesgo'] += 1
     df.loc[df['pct_sin_control_prenatal'] > p75_sin_prenatal, 'puntos_riesgo'] += 1
     df.loc[df['pct_sin_control_prenatal'] > UMBRAL_CRITICO_SIN_PRENATAL, 'puntos_riesgo'] += 1
@@ -819,7 +819,7 @@ def main():
                 'pct_area_rural': 0.35,  # 35% población rural Orinoquía
                 'pct_bajo_nivel_educativo': bajo_educ / 100,
                 'pct_bajo_peso': bajo_peso / 100,
-                'pct_cesareas': cesarea / 100,
+                'pct_cesarea': cesarea / 100,
                 'pct_embarazo_multiple': 0.02,  # 2% constante nacional
                 'pct_embarazos_alto_riesgo': pct_alto_riesgo,  # ADAPTATIVO
                 'pct_instituciones_publicas': 0.60,  # 60% públicas Orinoquía
