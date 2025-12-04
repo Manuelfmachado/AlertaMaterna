@@ -420,6 +420,7 @@ def main():
         # Calcular muertes evitables dinámicamente
         total_defunciones = df_filtrado['total_defunciones'].sum()
         pct_evitable_prom = df_filtrado['pct_mortalidad_evitable'].mean()
+        # pct_mortalidad_evitable está como decimal (0-1), no como porcentaje
         muertes_evitables = int(total_defunciones * pct_evitable_prom)
         
         with col1:
@@ -434,7 +435,7 @@ def main():
                      help="Tasa promedio de muertes fetales por cada 1,000 nacimientos. Valores de referencia: <10% (Normal), 10-30% (Moderado), 30-50% (Alto), >50% (Crítico)")
         with col5:
             st.metric("Muertes Evitables", f"{muertes_evitables:,}", 
-                     help=f"Número estimado de muertes que podrían prevenirse con intervención oportuna según clasificación CIE-10 ({pct_evitable_prom*100:.1f}% de {int(total_defunciones):,} defunciones totales). Estas muertes son causadas por enfermedades PREVENIBLES.")
+                     help=f"Número estimado de muertes que podrían prevenirse con intervención oportuna según clasificación CIE-10 ({pct_evitable_prom:.1%} de {int(total_defunciones):,} defunciones totales). Estas muertes son causadas por enfermedades PREVENIBLES.")
         
         # Métricas del Modelo ML
         st.markdown("---")
