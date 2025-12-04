@@ -35,7 +35,7 @@ El objetivo es generar **valor público** mediante inteligencia artificial aplic
 
 **AlertaMaterna** es un sistema de inteligencia artificial que identifica municipios de la región Orinoquía con alto riesgo de mortalidad materno-infantil, utilizando datos oficiales del DANE del periodo 2020-2024.
 
-El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al nacer, prematuridad, acceso a servicios, mortalidad neonatal, causas evitables) para clasificar **55 municipios** en dos categorías: **ALTO RIESGO** o **BAJO RIESGO**, además de predecir la probabilidad de mortalidad infantil en cada municipio.
+El sistema analiza **34 indicadores de salud** (atención prenatal, bajo peso al nacer, prematuridad, acceso a servicios, mortalidad neonatal, causas evitables) para clasificar **55 municipios** en dos categorías: **ALTO RIESGO** o **BAJO RIESGO**, además de predecir la probabilidad de mortalidad infantil en cada municipio.
 
 ### Objetivos
 
@@ -74,10 +74,6 @@ El sistema analiza **29 indicadores de salud** (atención prenatal, bajo peso al
 | **Mortalidad fetal promedio**   | 23.4‰ (23.4 muertes por cada 1,000 nacimientos)                        |
 | **Mortalidad evitable**         | 49.7% de muertes maternas son PREVENIBLES                               |
 | **Casos críticos detectados**  | 40 registros (mortalidad >50‰) - 100% sensibilidad                     |
-| **R² Score Modelo Regresión** | 0.52 (explica 52% variabilidad - bueno para salud pública)             |
-| **MAE (Error Promedio)**        | 6.93‰ (desviación promedio de predicciones)                           |
-| **RMSE**                        | 12.62‰ (error cuadrático medio)                                       |
-| **Interpretación**             | Normal (<5‰)\| Moderado (5-10‰) \| Alto (10-20‰) \| Crítico (>20‰) |
 
 ## Modelos Implementados
 
@@ -206,10 +202,15 @@ El dashboard tiene **2 pestañas principales**:
 
 ### 1. Panorama General
 
-- **Indicadores principales**: Municipios analizados, alto riesgo, nacimientos, mortalidad fetal
+- **Indicadores principales (4 KPIs)**: 
+  - **Municipios**: Total de municipios en la región filtrada
+  - **Alto Riesgo**: Número absoluto de municipios clasificados como alto riesgo
+  - **Nacimientos**: Total de nacimientos registrados en el período
+  - **Defunciones**: Total de defunciones infantiles (<1 año) registradas
 - **Distribución de riesgo**: Gráfico comparativo por departamento
 - **Indicadores clave**: Promedios de mortalidad, atención prenatal, bajo peso
 - **Top 10 municipios alto riesgo**: Ranking con puntajes detallados
+- **Nota sobre datos**: Todos los datos provienen de [www.datos.gov.co](https://www.datos.gov.co/) (REPS, RIPS, DIVIPOLA) y estadísticas vitales del DANE 2020-2024
 
 ### 2. Predictor de Riesgo
 
@@ -222,7 +223,7 @@ El dashboard tiene **2 pestañas principales**:
    - **Amarillo (30-60%)**: Riesgo medio
    - **Rojo (>60%)**: Riesgo alto
 
-## Features Generadas (29 variables)
+## Features Generadas (34 indicadores)
 
 ### Demográficas (5)
 

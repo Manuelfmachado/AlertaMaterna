@@ -95,7 +95,7 @@ Las 29 variables fueron seleccionadas basándose en:
 │              PROCESAMIENTO Y FEATURES                        │
 │  Script: features.py                                         │
 │  • Agregación por municipio-año                             │
-│  • Cálculo de 24 indicadores                                │
+│  • Cálculo de 34 indicadores                                │
 │  • Filtrado de calidad (≥10 nacimientos)                    │
 └────────────────────┬────────────────────────────────────────┘
                      │
@@ -127,18 +127,16 @@ Las 29 variables fueron seleccionadas basándose en:
 
 ## 4. Ingeniería de Features
 
-### 4.1 Variables Generadas (29 features)
+### 4.1 Variables Generadas (34 indicadores)
 
-#### A. Indicadores Demográficos (7)
+#### A. Indicadores Demográficos (5)
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `total_nacimientos` | Total de nacimientos en el municipio-año | Denominador para tasas, tamaño muestral |
 | `edad_materna_promedio` | Edad promedio de las madres | Embarazos extremos (muy jóvenes/mayores) tienen mayor riesgo |
 | `pct_madres_adolescentes` | % madres <18 años | Asociado a complicaciones obstétricas (UNFPA 2013) |
-| `pct_madres_edad_avanzada` | % madres >35 años | Mayor riesgo de complicaciones (ACOG 2014) |
-| `pct_multiparidad` | % madres con >3 hijos | Gran multiparidad asociada a complicaciones |
-| `pct_bajo_nivel_educativo` | % madres sin educación formal | Proxy de nivel socioeconómico |
-| `pct_embarazo_multiple` | % embarazos gemelares/múltiples | Mayor riesgo de prematuridad y bajo peso |
+| `pct_madres_solteras` | % madres no casadas | Factor socioeconómico de riesgo |
+| `pct_educacion_baja` | % madres con educación básica | Proxy de nivel socioeconómico |
 
 #### B. Indicadores Clínicos (7)
 | Variable | Descripción | Justificación |
@@ -158,13 +156,14 @@ Las 29 variables fueron seleccionadas basándose en:
 | `pct_instituciones_publicas` | % instituciones públicas por municipio | Cobertura del sistema público (REPS diferenciado) |
 | `presion_obstetrica` | Nacimientos / instituciones | Capacidad instalada vs demanda |
 
-#### D. Indicadores de Acceso a Servicios RIPS (4) - NUEVO
+#### D. Indicadores de Acceso a Servicios RIPS (5) - NUEVO
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `atenciones_per_nacimiento` | Total atenciones obstétricas / nacimientos | Intensidad de uso del sistema de salud |
 | `consultas_per_nacimiento` | Consultas obstétricas / nacimientos | Acceso efectivo a servicios prenatales |
 | `urgencias_per_nacimiento` | Urgencias obstétricas / nacimientos | Indicador de complicaciones y acceso a emergencias |
 | `procedimientos_per_nacimiento` | Procedimientos obstétricos / nacimientos | Complejidad de atención requerida |
+| `pct_urgencias` | % atenciones de urgencia | Indicador de complicaciones obstétricas |
 
 #### E. Indicadores Socioeconómicos (3)
 | Variable | Descripción | Justificación |
