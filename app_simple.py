@@ -149,7 +149,7 @@ MODEL_DIR = 'models/'
 @st.cache_data
 def cargar_datos():
     """Carga datos principales"""
-    return pd.read_csv(f'{DATA_DIR}features_alerta_materna.csv')
+    return pd.read_csv(f'{DATA_DIR}features_municipio_anio.csv')
 
 @st.cache_data
 def cargar_coordenadas():
