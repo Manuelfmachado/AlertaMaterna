@@ -59,7 +59,7 @@ La región Orinoquía presenta características únicas que justifican un sistem
 
 ### 2.2 Justificación de Variables Seleccionadas
 
-Las 29 variables fueron seleccionadas basándose en:
+Las 34 variables fueron seleccionadas basándose en:
 
 1. **Literatura médica internacional:**
    - OMS: Indicadores de salud materno-infantil
@@ -583,11 +583,10 @@ tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 
 ### 6.2 Selección de Features
 
-**Features utilizadas: 28 de 29**
+**Features utilizadas: 34 indicadores**
 
 **Excluidas:**
 - `COD_DPTO`, `COD_MUNIC`, `ANO`: Variables de identificación (no se cuentan como features)
-- `tasa_mortalidad_infantil`: Variable target (no se usa como feature)
 
 **Nota:** El target `tasa_mortalidad_infantil` se calcula como (total_defunciones / total_nacimientos × 1000) y se predice directamente como valor continuo.
 
@@ -600,28 +599,31 @@ tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 5.  defunciones_fetales
 6.  edad_materna_promedio
 7.  indice_fragilidad_sistema [Crítica]
-8.  num_instituciones
-9.  pct_area_rural
-10. pct_bajo_nivel_educativo
-11. pct_bajo_peso
-12. pct_cesarea
-13. pct_embarazo_multiple
-14. pct_embarazos_alto_riesgo [Crítica]
-15. pct_instituciones_publicas
-16. pct_madres_adolescentes
-17. pct_madres_edad_avanzada
-18. pct_mortalidad_evitable [Crítica]
-19. pct_prematuro
-20. pct_regimen_subsidiado
-21. pct_sin_control_prenatal
-22. pct_sin_seguridad_social
-23. presion_obstetrica
-24. procedimientos_per_nacimiento (RIPS)
-25. tasa_mortalidad_fetal
-26. tasa_mortalidad_neonatal [Crítica]
-27. total_defunciones
-28. total_nacimientos
-29. urgencias_per_nacimiento (RIPS)
+8.  instituciones_per_1000nac
+9.  num_instituciones
+10. pct_cesareas
+11. pct_consultas_insuficientes
+12. pct_educacion_baja
+13. pct_embarazos_alto_riesgo [Crítica]
+14. pct_instituciones_publicas
+15. pct_madres_adolescentes
+16. pct_madres_solteras
+17. pct_mortalidad_evitable [Crítica]
+18. pct_multiparidad
+19. pct_partos_multiples
+20. pct_prematuros
+21. pct_regimen_subsidiado
+22. pct_sin_control_prenatal
+23. pct_sin_seguridad
+24. pct_urgencias
+25. presion_obstetrica
+26. procedimientos_per_nacimiento (RIPS)
+27. t_ges_promedio
+28. tasa_mortalidad_fetal
+29. tasa_mortalidad_neonatal [Crítica]
+30. total_defunciones
+31. total_nacimientos
+32. urgencias_per_nacimiento (RIPS)
 ```
 
 ### 6.3 Algoritmo Seleccionado: XGBoost
