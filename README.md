@@ -216,12 +216,16 @@ El dashboard tiene **2 pestañas principales**:
 
 **Herramienta interactiva** para evaluar municipios:
 
-1. Ingresa 20 indicadores del municipio (nacimientos, atención prenatal, APGAR, etc.)
-2. El sistema calcula probabilidad de alta mortalidad
-3. Visualización de riesgo:
-   - **Verde (<30%)**: Riesgo bajo
-   - **Amarillo (30-60%)**: Riesgo medio
-   - **Rojo (>60%)**: Riesgo alto
+1. Ingresa **15 indicadores** del municipio agrupados en:
+   - **Demográficos** (5): Nacimientos, edad materna, madres adolescentes, edad avanzada, nivel educativo
+   - **Clínicos** (5): Mortalidad neonatal, mortalidad fetal, bajo peso, prematuros, APGAR bajo
+   - **Acceso a Salud** (5): Control prenatal, consultas promedio, cesáreas, instituciones, presión obstétrica
+2. El sistema predice la **tasa de mortalidad infantil (<1 año) en ‰** (muertes por 1,000 nacimientos)
+3. Visualización con gauge interactivo que muestra:
+   - **Verde (< 5‰)**: NORMAL - dentro de estándares OMS
+   - **Amarillo (5-10‰)**: MODERADO - por encima de media global
+   - **Naranja (10-20‰)**: ALTO - requiere intervención
+   - **Rojo (> 20‰)**: CRÍTICO - crisis de salud pública
 
 ## Features Generadas (34 indicadores)
 
