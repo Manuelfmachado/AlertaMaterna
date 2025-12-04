@@ -231,6 +231,7 @@ def preparar_datos(df):
 
 def main():
     # Header
+    st.image("ALERTAMATERNA.png", width=140)
     st.title("AlertaMaterna")
     st.markdown("### Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil")
     st.markdown("**Región Orinoquía** | Meta, Arauca, Casanare, Guaviare, Vichada")
@@ -381,6 +382,7 @@ def main():
             titulo_resumen = f"Resumen - {depto_sel} {anio_sel}"
         
         st.subheader(titulo_resumen)
+        st.caption("Indicadores calculados con datos abiertos directos de www.datos.gov.co (DANE 2020–2024) y referenciados contra estándares de OMS/OPS/MinSalud.")
         
         col1, col2, col3, col4, col5 = st.columns([1.2, 1.5, 1.3, 1.5, 1.5])
         
@@ -962,7 +964,7 @@ def main():
             - Como referencia, la **OMS** reporta alrededor de **5‰** a nivel global, mientras que **Colombia** se sitúa entre **8–12‰** (DANE 2023).
             - Un valor de **{tasa_pred:.2f}‰** en este municipio sugiere un nivel de riesgo **{nivel}** frente a estos estándares internacionales.
 
-            _Este indicador se calcula con datos y patrones aprendidos de fuentes oficiales (DANE 2020–2024) y se interpreta según referencias de **OMS/OPS/MinSalud**. Es una estimación para **apoyo a la decisión**, no un valor oficial de vigilancia._
+            _Este indicador se calcula con datos y patrones aprendidos de **fuentes oficiales y datos abiertos directos de www.datos.gov.co y DANE 2020–2024** y se interpreta según referencias de **OMS/OPS/MinSalud**. Es una estimación para **apoyo a la decisión**, no un valor oficial de vigilancia._
             """)
 
             # Interpretación
@@ -1041,7 +1043,7 @@ def main():
         """
         <div style='text-align: center'>
             <p><b>AlertaMaterna</b> - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil</p>
-            <p>Región Orinoquía | Fuentes: www.datos.gov.co y DANE | Período: 2020-2024 | 2025</p>
+            <p>Región Orinoquía | Datos abiertos directos de <b>www.datos.gov.co</b> (DANE 2020–2024) | Referencias: OMS / OPS / MinSalud | 2025</p>
         </div>
         """,
         unsafe_allow_html=True
