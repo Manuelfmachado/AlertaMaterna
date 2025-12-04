@@ -428,18 +428,6 @@ def main():
             st.metric("Defunciones", f"{int(total_defunciones):,}", 
                      help="Total de defunciones (fetales, neonatales e infantiles <1 año) registradas en el periodo/año seleccionado. Incluye todas las causas de muerte.")
         
-        # Métricas del Modelo ML
-        st.markdown("---")
-        st.subheader("Desempeño del Modelo de Predicción (Regresión)")
-        
-        col1, col2, col3 = st.columns([1.5, 1.5, 1.5])
-        with col1:
-            st.metric("R² Score", "0.52", help="Coeficiente de determinación. Indica qué porcentaje de la variabilidad en mortalidad infantil es explicada por el modelo. 0.52 = el modelo explica el 52% de la variación, lo cual es BUENO para datos de salud pública con alta variabilidad")
-        with col2:
-            st.metric("MAE (Error Promedio)", "6.93‰", help="Error Absoluto Medio (Mean Absolute Error). En promedio, las predicciones se desvían 6.93 muertes por cada 1,000 nacimientos del valor real. Esto es razonable considerando que la media es 8.2‰")
-        with col3:
-            st.metric("RMSE", "12.62‰", help="Raíz del Error Cuadrático Medio (Root Mean Squared Error). Penaliza más los errores grandes. Valor controlado indica predicciones consistentes para la mayoría de casos")
-        
         st.markdown("---")
         
         # MAPA INTERACTIVO DE RIESGO
