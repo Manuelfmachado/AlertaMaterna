@@ -172,21 +172,44 @@ Las 34 variables fueron seleccionadas basándose en:
 | `pct_regimen_subsidiado` | % en régimen subsidiado | Proxy de nivel socioeconómico |
 | `pct_area_rural` | % población rural | Ruralidad asociada a menor acceso |
 
-#### F. Indicadores de Atención Prenatal (2)
+#### F. Indicadores de Atención Prenatal (3)
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
+| `consultas_promedio` | # promedio de consultas prenatales | OMS recomienda mínimo 4 consultas |
+| `pct_consultas_insuficientes` | % con <4 consultas prenatales | Atención prenatal inadecuada |
 | `pct_sin_control_prenatal` | % sin ningún control prenatal | Factor de riesgo crítico (WHO 2016) |
-| `consultas_promedio` | # promedio de consultas prenatales | OMS recomienda mínimo 8 consultas |
 
-#### G. Indicadores Críticos Avanzados (4) - NUEVO
+#### G. Indicadores Críticos Avanzados (8) - NUEVO
+
+**Mortalidad Neonatal (1):**
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
-| `tasa_mortalidad_neonatal` | Muertes 0-7 días × 1000 / nacimientos | Período crítico: 40% de mortalidad infantil ocurre en primera semana (WHO 2020). Detecta problemas en atención inmediata post-parto. Feature #1 del modelo (24.17% importancia). |
-| `pct_mortalidad_evitable` | % muertes por causas DANE 401-410, 501-506 | Identificación de muertes prevenibles según clasificación CIE-10 adaptada por DANE. 49.7% promedio indica gran margen de mejora con intervenciones dirigidas. Feature #3 del modelo (6.65% importancia). |
-| `pct_embarazos_alto_riesgo` | % con prematuridad + bajo peso + múltiples | Indicador compuesto de riesgo obstétrico. Combina 3 factores críticos asociados a mortalidad neonatal (March of Dimes 2019). Media: 93.8%. |
-| `indice_fragilidad_sistema` | (mortalidad × presión) / densidad institucional | Índice compuesto que mide vulnerabilidad sistémica: alta mortalidad + alta demanda + baja capacidad = fragilidad crítica. Escala 0-100, 23 municipios >80. |
+| `tasa_mortalidad_neonatal` | Muertes 0-27 días × 1000 / nacimientos | Período crítico: 40% de mortalidad infantil ocurre en primera semana (WHO 2020). Detecta problemas en atención inmediata post-parto. Feature #1 del modelo (24.17% importancia). |
 
-**Nota:** Las features institucionales (C) ahora utilizan datos reales diferenciados por municipio del REPS, en lugar de promedios globales. Las features de acceso a servicios (D) son nuevas y provienen del procesamiento de los RIPS 2020-2024. Las features críticas avanzadas (G) fueron agregadas en noviembre 2025 y mejoraron el ROC-AUC de 0.71 a 0.7731 (+9.2%).
+**Mortalidad Fetal (2):**
+| Variable | Descripción | Justificación |
+|----------|-------------|---------------|
+| `defunciones_fetales` | Número absoluto de muertes fetales | Numerador para cálculo de tasas |
+| `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nacimientos | Indicador principal OMS. Media regional: 23.4‰ |
+
+**Presión Obstétrica (2):**
+| Variable | Descripción | Justificación |
+|----------|-------------|---------------|
+| `total_defunciones` | Muertes fetales + no fetales (<1 año) | Denominador para presión |
+| `presion_obstetrica` | Total defunciones × 1000 / nacimientos | Medida agregada de estrés del sistema: nacimientos / fallecimientos |
+
+**Causas Evitables (1):**
+| Variable | Descripción | Justificación |
+|----------|-------------|---------------|
+| `pct_mortalidad_evitable` | % muertes por causas DANE 401-410, 501-506 | Identificación de muertes prevenibles según CIE-10 adaptada por DANE. 49.7% promedio indica gran margen de mejora. Feature #3 del modelo (6.65% importancia). |
+
+**Riesgo Obstétrico Compuesto (2):**
+| Variable | Descripción | Justificación |
+|----------|-------------|---------------|
+| `pct_embarazos_alto_riesgo` | % con prematuridad + bajo peso + múltiples | Indicador compuesto: combina 3 factores críticos asociados a mortalidad neonatal (March of Dimes 2019). Media: 93.8%. |
+| `indice_fragilidad_sistema` | Índice compuesto (0-100) basado en componentes críticos | Mide vulnerabilidad sistémica: alta mortalidad + baja cobertura prenatal + falta de aseguramiento + mortalidad evitable. Escala 0-100, 23 municipios >80. |
+
+**Nota:** Las features institucionales (C) utilizan datos diferenciados por municipio del REPS. Las features de acceso a servicios (D) provienen del procesamiento de los RIPS 2020-2024. Las features críticas avanzadas (G) detectan vulnerabilidades específicas en mortalidad neonatal, presión obstétrica y fragilidad del sistema.
 
 ### 4.2 Cálculo Detallado de Features Principales
 
