@@ -81,11 +81,11 @@ def crear_indice_riesgo_obstetrico(df):
         print(f"\n {excluidos} registros excluidos (< {MIN_NACIMIENTOS} nacimientos)")
     
     # Calcular percentiles sobre datos filtrados
-    p25_cesarea = df_filtrado['pct_cesarea'].quantile(0.25)
+    p25_cesarea = df_filtrado['pct_cesareas'].quantile(0.25)
     p75_mort_fetal = df_filtrado['tasa_mortalidad_fetal'].quantile(0.75)
     p75_sin_prenatal = df_filtrado['pct_sin_control_prenatal'].quantile(0.75)
     p75_bajo_peso = df_filtrado['pct_bajo_peso'].quantile(0.75)
-    p75_prematuro = df_filtrado['pct_prematuro'].quantile(0.75)
+    p75_prematuro = df_filtrado['pct_prematuros'].quantile(0.75)
     p75_presion_obs = df_filtrado['presion_obstetrica'].quantile(0.75)
     
     print("\n Criterios basados en percentiles:")
@@ -102,8 +102,8 @@ def crear_indice_riesgo_obstetrico(df):
     # Criterios con peso normal (1 punto c/u)
     df_filtrado.loc[df_filtrado['tasa_mortalidad_fetal'] > p75_mort_fetal, 'puntos_riesgo'] += 1
     df_filtrado.loc[df_filtrado['pct_bajo_peso'] > p75_bajo_peso, 'puntos_riesgo'] += 1
-    df_filtrado.loc[df_filtrado['pct_prematuro'] > p75_prematuro, 'puntos_riesgo'] += 1
-    df_filtrado.loc[df_filtrado['pct_cesarea'] < p25_cesarea, 'puntos_riesgo'] += 1
+    df_filtrado.loc[df_filtrado['pct_prematuros'] > p75_prematuro, 'puntos_riesgo'] += 1
+    df_filtrado.loc[df_filtrado['pct_cesareas'] < p25_cesarea, 'puntos_riesgo'] += 1
     df_filtrado.loc[df_filtrado['presion_obstetrica'] > p75_presion_obs, 'puntos_riesgo'] += 1
     
     # Criterio de atención prenatal (peso doble si es extremo)
