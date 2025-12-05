@@ -2,8 +2,8 @@
 
 ## Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil en la Región Orinoquía
 
-**Región:** Orinoquía, Colombia (Meta, Arauca, Casanare, Guaviare, Vichada)  
-**Periodo de análisis:** 2020-2024  
+**Región:** Orinoquía, Colombia (Meta, Arauca, Casanare, Guaviare, Vichada)
+**Periodo de análisis:** 2020-2024
 **Fuentes de datos:** DANE y www.datos.gov.co
 
 ---
@@ -35,6 +35,7 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 **Aclaración datos**: Los datos brutos del DANE contienen **2,789,391 nacimientos** en toda Orinoquía (2020-2024), pero el análisis se realiza sobre **137,780 nacimientos** en los 251 registros que cumplen el estándar OMS (≥10 nacimientos/año). Se excluyen municipios-año con datos insuficientes para garantizar validez estadística.
 
 **Resultados principales:**
+
 - 310 registros municipio-año analizados (2020-2024)
 - 251 registros válidos con ≥10 nacimientos/año (estándar OMS)
 - **63 registros clasificados como alto riesgo (25.1%)**
@@ -62,16 +63,17 @@ La región Orinoquía presenta características únicas que justifican un sistem
 Las 34 variables fueron seleccionadas basándose en:
 
 1. **Literatura médica internacional:**
+
    - OMS: Indicadores de salud materno-infantil
    - UNICEF: Factores de riesgo en salud neonatal
    - Ministerio de Salud Colombia: Guías de atención prenatal
-
 2. **Estudios epidemiológicos previos:**
+
    - Asociación entre bajo peso al nacer y mortalidad (Wilcox 2001)
    - Importancia del control prenatal (WHO 2016)
    - Factores de riesgo en embarazo adolescente (UNFPA 2013)
-
 3. **Disponibilidad de datos:**
+
    - Todas las variables provienen de registros oficiales DANE
    - Cobertura completa para la región y periodo de estudio
 
@@ -130,83 +132,94 @@ Las 34 variables fueron seleccionadas basándose en:
 ### 4.1 Variables Generadas (34 indicadores)
 
 #### A. Indicadores Demográficos (5)
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `total_nacimientos` | Total de nacimientos en el municipio-año | Denominador para tasas, tamaño muestral |
-| `edad_materna_promedio` | Edad promedio de las madres | Embarazos extremos (muy jóvenes/mayores) tienen mayor riesgo |
-| `pct_madres_adolescentes` | % madres <18 años | Asociado a complicaciones obstétricas (UNFPA 2013) |
-| `pct_madres_solteras` | % madres no casadas | Factor socioeconómico de riesgo |
-| `pct_educacion_baja` | % madres con educación básica | Proxy de nivel socioeconómico |
+
+| Variable                    | Descripción                              | Justificación                                                |
+| --------------------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| `total_nacimientos`       | Total de nacimientos en el municipio-año | Denominador para tasas, tamaño muestral                      |
+| `edad_materna_promedio`   | Edad promedio de las madres               | Embarazos extremos (muy jóvenes/mayores) tienen mayor riesgo |
+| `pct_madres_adolescentes` | % madres <18 años                        | Asociado a complicaciones obstétricas (UNFPA 2013)           |
+| `pct_madres_solteras`     | % madres no casadas                       | Factor socioeconómico de riesgo                              |
+| `pct_educacion_baja`      | % madres con educación básica           | Proxy de nivel socioeconómico                                |
 
 #### B. Indicadores Clínicos (7)
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `pct_bajo_peso` | % nacidos con <2500g | Predictor de mortalidad neonatal (Wilcox 2001) |
-| `pct_prematuro` | % nacidos <37 semanas | Principal causa de mortalidad neonatal (WHO) |
-| `pct_cesarea` | % partos por cesárea | Proxy de acceso a atención especializada |
-| `apgar_bajo_promedio` | % APGAR <7 a los 5 min | Indicador de asfixia perinatal |
-| `defunciones_fetales` | Número de muertes fetales | Numerador para mortalidad fetal |
-| `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nac | Indicador principal OMS |
-| `total_defunciones` | Muertes <1 año | Para target de mortalidad infantil |
+
+| Variable                  | Descripción                  | Justificación                                 |
+| ------------------------- | ----------------------------- | ---------------------------------------------- |
+| `pct_bajo_peso`         | % nacidos con <2500g          | Predictor de mortalidad neonatal (Wilcox 2001) |
+| `pct_prematuro`         | % nacidos <37 semanas         | Principal causa de mortalidad neonatal (WHO)   |
+| `pct_cesarea`           | % partos por cesárea         | Proxy de acceso a atención especializada      |
+| `apgar_bajo_promedio`   | % APGAR <7 a los 5 min        | Indicador de asfixia perinatal                 |
+| `defunciones_fetales`   | Número de muertes fetales    | Numerador para mortalidad fetal                |
+| `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nac | Indicador principal OMS                        |
+| `total_defunciones`     | Muertes <1 año               | Para target de mortalidad infantil             |
 
 #### C. Indicadores Institucionales (3)
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `num_instituciones` | # instituciones de salud por municipio | Acceso a servicios (REPS diferenciado) |
+
+| Variable                       | Descripción                            | Justificación                                     |
+| ------------------------------ | --------------------------------------- | -------------------------------------------------- |
+| `num_instituciones`          | # instituciones de salud por municipio  | Acceso a servicios (REPS diferenciado)             |
 | `pct_instituciones_publicas` | % instituciones públicas por municipio | Cobertura del sistema público (REPS diferenciado) |
-| `presion_obstetrica` | Nacimientos / instituciones | Capacidad instalada vs demanda |
+| `presion_obstetrica`         | Nacimientos / instituciones             | Capacidad instalada vs demanda                     |
 
 #### D. Indicadores de Acceso a Servicios RIPS (5) - NUEVO
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `atenciones_per_nacimiento` | Total atenciones obstétricas / nacimientos | Intensidad de uso del sistema de salud |
-| `consultas_per_nacimiento` | Consultas obstétricas / nacimientos | Acceso efectivo a servicios prenatales |
-| `urgencias_per_nacimiento` | Urgencias obstétricas / nacimientos | Indicador de complicaciones y acceso a emergencias |
-| `procedimientos_per_nacimiento` | Procedimientos obstétricos / nacimientos | Complejidad de atención requerida |
-| `pct_urgencias` | % atenciones de urgencia | Indicador de complicaciones obstétricas |
+
+| Variable                          | Descripción                                | Justificación                                     |
+| --------------------------------- | ------------------------------------------- | -------------------------------------------------- |
+| `atenciones_per_nacimiento`     | Total atenciones obstétricas / nacimientos | Intensidad de uso del sistema de salud             |
+| `consultas_per_nacimiento`      | Consultas obstétricas / nacimientos        | Acceso efectivo a servicios prenatales             |
+| `urgencias_per_nacimiento`      | Urgencias obstétricas / nacimientos        | Indicador de complicaciones y acceso a emergencias |
+| `procedimientos_per_nacimiento` | Procedimientos obstétricos / nacimientos   | Complejidad de atención requerida                 |
+| `pct_urgencias`                 | % atenciones de urgencia                    | Indicador de complicaciones obstétricas           |
 
 #### E. Indicadores Socioeconómicos (3)
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `pct_sin_seguridad_social` | % sin afiliación en salud | Acceso a servicios |
-| `pct_regimen_subsidiado` | % en régimen subsidiado | Proxy de nivel socioeconómico |
-| `pct_area_rural` | % población rural | Ruralidad asociada a menor acceso |
+
+| Variable                     | Descripción               | Justificación                    |
+| ---------------------------- | -------------------------- | --------------------------------- |
+| `pct_sin_seguridad_social` | % sin afiliación en salud | Acceso a servicios                |
+| `pct_regimen_subsidiado`   | % en régimen subsidiado   | Proxy de nivel socioeconómico    |
+| `pct_area_rural`           | % población rural         | Ruralidad asociada a menor acceso |
 
 #### F. Indicadores de Atención Prenatal (3)
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `consultas_promedio` | # promedio de consultas prenatales | OMS recomienda mínimo 4 consultas |
-| `pct_consultas_insuficientes` | % con <4 consultas prenatales | Atención prenatal inadecuada |
-| `pct_sin_control_prenatal` | % sin ningún control prenatal | Factor de riesgo crítico (WHO 2016) |
+
+| Variable                        | Descripción                       | Justificación                       |
+| ------------------------------- | ---------------------------------- | ------------------------------------ |
+| `consultas_promedio`          | # promedio de consultas prenatales | OMS recomienda mínimo 4 consultas   |
+| `pct_consultas_insuficientes` | % con <4 consultas prenatales      | Atención prenatal inadecuada        |
+| `pct_sin_control_prenatal`    | % sin ningún control prenatal     | Factor de riesgo crítico (WHO 2016) |
 
 #### G. Indicadores Críticos Avanzados (8) - NUEVO
 
 **Mortalidad Neonatal (1):**
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
+
+| Variable                     | Descripción                             | Justificación                                                                                                                                                                      |
+| ---------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tasa_mortalidad_neonatal` | Muertes 0-27 días × 1000 / nacimientos | Período crítico: 40% de mortalidad infantil ocurre en primera semana (WHO 2020). Detecta problemas en atención inmediata post-parto. Feature #1 del modelo (24.17% importancia). |
 
 **Mortalidad Fetal (2):**
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `defunciones_fetales` | Número absoluto de muertes fetales | Numerador para cálculo de tasas |
+
+| Variable                  | Descripción                          | Justificación                                  |
+| ------------------------- | ------------------------------------- | ----------------------------------------------- |
+| `defunciones_fetales`   | Número absoluto de muertes fetales   | Numerador para cálculo de tasas                |
 | `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nacimientos | Indicador principal OMS. Media regional: 23.4‰ |
 
 **Presión Obstétrica (2):**
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `total_defunciones` | Muertes fetales + no fetales (<1 año) | Denominador para presión |
+
+| Variable               | Descripción                            | Justificación                                                       |
+| ---------------------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `total_defunciones`  | Muertes fetales + no fetales (<1 año)  | Denominador para presión                                            |
 | `presion_obstetrica` | Total defunciones × 1000 / nacimientos | Medida agregada de estrés del sistema: nacimientos / fallecimientos |
 
 **Causas Evitables (1):**
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
+
+| Variable                    | Descripción                               | Justificación                                                                                                                                                  |
+| --------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pct_mortalidad_evitable` | % muertes por causas DANE 401-410, 501-506 | Identificación de muertes prevenibles según CIE-10 adaptada por DANE. 49.7% promedio indica gran margen de mejora. Feature #3 del modelo (6.65% importancia). |
 
 **Riesgo Obstétrico Compuesto (2):**
-| Variable | Descripción | Justificación |
-|----------|-------------|---------------|
-| `pct_embarazos_alto_riesgo` | % con prematuridad + bajo peso + múltiples | Indicador compuesto: combina 3 factores críticos asociados a mortalidad neonatal (March of Dimes 2019). Media: 93.8%. |
+
+| Variable                      | Descripción                                              | Justificación                                                                                                                                             |
+| ----------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pct_embarazos_alto_riesgo` | % con prematuridad + bajo peso + múltiples               | Indicador compuesto: combina 3 factores críticos asociados a mortalidad neonatal (March of Dimes 2019). Media: 93.8%.                                     |
 | `indice_fragilidad_sistema` | Índice compuesto (0-100) basado en componentes críticos | Mide vulnerabilidad sistémica: alta mortalidad + baja cobertura prenatal + falta de aseguramiento + mortalidad evitable. Escala 0-100, 23 municipios >80. |
 
 **Nota:** Las features institucionales (C) utilizan datos diferenciados por municipio del REPS. Las features de acceso a servicios (D) provienen del procesamiento de los RIPS 2020-2024. Las features críticas avanzadas (G) detectan vulnerabilidades específicas en mortalidad neonatal, presión obstétrica y fragilidad del sistema.
@@ -236,7 +249,7 @@ features['tasa_mortalidad_neonatal'] = (
 ).fillna(0)
 ```
 
-**Fuente de datos:** Defunciones no fetales DANE 2020-2024  
+**Fuente de datos:** Defunciones no fetales DANE 2020-2024
 **Justificación:** El 40% de la mortalidad infantil ocurre en la primera semana de vida (WHO 2020). Detecta problemas en atención inmediata post-parto.
 
 #### 2. **num_instituciones** (Importancia: 9.24%)
@@ -253,7 +266,7 @@ num_instituciones = df_REPS.groupby('COD_MUNIC').size()
 inst_count = df_inst.groupby('MunicipioSede').size().reset_index(name='num_instituciones')
 ```
 
-**Fuente de datos:** REPS (Registro Especial de Prestadores) MinSalud  
+**Fuente de datos:** REPS (Registro Especial de Prestadores) MinSalud
 **Justificación:** Proxy de acceso a servicios de salud. Municipios con más instituciones tienen mejor cobertura.
 
 #### 3. **pct_mortalidad_evitable** (Importancia: 6.65%)
@@ -279,7 +292,7 @@ causas_evitables = df_def_fet[
 pct_mortalidad_evitable = (causas_evitables / total_defunciones) * 100
 ```
 
-**Fuente de datos:** Defunciones fetales y no fetales DANE, campo CAUSA_667  
+**Fuente de datos:** Defunciones fetales y no fetales DANE, campo CAUSA_667
 **Justificación:** Identifica municipios donde las muertes podrían prevenirse con intervención oportuna. 49.7% promedio indica gran margen de mejora.
 
 #### 4. **pct_bajo_peso** (Importancia: 5.44%)
@@ -305,7 +318,7 @@ pct_bajo_peso = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
 )
 ```
 
-**Fuente de datos:** Nacimientos DANE, campo PESO_NAC  
+**Fuente de datos:** Nacimientos DANE, campo PESO_NAC
 **Justificación:** Predictor clásico de mortalidad neonatal. Asociado a complicaciones y mayor necesidad de cuidados intensivos (Wilcox 2001).
 
 #### 5. **procedimientos_per_nacimiento** (Importancia: 4.97%)
@@ -326,7 +339,7 @@ procedimientos = df_rips.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size()
 procedimientos_per_nacimiento = procedimientos / total_nacimientos
 ```
 
-**Fuente de datos:** RIPS (Registros Individuales de Prestación de Servicios)  
+**Fuente de datos:** RIPS (Registros Individuales de Prestación de Servicios)
 **Justificación:** Indica intensidad de atención médica recibida. Valores altos sugieren embarazos de alto riesgo o buena cobertura de servicios.
 
 #### 6. **edad_materna_promedio** (Importancia: 4.59%)
@@ -345,7 +358,7 @@ edad_materna_promedio = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
 )
 ```
 
-**Fuente de datos:** Nacimientos DANE, campo EDAD_MADRE  
+**Fuente de datos:** Nacimientos DANE, campo EDAD_MADRE
 **Justificación:** Embarazos en edades extremas (<18 años o >35 años) tienen mayor riesgo de complicaciones obstétricas (UNFPA 2013, ACOG 2014).
 
 #### 7. **pct_area_rural** (Importancia: 3.91%)
@@ -368,7 +381,7 @@ pct_area_rural = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
 )
 ```
 
-**Fuente de datos:** Nacimientos DANE, campo AREA_NAC  
+**Fuente de datos:** Nacimientos DANE, campo AREA_NAC
 **Justificación:** Proxy de acceso geográfico a servicios de salud. Zonas rurales tienen mayor dificultad para acceder a atención especializada.
 
 #### 8. **consultas_promedio** (Importancia: 3.58%)
@@ -387,7 +400,7 @@ consultas_promedio = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
 )
 ```
 
-**Fuente de datos:** Nacimientos DANE, campo NUMERO_CON  
+**Fuente de datos:** Nacimientos DANE, campo NUMERO_CON
 **Justificación:** OMS recomienda mínimo 8 consultas prenatales. Atención prenatal adecuada previene complicaciones y reduce mortalidad (WHO 2016).
 
 #### 9. **pct_sin_seguridad_social** (Importancia: 3.34%)
@@ -412,7 +425,7 @@ pct_sin_seguridad_social = df_nac.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).agg(
 )
 ```
 
-**Fuente de datos:** Nacimientos DANE, campo ID_REGIMEN_SEG  
+**Fuente de datos:** Nacimientos DANE, campo ID_REGIMEN_SEG
 **Justificación:** Barrera crítica de acceso a servicios de salud. Madres sin seguridad social tienen menor probabilidad de recibir atención prenatal y obstétrica adecuada.
 
 #### 10. **defunciones_fetales** (Importancia: 3.30%)
@@ -431,7 +444,7 @@ defunciones_fet = df_def_fet.groupby(['COD_DPTO', 'COD_MUNIC', 'ANO']).size().re
 )
 ```
 
-**Fuente de datos:** Defunciones fetales DANE  
+**Fuente de datos:** Defunciones fetales DANE
 **Justificación:** Indicador directo de problemas en atención obstétrica y calidad de servicios de salud. Correlación alta con mortalidad infantil general.
 
 ---
@@ -453,6 +466,7 @@ presion_obstetrica = total_nacimientos / num_instituciones
 **Umbral mínimo: 10 nacimientos por municipio-año**
 
 **Justificación:**
+
 - Estabilidad estadística: Tasas calculadas con <10 eventos son altamente inestables
 - Evitar falsos positivos: Un municipio con 2 nacimientos y 1 defunción = 500‰ (no representativo)
 - Recomendación OMS: Mínimo 10 eventos para tasas confiables
@@ -469,10 +483,12 @@ presion_obstetrica = total_nacimientos / num_instituciones
 **Motivación:** Los sistemas basados únicamente en percentiles tienen limitaciones:
 
 **Problema identificado:**
+
 - Sistema percentil puro: Un municipio con 85‰ de mortalidad podía clasificarse como "bajo riesgo" si otros municipios tenían valores aún más altos
 - Ejemplo real: San José del Guaviare (85.2‰) clasificado como bajo riesgo por estar en percentil 60
 
 **Solución:** Sistema híbrido que combina:
+
 1. **Umbrales críticos absolutos** (basados en OMS/literatura médica)
 2. **Percentiles relativos** (basados en distribución de datos)
 
@@ -481,6 +497,7 @@ presion_obstetrica = total_nacimientos / num_instituciones
 #### A. Mortalidad Fetal Crítica: 50‰
 
 **Justificación:**
+
 - Tasa global promedio: 5‰ (OMS 2020)
 - Latinoamérica promedio: 10-15‰ (PAHO 2019)
 - Colombia nacional: 8-12‰ (DANE 2023)
@@ -489,15 +506,18 @@ presion_obstetrica = total_nacimientos / num_instituciones
 **Regla:** Mortalidad >50‰ → +3 puntos automáticos → ALTO RIESGO garantizado
 
 **Literatura de soporte:**
-- OMS: Tasas >20‰ consideradas "muy altas" 
+
+- OMS: Tasas >20‰ consideradas "muy altas"
 - PAHO: Tasas >50‰ indican "crisis de salud pública"
 - Estudios Colombia: Departamentos con >30‰ requieren intervención urgente
 
 #### B. Sin Atención Prenatal: 50%
 
 **Justificación:**
+
 - OMS recomienda control prenatal universal (100%)
-- >50% sin atención prenatal = falla sistémica crítica
+- > 50% sin atención prenatal = falla sistémica crítica
+  >
 
 **Regla:** >50% sin prenatal → +2 puntos adicionales
 
@@ -549,6 +569,7 @@ Umbral    Alto Riesgo    Críticos detectados    Especificidad
 **Criterio seleccionado: ≥3 puntos**
 
 **Razones:**
+
 1. **Detecta 100% de casos críticos** (mortalidad >50‰)
 2. **Equilibrio sensibilidad-especificidad:** 25.1% alto riesgo es manejable operacionalmente
 3. **Coherencia médica:** 3+ factores de riesgo = intervención justificada
@@ -557,19 +578,23 @@ Umbral    Alto Riesgo    Críticos detectados    Especificidad
 ### 5.6 Resultados del Modelo 1
 
 **Distribución final (251 registros válidos con ≥10 nacimientos/año):**
+
 - Alto riesgo: **63 registros municipio-año (25.1%)**
 - Bajo riesgo: 188 registros municipio-año (74.9%)
 
 **Casos críticos identificados:**
+
 - 40 registros con mortalidad >50‰ (todos clasificados como ALTO RIESGO)
 - 100% de sensibilidad en casos críticos
 
 **Indicadores agregados periodo 2020-2024:**
+
 - **Nacimientos totales:** 137,780 nacimientos vivos
 - **Mortalidad fetal promedio:** 23.4‰ (23.4 muertes por 1,000 nacimientos)
 - **Mortalidad evitable:** 49.7% de muertes maternas son por causas PREVENIBLES
 
 **Promedios por grupo:**
+
 ```
 Indicador                    Alto Riesgo    Bajo Riesgo    Diferencia
 ─────────────────────────────────────────────────────────────────────
@@ -598,6 +623,7 @@ tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 ```
 
 **Justificación del enfoque de regresión:**
+
 - **Interpretación médica directa:** Predice tasa real en ‰ (ej: "8.5 muertes por 1,000 nacimientos")
 - **Umbrales absolutos OMS:** Permite clasificar según estándares internacionales (<5‰ Normal, 5-10‰ Moderado, 10-20‰ Alto, >20‰ Crítico)
 - **Planificación cuantitativa:** "500 nacimientos × 15‰ = ~7-8 muertes esperadas"
@@ -609,11 +635,13 @@ tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 **Features utilizadas: 34 indicadores**
 
 **Excluidas:**
+
 - `COD_DPTO`, `COD_MUNIC`, `ANO`: Variables de identificación (no se cuentan como features)
 
 **Nota:** El target `tasa_mortalidad_infantil` se calcula como (total_defunciones / total_nacimientos × 1000) y se predice directamente como valor continuo.
 
 **Features finales (orden alfabético):**
+
 ```
 1.  apgar_bajo_promedio
 2.  atenciones_per_nacimiento (RIPS)
@@ -653,12 +681,12 @@ tasa_mortalidad_infantil = (defunciones_menores_1_año / nacimientos) × 1000
 
 **Justificación de XGBoost vs otras opciones:**
 
-| Modelo | Ventajas | Desventajas | Seleccionado |
-|--------|----------|-------------|--------------|
-| Regresión Lineal | Simple, interpretable | Asume linealidad, no captura interacciones | No |
-| Random Forest Regressor | Robusto, no asume distribución | Menos preciso que XGBoost | No |
-| **XGBoost Regressor** | **Mejor performance, captura no-linealidades, interpreta importancia** | **Requiere tuning** | **Sí ✓** |
-| Redes Neuronales | Máxima capacidad | Caja negra, requiere muchos datos (>10k) | No |
+| Modelo                      | Ventajas                                                                     | Desventajas                                | Seleccionado     |
+| --------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------ | ---------------- |
+| Regresión Lineal           | Simple, interpretable                                                        | Asume linealidad, no captura interacciones | No               |
+| Random Forest Regressor     | Robusto, no asume distribución                                              | Menos preciso que XGBoost                  | No               |
+| **XGBoost Regressor** | **Mejor performance, captura no-linealidades, interpreta importancia** | **Requiere tuning**                  | **Sí ✓** |
+| Redes Neuronales            | Máxima capacidad                                                            | Caja negra, requiere muchos datos (>10k)   | No               |
 
 **Hiperparámetros optimizados (post-tuning):**
 
@@ -679,27 +707,28 @@ XGBRegressor(
 **Justificación de hiperparámetros:**
 
 1. **n_estimators=50 (vs 100 inicial):**
+
    - Suficiente para convergencia con learning_rate bajo
    - Reduce overfitting en dataset pequeño (251 registros)
    - Balance entre performance y tiempo de entrenamiento
-
 2. **max_depth=3 (vs 5 inicial):**
+
    - **Crítico para evitar overfitting:** Primera versión con max_depth=5 mostró R² train=0.998 vs test=0.448 (overfitting extremo)
    - Árboles más simples generalizan mejor
    - Captura interacciones de 3 niveles (suficiente para este problema)
    - Reducción de overfitting: R² train 0.63 vs test 0.52 (diferencia aceptable <12%)
-
 3. **learning_rate=0.05 (vs 0.1 inicial):**
+
    - Aprendizaje más lento y estable
    - Reduce riesgo de overfitting
    - Compensa reducción de n_estimators
-
 4. **subsample=0.8 y colsample_bytree=0.8:**
+
    - Introduce aleatoriedad para robustez
    - Cada árbol ve solo 80% de datos y features
    - Reduce correlación entre árboles (ensemble más diverso)
-
 5. **reg_alpha=0.1 y reg_lambda=1.0:**
+
    - Regularización L1 (Lasso): promueve feature selection
    - Regularización L2 (Ridge): penaliza pesos grandes
    - Combinación óptima para dataset pequeño
@@ -747,12 +776,14 @@ tasa_predicha = max(tasa_predicha, 3.0)
 ```
 
 **Justificación médica:**
+
 - **OMS (2020):** Mortalidad fetal >50‰ asociada a mortalidad infantil >10‰
 - **PAHO (2019):** Países con mortalidad neonatal >10‰ tienen mortalidad infantil >15‰
 - **PAHO (2019) - Contexto Latinoamericano:** Municipios mejor desempeño regional mantienen 3-5‰ debido a limitaciones estructurales
 - **Coherencia epidemiológica:** Garantiza predicciones médicamente plausibles y realistas para contexto colombiano y regional
 
 **Impacto:**
+
 - Afecta ~10% de predicciones (casos con indicadores excelentes)
 - Evita subestimación en municipios críticos
 - Evita predicciones irreales de 0‰ (no existe en ningún país)
@@ -770,6 +801,7 @@ X_scaled = scaler.fit_transform(X)
 ```
 
 **Justificación:**
+
 - XGBoost basado en árboles no requiere normalización estrictamente
 - **Incluida para:**
   - Comparabilidad entre features en importancia
@@ -777,6 +809,7 @@ X_scaled = scaler.fit_transform(X)
   - Uso futuro del scaler en predictor del dashboard
 
 **Transformación aplicada:**
+
 ```
 X_norm = (X - media) / desviación_estándar
 ```
@@ -793,11 +826,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 ```
 
 **Configuración:**
+
 - Train: 201 registros (80%)
 - Test: 50 registros (20%)
 - Sin estratificación (no aplica en regresión continua)
 
 **Justificación 80/20:**
+
 - Estándar en ML para datasets <1000 registros
 - Suficientes datos para entrenar (201)
 - Suficientes datos para validar (50)
@@ -839,34 +874,35 @@ TOTAL               251   100.0%        8.4‰                    8.4‰
 **Fortalezas del Modelo de Regresión:**
 
 1. **R² = 0.52 - Performance BUENA para salud pública:**
+
    - Explica 52% de la variabilidad en tasas de mortalidad
    - Comparable a estudios similares en epidemiología (típico: 0.45-0.60)
    - Superior a modelos lineales simples (R² ~0.30)
    - Suficiente para identificar municipios de alto riesgo y priorizar intervenciones
-
 2. **MAE = 6.93‰ - Error promedio razonable:**
+
    - Desviación absoluta promedio de 6.93 muertes por 1,000 nacimientos
    - En contexto: tasa promedio Orinoquía = 8.4‰, error = 82% de la media
    - Predicción ejemplo: Real 15‰ → Predicho 8-22‰ (rango útil para alertas)
    - Menor error en rangos Normal y Moderado (<5‰), mayor en Crítico (>20‰)
-
 3. **RMSE = 12.62‰ - Penaliza errores grandes:**
+
    - Error cuadrático medio: ~1.5x MAE (indica algunos errores grandes)
    - Casos extremos (>50‰) difíciles de predecir con precisión
    - Aceptable: errores grandes en casos extremos son menos críticos (ya identificados como críticos)
-
 4. **Overfitting controlado (10.6% diferencia):**
+
    - R² Train 0.63 vs Test 0.52 = diferencia <12% (aceptable)
    - Hiperparámetros optimizados evitaron overfitting extremo inicial (R² train 0.998)
    - Regularización L1/L2 + max_depth=3 + subsample efectivos
    - Modelo generaliza bien a datos nuevos
-
 5. **Interpretación médica directa:**
+
    - Predice tasa real en ‰: "Este municipio tendrá 8.5 muertes por 1,000 nacimientos"
    - Vs clasificación binaria confusa: "87% probabilidad de estar en percentil 75"
    - Permite planificación cuantitativa: "500 nacimientos × 15‰ = ~7-8 muertes esperadas"
-
 6. **Umbrales absolutos OMS:**
+
    - Normal (<5‰): 71.3% casos - sistema funcionando bien
    - Crítico (>20‰): 11.3% casos - requieren intervención urgente
    - No depende de percentiles relativos que cambian cada año
@@ -884,6 +920,7 @@ Crítico         18.7       24.3         Mayor incertidumbre
 ```
 
 **Observaciones:**
+
 - Mejor performance en rangos Normal/Moderado (71% casos)
 - Mayor error en casos Críticos (>20‰) por:
   * Variabilidad extrema (rango 20-200‰)
@@ -891,22 +928,24 @@ Crítico         18.7       24.3         Mayor incertidumbre
   * Factores no capturados (conflicto armado, migración masiva)
 
 **Casos Extremos Manejados:**
+
 - Municipio con mortalidad fetal 100‰ → predicción 15-20‰ (coherente con reglas médicas)
 - Vs modelo clasificación antiguo: 100‰ → "87% probabilidad percentil 75" (confuso)
 
 **Limitaciones Residuales:**
 
 1. **Casos críticos subestimados (18.7‰ error promedio):**
+
    - Modelo tiende a subestimar tasas >50‰
    - Reglas médicas mitigan pero no eliminan totalmente
    - Solución: combinar con alertas de Modelo 1 (100% sensibilidad casos >50‰)
-
 2. **Variabilidad no capturada (48%):**
+
    - R² = 0.52 → 48% varianza no explicada
    - Factores no en dataset: clima, conflicto, infraestructura vial, índices pobreza
    - Futuro: integrar más fuentes de datos
-
 3. **Sin intervalos de confianza:**
+
    - Predicción puntual (ej: 8.5‰) sin rango de incertidumbre
    - Futuro: implementar quantile regression para intervalos
 
@@ -929,12 +968,14 @@ pct_bajo_peso                       4.76%        ↓ (antes #4: 5.44%)
 ```
 
 **Cambios en Importancias vs Modelo Clasificación:**
+
 - **APGAR bajo** ahora #1 (antes #4): Mejor predictor continuo de severidad
 - **Mortalidad neonatal** bajó de #1 a #4: Ya no domina (antes 24% → ahora 6%)
 - **Consultas promedio** subió a #3: Más relevante para rango continuo
 - **Distribución más equilibrada:** Top feature 10.78% (vs 24.17% anterior)
 
 **Coherencia con Literatura Médica:**
+
 - **APGAR bajo** como #1: Predictor universal de mortalidad neonatal (WHO 2020)
 - **Infraestructura** (#2) y **atención prenatal** (#3): Factores modificables clave
 - **Mortalidad neonatal** (#4): Valida enfoque en período crítico (0-7 días)
@@ -979,25 +1020,26 @@ TOTAL              45            13           29%           63.4‰
 ```
 
 **Observaciones:**
+
 1. **Arauca y Vichada:** Situación crítica (57-100% alto riesgo)
 2. **Guaviare:** Solo 1 municipio con datos suficientes (San José), clasificado alto riesgo
 3. **Casanare y Meta:** Situación más controlada pero con casos críticos aislados
 
 ### 7.3 Municipios Críticos (Mortalidad >50‰) - Año 2024
 
-| Municipio | Departamento | Nacimientos | Defunciones | Mortalidad | Clasificación |
-|-----------|--------------|-------------|-------------|------------|---------------|
-| Saravena | Arauca | 1,716 | 278 | 162.0‰ | ALTO RIESGO |
-| Puerto Rondón | Arauca | 21 | 2 | 95.2‰ | ALTO RIESGO |
-| Puerto Carreño | Vichada | 513 | 47 | 91.6‰ | ALTO RIESGO |
-| Arauca | Arauca | 1,188 | 107 | 90.1‰ | ALTO RIESGO |
-| San José del Guaviare | Guaviare | 1,009 | 86 | 85.2‰ | ALTO RIESGO |
-| Monterrey | Casanare | 24 | 2 | 83.3‰ | ALTO RIESGO |
-| Guamal | Meta | 13 | 1 | 76.9‰ | ALTO RIESGO |
-| Cabuyaro | Meta | 17 | 1 | 58.8‰ | ALTO RIESGO |
-| Hato Corozal | Casanare | 38 | 2 | 52.6‰ | ALTO RIESGO |
-| La Primavera | Vichada | 57 | 3 | 52.6‰ | ALTO RIESGO |
-| Tame | Arauca | 215 | 11 | 51.2‰ | ALTO RIESGO |
+| Municipio              | Departamento | Nacimientos | Defunciones | Mortalidad | Clasificación |
+| ---------------------- | ------------ | ----------- | ----------- | ---------- | -------------- |
+| Saravena               | Arauca       | 1,716       | 278         | 162.0‰    | ALTO RIESGO    |
+| Puerto Rondón         | Arauca       | 21          | 2           | 95.2‰     | ALTO RIESGO    |
+| Puerto Carreño        | Vichada      | 513         | 47          | 91.6‰     | ALTO RIESGO    |
+| Arauca                 | Arauca       | 1,188       | 107         | 90.1‰     | ALTO RIESGO    |
+| San José del Guaviare | Guaviare     | 1,009       | 86          | 85.2‰     | ALTO RIESGO    |
+| Monterrey              | Casanare     | 24          | 2           | 83.3‰     | ALTO RIESGO    |
+| Guamal                 | Meta         | 13          | 1           | 76.9‰     | ALTO RIESGO    |
+| Cabuyaro               | Meta         | 17          | 1           | 58.8‰     | ALTO RIESGO    |
+| Hato Corozal           | Casanare     | 38          | 2           | 52.6‰     | ALTO RIESGO    |
+| La Primavera           | Vichada      | 57          | 3           | 52.6‰     | ALTO RIESGO    |
+| Tame                   | Arauca       | 215         | 11          | 51.2‰     | ALTO RIESGO    |
 
 **Total población afectada:** 4,811 nacimientos en municipios críticos (38% del total 2024)
 
@@ -1010,11 +1052,12 @@ Año    Registros    Alto Riesgo    % Alto    Mortalidad Promedio
 2021      54            12          22%           42.1‰
 2022      52            11          21%           38.7‰
 2023      50             8          16%           35.2‰
-2024      45            13          29%           63.4‰
+2024      45            13          29%           63.4u‰
 ──────────────────────────────────────────────────────────────────
 ```
 
 **Tendencia identificada:**
+
 - Mejora 2020-2023 (mortalidad bajó de 48.3‰ a 35.2‰)
 - **Retroceso significativo en 2024** (subió a 63.4‰)
 - Posibles causas 2024:
@@ -1048,6 +1091,7 @@ Orinoquía Alto Riesgo 2024                99.6‰
 **Proceso de verificación:**
 
 1. **Verificación manual de tasas:
+
 ```python
 # Ejemplo: Saravena 2024
 nacimientos = 1716
@@ -1058,6 +1102,7 @@ mortalidad_archivo = 162.0‰
 ```
 
 2. **Verificación de clasificaciones:**
+
 ```
 Todos los municipios con mortalidad >50‰:
 - Tienen puntos_riesgo ≥3 (incluye +3 bonus)
@@ -1066,6 +1111,7 @@ Todos los municipios con mortalidad >50‰:
 ```
 
 3. **Consistencia con datos crudos DANE:**
+
 ```
 Archivo: BD-EEVV-Nacimientos-2024.csv
 Filtro: COD_DPTO=81, COD_MUNIC=736
@@ -1123,6 +1169,7 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 ```
 
 **Resultado:** ROC-AUC CV: 0.685 (+/- 0.08)
+
 - Similar a test set (0.71)
 - Desviación aceptable (<0.1)
 - Confirma estabilidad del modelo
@@ -1136,48 +1183,62 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 #### A. Limitaciones de Datos
 
 1. **Tamaño del dataset:**
+
    - 310 registros totales, 251 válidos
    - Pequeño para Deep Learning
    - Limita capacidad de generalización
-
 2. **Datos faltantes:**
+
    - % prematuro: dato ausente en ~70% de certificados
    - % cesárea: dato ausente en ~60% de certificados
    - Impacta discriminación de estos features
-
 3. **Granularidad temporal:**
+
    - Agregación anual (no mensual/trimestral)
    - Pierde estacionalidad
-
 4. **Cobertura geográfica:**
+
    - Solo región Orinoquía
    - No generalizable a otras regiones sin reentrenamiento
 
 #### B. Limitaciones del Modelo 1
 
 1. **Percentiles dinámicos:**
+
    - Cambian según datos de cada año
    - Un municipio puede cambiar clasificación sin cambiar indicadores
-
 2. **Pesos uniformes:**
+
    - Todos los criterios valen 1 punto (excepto críticos)
    - Mortalidad fetal podría tener más peso que otros
-
 3. **Sin predicción temporal:**
+
    - Clasifica estado actual
    - No predice evolución futura
 
 #### C. Limitaciones del Modelo 2
 
-1. **Precision baja en alto riesgo (40%):**
+1. **Predicción concentrada en la media:**
+   
+   - **Problema:** El modelo tiende a predecir valores cercanos a la media regional (8-12‰)
+   - **Causa:** Dataset limitado (251 registros) con alta variabilidad (0-200‰)
+   - **Impacto:** Subestima casos extremos (muy bajos <3‰ o muy altos >30‰)
+   - **Justificación estadística:** Con R²=0.52, el 48% de variabilidad no explicada se "regresa" hacia la media
+   - **Solución NO aplicada:** No se implementaron ajustes post-predicción arbitrarios para evitar introducir sesgos sin fundamentación científica
+   - **Recomendación:** Interpretar predicciones como indicadores de tendencia, no valores exactos
+
+2. **Precision baja en alto riesgo (40%):**
+
    - 60% de alertas de alto riesgo son falsos positivos
    - Puede generar fatiga de alertas
+   
+3. **Features con baja importancia:**
 
-2. **Features con baja importancia:**
    - Algunas variables aportan poco (<0.05)
    - Simplificación podría mejorar interpretabilidad
+   
+4. **Sin intervalo de confianza:**
 
-3. **Sin intervalo de confianza:**
    - Predice probabilidad puntual
    - No comunica incertidumbre
 
@@ -1186,47 +1247,50 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 #### Mejoras a Corto Plazo
 
 1. **Optimización de hiperparámetros:**
+
    - Grid search o Random search
    - Probar diferentes max_depth, n_estimators
-
 2. **Feature selection:**
+
    - Eliminar features con importancia <0.03
    - Reducir de 20 a ~12 features principales
-
 3. **Threshold tuning:**
+
    - Ajustar umbral de clasificación (actualmente 0.5)
    - Buscar punto óptimo recall/precision según prioridades
 
 #### Mejoras a Mediano Plazo
 
 1. **Incorporar más fuentes:**
+
    - Datos climáticos (sequías, inundaciones)
    - Índices de pobreza multidimensional
    - Infraestructura vial (tiempo a hospital)
-
 2. **Modelos ensembles:**
+
    - Combinar XGBoost + Random Forest + Logistic Regression
    - Voting o Stacking
-
 3. **Análisis de series temporales:**
+
    - ARIMA o Prophet para proyecciones
    - Detectar tendencias y estacionalidad
 
 #### Mejoras a Largo Plazo
 
 1. **Sistema de recomendación:**
+
    - No solo clasificar, sino sugerir intervenciones
    - "Este municipio necesita: +3 instituciones, +20% cobertura prenatal"
-
 2. **Modelo causal:**
+
    - Ir más allá de correlación
    - Identificar intervenciones con mayor impacto
-
 3. **Integración con sistemas de salud:**
+
    - API para actualización en tiempo real
    - Alertas automáticas a autoridades
-
 4. **Análisis espacial:**
+
    - Clustering geográfico
    - Identificar corredores de riesgo
 
@@ -1237,39 +1301,26 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 ### Literatura Científica
 
 1. **Organización Mundial de la Salud (OMS).** (2020). *Trends in maternal mortality 2000 to 2017.* WHO, UNICEF, UNFPA, World Bank Group, and UNDP.
-
 2. **Pan American Health Organization (PAHO).** (2019). *Maternal and Neonatal Health in Latin America and the Caribbean.* Washington, DC.
-
 3. **Wilcox, A.J.** (2001). "On the importance—and the unimportance—of birthweight." *International Journal of Epidemiology*, 30(6), 1233-1241.
-
 4. **WHO.** (2016). *WHO recommendations on antenatal care for a positive pregnancy experience.* Geneva: World Health Organization.
-
 5. **UNFPA.** (2013). *Motherhood in Childhood: Facing the challenge of adolescent pregnancy.* State of World Population 2013.
-
 6. **American College of Obstetricians and Gynecologists (ACOG).** (2014). "Committee Opinion No. 579: Definition of term pregnancy." *Obstetrics & Gynecology*, 122(5), 1139-1140.
-
 7. **Chen, T., & Guestrin, C.** (2016). "XGBoost: A scalable tree boosting system." *Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 785-794.
-
 8. **Chawla, N.V., Bowyer, K.W., Hall, L.O., & Kegelmeyer, W.P.** (2002). "SMOTE: Synthetic Minority Over-sampling Technique." *Journal of Artificial Intelligence Research*, 16, 321-357.
 
 ### Datos y Fuentes Oficiales
 
 9. **Departamento Administrativo Nacional de Estadística (DANE).** (2024). *Estadísticas Vitales - Nacimientos y Defunciones 2020-2024.* Bogotá, Colombia.
-
 10. **Ministerio de Salud y Protección Social de Colombia.** (2023). *Análisis de Situación de Salud (ASIS) Colombia 2023.*
-
 11. **DANE.** (2023). *Código Único de Identificación de Divisiones Político Administrativas - DIVIPOLA.*
-
 12. **Ministerio de Salud.** (2021). *Registro Especial de Prestadores de Servicios de Salud (REPS).*
 
 ### Recursos Técnicos
 
 13. **Scikit-learn Documentation.** (2024). *Machine Learning in Python.* https://scikit-learn.org/
-
 14. **XGBoost Documentation.** (2024). *XGBoost Python Package.* https://xgboost.readthedocs.io/
-
 15. **Imbalanced-learn Documentation.** (2024). *Dealing with imbalanced datasets.* https://imbalanced-learn.org/
-
 16. **Streamlit Documentation.** (2024). *The fastest way to build data apps.* https://docs.streamlit.io/
 
 ---
@@ -1279,6 +1330,7 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 ### Anexo A: Código de Reproducción
 
 El código completo está disponible en:
+
 - `src/features.py`: Generación de features
 - `src/train_model.py`: Entrenamiento de modelos
 - `app_simple.py`: Dashboard interactivo
@@ -1328,6 +1380,6 @@ data/processed/
 
 ---
 
-**Documento generado:** Noviembre 2025  
-**Proyecto:** AlertaMaterna - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil  
+**Documento generado:** Noviembre 2025
+**Proyecto:** AlertaMaterna - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil
 **Región:** Orinoquía, Colombia
