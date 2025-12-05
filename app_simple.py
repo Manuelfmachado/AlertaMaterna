@@ -123,17 +123,17 @@ st.markdown("""
         font-weight: 700 !important;
     }
     
-    /* Valores rosados de los sliders - tamaño óptimo */
+    /* Valores rosados de los sliders - tamaño compacto */
     .stSlider [data-baseweb="slider"] [role="slider"]::before,
     .stSlider [data-baseweb="slider"] div[data-testid] {
-        font-size: 1.4rem !important;
+        font-size: 1.1rem !important;
         font-weight: 700 !important;
     }
     
     /* Forzar tamaño de todos los elementos de texto dentro del slider */
     .stSlider div[data-baseweb="slider"] span,
     .stSlider div[data-baseweb="slider"] div {
-        font-size: 1.3rem !important;
+        font-size: 1.1rem !important;
         font-weight: 700 !important;
     }
 
