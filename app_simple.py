@@ -1155,6 +1155,8 @@ def main():
             """)
 
             # Interpretación
+            # Definir referencia de OMS para evitar NameError en los f-strings
+            ref_oms = "OMS (~5‰)"
             if nivel == "NORMAL":
                 st.success(f"""
                 **RIESGO {nivel}** ({tasa_pred:.2f}‰)
