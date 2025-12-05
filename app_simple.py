@@ -122,6 +122,15 @@ st.markdown("""
         font-size: 1.5rem !important;
         font-weight: 700 !important;
     }
+    
+    /* Valores rosados de los sliders más grandes */
+    .stSlider [data-baseweb="slider"] [data-testid="stTickBarMin"],
+    .stSlider [data-baseweb="slider"] [data-testid="stTickBarMax"],
+    .stSlider div[data-baseweb="slider"] > div > div > div {
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+        color: #FF4B8B !important;
+    }
 
     /* Evitar truncamiento de valores y etiquetas de métricas */
     [data-testid="stMetricValue"] {
