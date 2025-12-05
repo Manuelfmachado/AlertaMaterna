@@ -1036,15 +1036,21 @@ def main():
             if mort_fetal > 50.0:
                 tasa_pred = max(tasa_pred, 15.0)  # Mínimo razonable para crisis
             
-            # REGLA 3: Límite superior de coherencia (Expandido)
+            # REGLA 3: Límite superior de coherencia (Ajustado a evidencia DANE/WHO)
             # Si los indicadores vitales directos (Neonatal y Fetal) son normales,
-            # la Mortalidad Infantil no puede ser "Crítica" (>20‰) por pura alucinación del modelo.
-            # Fundamentación: La mortalidad neonatal suele ser el 60-70% de la infantil.
+            # la Mortalidad Infantil debe ser consistente con la proporción neonatal/infantil.
+            # Fundamentación: En Colombia, la mortalidad neonatal aporta el ~60% de la infantil (DANE).
+            # Se usa un factor de 3.0x (muy conservador, asumiendo MN=33%) para el límite superior.
             if mort_neonatal < 5.0 and mort_fetal < 15.0:
-                # Si MN es normal (<5), la MI difícilmente supera 15-18‰ salvo crisis post-neonatal grave
-                # Cap: Máximo 15‰ o 4 veces la neonatal (lo que sea mayor para ser conservador)
-                # Esto evita que el modelo prediga 69‰ cuando la neonatal es 3.5‰
-                cap_coherencia = max(12.0, mort_neonatal * 4.0)
+                # Si MN es normal (<5), la MI no debería exceder 3 veces ese valor salvo epidemia.
+                # Cap: Máximo 3.0 veces la neonatal o el piso de 10.0‰ (lo que sea mayor)
+                # Para MN=3.5 -> Cap = max(10.0, 10.5) = 10.5‰ (Borde Moderado/Alto)
+                # Ajuste fino: Si MN < 4.0, el riesgo no debería ser ALTO (>10) sin otros factores.
+                
+                factor_seguridad = 3.0
+                piso_minimo = 8.0 # Promedio nacional bajo
+                
+                cap_coherencia = max(piso_minimo, mort_neonatal * factor_seguridad)
                 tasa_pred = min(tasa_pred, cap_coherencia)
             
             st.session_state.resultado_prediccion = {
