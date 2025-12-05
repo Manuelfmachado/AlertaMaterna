@@ -123,13 +123,18 @@ st.markdown("""
         font-weight: 700 !important;
     }
     
-    /* Valores rosados de los sliders más grandes */
-    .stSlider [data-baseweb="slider"] [data-testid="stTickBarMin"],
-    .stSlider [data-baseweb="slider"] [data-testid="stTickBarMax"],
-    .stSlider div[data-baseweb="slider"] > div > div > div {
-        font-size: 1.8rem !important;
+    /* Valores rosados de los sliders más grandes - el número que aparece arriba */
+    .stSlider [data-baseweb="slider"] [role="slider"]::before,
+    .stSlider [data-baseweb="slider"] div[data-testid] {
+        font-size: 2.2rem !important;
+        font-weight: 900 !important;
+    }
+    
+    /* Forzar tamaño de todos los elementos de texto dentro del slider */
+    .stSlider div[data-baseweb="slider"] span,
+    .stSlider div[data-baseweb="slider"] div {
+        font-size: 2rem !important;
         font-weight: 800 !important;
-        color: #FF4B8B !important;
     }
 
     /* Evitar truncamiento de valores y etiquetas de métricas */
