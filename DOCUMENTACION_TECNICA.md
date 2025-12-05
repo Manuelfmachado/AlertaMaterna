@@ -36,16 +36,16 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 
 **Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros.
 
-**Aclaración datos**: Los datos brutos del DANE contienen **2,789,391 nacimientos** en toda Orinoquía (2020-2024), pero el análisis se realiza sobre **137,780 nacimientos** en los 251 registros que cumplen el estándar OMS (≥10 nacimientos/año). Se excluyen municipios-año con datos insuficientes para garantizar validez estadística.
+**Aclaración datos**: Los datos brutos del DANE a nivel **nacional** contienen **2,789,391 nacimientos** (2020-2024). En la **región Orinoquía** se registraron **~138,000 nacimientos**, de los cuales el análisis se realiza sobre **137,780 nacimientos** en los 251 registros que cumplen el estándar OMS (≥10 nacimientos/año). Se excluyen municipios-año con datos insuficientes para garantizar validez estadística.
 
-**Resultados principales:**
-- 310 registros municipio-año analizados (2020-2024)
-- 251 registros válidos con ≥10 nacimientos/año (estándar OMS)
-- **63 registros clasificados como alto riesgo (25.1%)**
+**Resultados principales (Orinoquía 2020-2024):**
+- 251 registros municipio-año válidos con ≥10 nacimientos/año (estándar OMS)
+- **57 municipios únicos** analizados en 5 departamentos
 - **137,780 nacimientos analizados** en registros válidos
-- **Mortalidad fetal promedio: 23.4‰** (23.4 muertes por 1,000 nacimientos)
-- **49.7% de muertes maternas son PREVENIBLES** (causas evitables CIE-10)
-- 40 registros con mortalidad crítica (>50‰) correctamente identificados (100% sensibilidad)
+- **68 registros clasificados como alto riesgo** (mortalidad fetal >30‰)
+- **40 registros con mortalidad crítica** (>50‰) correctamente identificados
+- **Mortalidad fetal promedio ponderada:** 49.0‰ (2020-2024)
+- **57.8% de muertes son potencialmente EVITABLES** (causas evitables según clasificación DANE)
 - **Modelo predictivo híbrido + intervalos de confianza P10/P50/P90**
 - **Cobertura del intervalo [P10, P90]: 90.2%**
 
@@ -196,7 +196,7 @@ Las 34 variables fueron seleccionadas basándose en:
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
 | `defunciones_fetales` | Número absoluto de muertes fetales | Numerador para cálculo de tasas |
-| `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nacimientos | Indicador principal OMS. Media regional: 23.4‰ |
+| `tasa_mortalidad_fetal` | Muertes fetales × 1000 / nacimientos | Indicador principal OMS. Media regional ponderada: 49.7‰ |
 
 **Presión Obstétrica (2):**
 | Variable | Descripción | Justificación |
@@ -207,7 +207,7 @@ Las 34 variables fueron seleccionadas basándose en:
 **Causas Evitables (1):**
 | Variable | Descripción | Justificación |
 |----------|-------------|---------------|
-| `pct_mortalidad_evitable` | % muertes por causas DANE 401-410, 501-506 | Identificación de muertes prevenibles según CIE-10 adaptada por DANE. 49.7% promedio indica gran margen de mejora. Feature #3 del modelo (6.65% importancia). |
+| `pct_mortalidad_evitable` | % muertes por causas DANE 401-410, 501-506 | Identificación de muertes prevenibles según CIE-10 adaptada por DANE. 57.8% promedio indica gran margen de mejora. Feature #3 del modelo (6.65% importancia). |
 
 **Riesgo Obstétrico Compuesto (2):**
 | Variable | Descripción | Justificación |
@@ -286,7 +286,7 @@ pct_mortalidad_evitable = (causas_evitables / total_defunciones) * 100
 ```
 
 **Fuente de datos:** Defunciones fetales y no fetales DANE, campo CAUSA_667  
-**Justificación:** Identifica municipios donde las muertes podrían prevenirse con intervención oportuna. 49.7% promedio indica gran margen de mejora.
+**Justificación:** Identifica municipios donde las muertes podrían prevenirse con intervención oportuna. 57.8% promedio indica gran margen de mejora.
 
 #### 4. **pct_bajo_peso** (Importancia: 5.44%)
 
@@ -563,17 +563,17 @@ Umbral    Alto Riesgo    Críticos detectados    Especificidad
 ### 5.6 Resultados del Modelo 1
 
 **Distribución final (251 registros válidos con ≥10 nacimientos/año):**
-- Alto riesgo: **63 registros municipio-año (25.1%)**
-- Bajo riesgo: 188 registros municipio-año (74.9%)
+- Alto riesgo (MF >30‰): **68 registros municipio-año (27.1%)**
+- Bajo riesgo (MF ≤30‰): 183 registros municipio-año (72.9%)
 
 **Casos críticos identificados:**
-- 40 registros con mortalidad >50‰ (todos clasificados como ALTO RIESGO)
+- 40 registros con mortalidad fetal >50‰ (todos clasificados como ALTO RIESGO)
 - 100% de sensibilidad en casos críticos
 
-**Indicadores agregados periodo 2020-2024:**
-- **Nacimientos totales:** 137,780 nacimientos vivos
-- **Mortalidad fetal promedio:** 23.4‰ (23.4 muertes por 1,000 nacimientos)
-- **Mortalidad evitable:** 49.7% de muertes maternas son por causas PREVENIBLES
+**Indicadores agregados periodo 2020-2024 (Orinoquía):**
+- **Nacimientos totales analizados:** 137,780 nacimientos vivos
+- **Mortalidad fetal promedio ponderada:** 49.7‰ (ponderada por nacimientos)
+- **Mortalidad evitable:** 57.8% de muertes son por causas potencialmente EVITABLES
 
 **Promedios por grupo:**
 ```
@@ -1002,7 +1002,7 @@ pct_bajo_peso                       4.76%        ↓ (antes #4: 5.44%)
 - **APGAR bajo** como #1: Predictor universal de mortalidad neonatal (WHO 2020)
 - **Infraestructura** (#2) y **atención prenatal** (#3): Factores modificables clave
 - **Mortalidad neonatal** (#4): Valida enfoque en período crítico (0-7 días)
-- **Mortalidad evitable** (#5): 49.7% muertes prevenibles → gran margen de mejora
+- **Mortalidad evitable** (#5): 57.8% muertes prevenibles → gran margen de mejora
 - Variables clínicas + acceso dominan TOP 10: coherente con causalidad médica
 
 ---
@@ -1020,12 +1020,12 @@ Registros excluidos (<10 nac/año): 59 (19%)
 
 Periodo:                           2020-2024 (5 años)
 Departamentos:                     5 (Meta, Arauca, Casanare, Guaviare, Vichada)
-Municipios únicos:                 55
+Municipios únicos:                 57
 
-DATOS AGREGADOS PERIODO 2020-2024:
-Total nacimientos:                 137,780 nacimientos vivos
-Mortalidad fetal promedio:         23.4‰ (23.4 muertes por 1,000 nacimientos)
-Mortalidad evitable:               49.7% de muertes maternas son PREVENIBLES
+DATOS AGREGADOS PERIODO 2020-2024 (ORINOQUÍA):
+Total nacimientos analizados:      137,780 nacimientos vivos
+Mortalidad fetal promedio pond.:   49.7‰ (ponderada por nacimientos)
+Mortalidad evitable:               57.8% de muertes son potencialmente EVITABLES
 ```
 
 ### 7.2 Distribución de Riesgo por Departamento (2024)
