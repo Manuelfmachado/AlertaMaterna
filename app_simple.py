@@ -280,6 +280,13 @@ def main():
     st.markdown("<hr style='border: 2px solid #FF69B4; margin: 20px 0;'>", unsafe_allow_html=True)
     st.markdown("### Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil")
     st.markdown("**Región Orinoquía** | Meta, Arauca, Casanare, Guaviare, Vichada")
+    # Banner de aclaración de unidades
+    st.markdown("""
+    <div style='background-color: #f9f9f9; border-left: 6px solid #FF69B4; padding: 16px; margin-bottom: 10px; font-size: 1.25rem;'>
+        <b>IMPORTANTE:</b> Todas las tasas de mortalidad y riesgo en este dashboard se expresan en <b>“por mil nacidos vivos” (‰)</b>.<br>
+        Ejemplo: <b>25.0‰ = 25 muertes por cada 1,000 nacimientos</b>.
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("---")
     
     # Cargar datos
@@ -453,11 +460,11 @@ def main():
 
         with col1:
             st.metric(
-                "💔 Mortalidad Fetal Promedio",
-                f"{mort_promedio:.1f}%",
+                "💔 Mortalidad Fetal Promedio (‰)",
+                f"{mort_promedio:.1f}‰",
                 delta=delta_mort_str,
                 delta_color=delta_color_val,
-                help="Promedio de muertes fetales por 100 nacimientos. Estándar OMS: <0.5%"
+                help="Promedio de muertes fetales por 1,000 nacimientos. Estándar OMS: <5‰"
             )
 
         with col2:
@@ -547,7 +554,7 @@ def main():
         fig_evol.update_layout(
             title=titulo_evol,
             xaxis_title="Año",
-            yaxis_title="Tasa Mortalidad (%)",
+            yaxis_title="Tasa Mortalidad (‰)",
             hovermode='x unified',
             height=400,
             template='plotly_white',
@@ -770,39 +777,39 @@ def main():
         
         # Top municipios de alto riesgo
         st.subheader(f"🚨 Top 10 Municipios en Emergencia Sanitaria {anio_sel}")
-        st.caption("Municipios con mayor tasa de mortalidad fetal (%).")
+        st.caption("Municipios con mayor tasa de mortalidad fetal (‰).")
         
         # Top 10 por mortalidad
-        df_top10 = df_filtrado.nlargest(10, 'tasa_mortalidad_fetal_pct')
+        df_top10 = df_filtrado.nlargest(10, 'tasa_mortalidad_fetal')
         
         if len(df_top10) > 0:
             fig_top10 = px.bar(
                 df_top10,
                 y='NOMBRE_MUNICIPIO',
-                x='tasa_mortalidad_fetal_pct',
+                x='tasa_mortalidad_fetal',
                 orientation='h',
-                color='tasa_mortalidad_fetal_pct',
+                color='tasa_mortalidad_fetal',
                 color_continuous_scale=['#27AE60', '#F1C40F', '#E67E22', '#E74C3C'],
-                labels={'tasa_mortalidad_fetal_pct': 'Mortalidad (%)', 'NOMBRE_MUNICIPIO': 'Municipio'},
-                text='tasa_mortalidad_fetal_pct'
+                labels={'tasa_mortalidad_fetal': 'Mortalidad (‰)', 'NOMBRE_MUNICIPIO': 'Municipio'},
+                text='tasa_mortalidad_fetal'
             )
 
             fig_top10.add_vline(
-                x=5.0,
+                x=50.0,
                 line_dash="dash",
                 line_color="red",
-                annotation_text="Umbral Crítico (5.0%)"
+                annotation_text="Umbral Crítico (50‰)"
             )
 
             fig_top10.update_layout(
                 height=500,
                 template='plotly_white',
-                xaxis_title="Tasa de Mortalidad Fetal (%)",
+                xaxis_title="Tasa de Mortalidad Fetal (‰)",
                 yaxis_title="",
                 yaxis={'categoryorder':'total ascending'}
             )
             
-            fig_top10.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+            fig_top10.update_traces(texttemplate='%{text:.1f}‰', textposition='outside')
 
             st.plotly_chart(fig_top10, use_container_width=True)
             
