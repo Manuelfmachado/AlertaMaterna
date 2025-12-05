@@ -603,7 +603,13 @@ def main():
         
         # MAPA INTERACTIVO DE RIESGO
         st.subheader("Mapa Interactivo de Riesgo - Región Orinoquía")
-        st.caption("Visualización geográfica de municipios por nivel de mortalidad fetal. Color indica el nivel de riesgo")
+        
+        # Selector de tipo de visualización
+        col_viz1, col_viz2 = st.columns([3, 1])
+        with col_viz1:
+            st.caption("Visualización geográfica de municipios por nivel de mortalidad fetal. Color indica el nivel de riesgo")
+        with col_viz2:
+            tipo_mapa = st.selectbox("Tipo de mapa:", ["Puntos con bordes", "Mapa de calor"], key="tipo_mapa_viz")
         
         if 'LATITUD' in df_filtrado.columns and 'LONGITUD' in df_filtrado.columns:
             df_mapa = df_filtrado.dropna(subset=['LATITUD', 'LONGITUD']).copy()
@@ -622,57 +628,176 @@ def main():
                 
                 df_mapa['color'] = df_mapa['tasa_mortalidad_fetal_pct'].apply(get_color)
                 
+                # GEOJSON simplificado de límites departamentales de Orinoquía
+                # Coordenadas aproximadas de límites departamentales
+                geojson_orinoquia = {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "properties": {"name": "Meta", "id": "50"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [-75.5, 1.5], [-75.5, 5.0], [-71.0, 5.0], [-71.0, 1.5], [-75.5, 1.5]
+                                ]]
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "properties": {"name": "Arauca", "id": "81"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [-72.5, 5.5], [-72.5, 7.5], [-69.0, 7.5], [-69.0, 5.5], [-72.5, 5.5]
+                                ]]
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "properties": {"name": "Casanare", "id": "85"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [-73.5, 4.5], [-73.5, 6.5], [-70.0, 6.5], [-70.0, 4.5], [-73.5, 4.5]
+                                ]]
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "properties": {"name": "Guaviare", "id": "95"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [-74.0, 0.5], [-74.0, 3.0], [-69.5, 3.0], [-69.5, 0.5], [-74.0, 0.5]
+                                ]]
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "properties": {"name": "Vichada", "id": "99"},
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [-71.5, 3.0], [-71.5, 6.5], [-67.0, 6.5], [-67.0, 3.0], [-71.5, 3.0]
+                                ]]
+                            }
+                        }
+                    ]
+                }
+                
                 fig_mapa = go.Figure()
                 
-                # Capa de fondo para bordes negros (puntos más grandes y negros)
-                fig_mapa.add_trace(go.Scattermapbox(
-                    lat=df_mapa['LATITUD'],
-                    lon=df_mapa['LONGITUD'],
-                    mode='markers',
-                    marker=dict(
-                        size=18,
-                        color='black',
-                        opacity=1
-                    ),
-                    hoverinfo='skip',
-                    showlegend=False
-                ))
+                if tipo_mapa == "Puntos con bordes":
+                    # Agregar límites departamentales como capa de fondo
+                    fig_mapa.add_trace(go.Choroplethmapbox(
+                        geojson=geojson_orinoquia,
+                        locations=[f["properties"]["id"] for f in geojson_orinoquia["features"]],
+                        z=[0, 0, 0, 0, 0],  # Sin color de relleno
+                        colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]],
+                        showscale=False,
+                        marker=dict(opacity=0, line=dict(color='black', width=2)),
+                        hoverinfo='skip',
+                        showlegend=False
+                    ))
+                    
+                    # Capa de fondo para bordes negros (puntos más grandes y negros)
+                    fig_mapa.add_trace(go.Scattermapbox(
+                        lat=df_mapa['LATITUD'],
+                        lon=df_mapa['LONGITUD'],
+                        mode='markers',
+                        marker=dict(
+                            size=18,
+                            color='black',
+                            opacity=1
+                        ),
+                        hoverinfo='skip',
+                        showlegend=False
+                    ))
+                    
+                    # Capa principal con colores
+                    fig_mapa.add_trace(go.Scattermapbox(
+                        lat=df_mapa['LATITUD'],
+                        lon=df_mapa['LONGITUD'],
+                        mode='markers+text',
+                        marker=dict(
+                            size=14,
+                            color=df_mapa['color'],
+                            opacity=0.95
+                        ),
+                        text=df_mapa['NOMBRE_MUNICIPIO'],
+                        textposition='top center',
+                        textfont=dict(
+                            size=12, 
+                            color='#000000',
+                            family='Arial Black'
+                        ),
+                        hovertemplate=(
+                            '<b style="font-size:16px;">%{text}</b><br><br>' +
+                            '<b>📍 Departamento:</b> %{customdata[0]}<br>' +
+                            '<b>📅 Año:</b> %{customdata[1]}<br>' +
+                            '<b>💀 Mortalidad Fetal:</b> %{customdata[2]:.1f}‰<br>' +
+                            '<b>👶 Nacimientos:</b> %{customdata[3]:,}<br>' +
+                            '<b>⚠️ Clasificación:</b> %{customdata[4]}<br>' +
+                            '<extra></extra>'
+                        ),
+                        customdata=np.stack([
+                            df_mapa['DEPARTAMENTO'],
+                            df_mapa['ANO'].astype(int),
+                            df_mapa['tasa_mortalidad_fetal_pct'],
+                            df_mapa['total_nacimientos'].astype(int),
+                            df_mapa['RIESGO']
+                        ], axis=-1),
+                        name='Municipios'
+                    ))
                 
-                # Capa principal con colores
-                fig_mapa.add_trace(go.Scattermapbox(
-                    lat=df_mapa['LATITUD'],
-                    lon=df_mapa['LONGITUD'],
-                    mode='markers+text',
-                    marker=dict(
-                        size=14,
-                        color=df_mapa['color'],
-                        opacity=0.95
-                    ),
-                    text=df_mapa['NOMBRE_MUNICIPIO'],
-                    textposition='top center',
-                    textfont=dict(
-                        size=12, 
-                        color='#000000',
-                        family='Arial Black'
-                    ),
-                    hovertemplate=(
-                        '<b style="font-size:16px;">%{text}</b><br><br>' +
-                        '<b>📍 Departamento:</b> %{customdata[0]}<br>' +
-                        '<b>📅 Año:</b> %{customdata[1]}<br>' +
-                        '<b>💀 Mortalidad Fetal:</b> %{customdata[2]:.1f}‰<br>' +
-                        '<b>👶 Nacimientos:</b> %{customdata[3]:,}<br>' +
-                        '<b>⚠️ Clasificación:</b> %{customdata[4]}<br>' +
-                        '<extra></extra>'
-                    ),
-                    customdata=np.stack([
-                        df_mapa['DEPARTAMENTO'],
-                        df_mapa['ANO'].astype(int),
-                        df_mapa['tasa_mortalidad_fetal_pct'],
-                        df_mapa['total_nacimientos'].astype(int),
-                        df_mapa['RIESGO']
-                    ], axis=-1),
-                    name='Municipios'
-                ))
+                else:  # Mapa de calor
+                    fig_mapa.add_trace(go.Densitymapbox(
+                        lat=df_mapa['LATITUD'],
+                        lon=df_mapa['LONGITUD'],
+                        z=df_mapa['tasa_mortalidad_fetal_pct'],
+                        radius=25,
+                        colorscale=[
+                            [0, '#27AE60'],
+                            [0.33, '#F39C12'],
+                            [0.66, '#E67E22'],
+                            [1, '#E74C3C']
+                        ],
+                        showscale=True,
+                        colorbar=dict(
+                            title="Mortalidad<br>Fetal (‰)",
+                            titleside="right",
+                            tickmode="linear",
+                            tick0=0,
+                            dtick=10
+                        ),
+                        hovertemplate='Mortalidad: %{z:.1f}‰<extra></extra>'
+                    ))
+                    
+                    # Puntos sobre el mapa de calor para contexto
+                    fig_mapa.add_trace(go.Scattermapbox(
+                        lat=df_mapa['LATITUD'],
+                        lon=df_mapa['LONGITUD'],
+                        mode='markers',
+                        marker=dict(
+                            size=8,
+                            color='white',
+                            opacity=0.7,
+                            line=dict(color='black', width=1)
+                        ),
+                        text=df_mapa['NOMBRE_MUNICIPIO'],
+                        hovertemplate=(
+                            '<b>%{text}</b><br>' +
+                            'Departamento: %{customdata[0]}<br>' +
+                            'Mortalidad: %{customdata[1]:.1f}‰' +
+                            '<extra></extra>'
+                        ),
+                        customdata=np.stack([
+                            df_mapa['DEPARTAMENTO'],
+                            df_mapa['tasa_mortalidad_fetal_pct']
+                        ], axis=-1),
+                        name='Municipios'
+                    ))
                 
                 fig_mapa.update_layout(
                     mapbox=dict(
