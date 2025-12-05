@@ -628,79 +628,9 @@ def main():
                 
                 df_mapa['color'] = df_mapa['tasa_mortalidad_fetal_pct'].apply(get_color)
                 
-                # GEOJSON simplificado de límites departamentales de Orinoquía
-                # Coordenadas aproximadas de límites departamentales
-                geojson_orinoquia = {
-                    "type": "FeatureCollection",
-                    "features": [
-                        {
-                            "type": "Feature",
-                            "properties": {"name": "Meta", "id": "50"},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [[
-                                    [-75.5, 1.5], [-75.5, 5.0], [-71.0, 5.0], [-71.0, 1.5], [-75.5, 1.5]
-                                ]]
-                            }
-                        },
-                        {
-                            "type": "Feature",
-                            "properties": {"name": "Arauca", "id": "81"},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [[
-                                    [-72.5, 5.5], [-72.5, 7.5], [-69.0, 7.5], [-69.0, 5.5], [-72.5, 5.5]
-                                ]]
-                            }
-                        },
-                        {
-                            "type": "Feature",
-                            "properties": {"name": "Casanare", "id": "85"},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [[
-                                    [-73.5, 4.5], [-73.5, 6.5], [-70.0, 6.5], [-70.0, 4.5], [-73.5, 4.5]
-                                ]]
-                            }
-                        },
-                        {
-                            "type": "Feature",
-                            "properties": {"name": "Guaviare", "id": "95"},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [[
-                                    [-74.0, 0.5], [-74.0, 3.0], [-69.5, 3.0], [-69.5, 0.5], [-74.0, 0.5]
-                                ]]
-                            }
-                        },
-                        {
-                            "type": "Feature",
-                            "properties": {"name": "Vichada", "id": "99"},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [[
-                                    [-71.5, 3.0], [-71.5, 6.5], [-67.0, 6.5], [-67.0, 3.0], [-71.5, 3.0]
-                                ]]
-                            }
-                        }
-                    ]
-                }
-                
                 fig_mapa = go.Figure()
                 
                 if tipo_mapa == "Puntos con bordes":
-                    # Agregar límites departamentales como capa de fondo
-                    fig_mapa.add_trace(go.Choroplethmapbox(
-                        geojson=geojson_orinoquia,
-                        locations=[f["properties"]["id"] for f in geojson_orinoquia["features"]],
-                        z=[0, 0, 0, 0, 0],  # Sin color de relleno
-                        colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]],
-                        showscale=False,
-                        marker=dict(opacity=0, line=dict(color='black', width=2)),
-                        hoverinfo='skip',
-                        showlegend=False
-                    ))
-                    
                     # Capa de fondo para bordes negros (puntos más grandes y negros)
                     fig_mapa.add_trace(go.Scattermapbox(
                         lat=df_mapa['LATITUD'],
@@ -765,11 +695,7 @@ def main():
                         ],
                         showscale=True,
                         colorbar=dict(
-                            title="Mortalidad<br>Fetal (‰)",
-                            titleside="right",
-                            tickmode="linear",
-                            tick0=0,
-                            dtick=10
+                            title=dict(text="Mortalidad<br>Fetal (‰)", side="right")
                         ),
                         hovertemplate='Mortalidad: %{z:.1f}‰<extra></extra>'
                     ))
