@@ -626,53 +626,53 @@ def main():
                 
                 # Capa de fondo para bordes negros (puntos más grandes y negros)
                 fig_mapa.add_trace(go.Scattermapbox(
-                        lat=df_mapa['LATITUD'],
-                        lon=df_mapa['LONGITUD'],
-                        mode='markers',
-                        marker=dict(
-                            size=18,
-                            color='black',
-                            opacity=1
-                        ),
-                        hoverinfo='skip',
-                        showlegend=False
-                    ))
-                    
-                    # Capa principal con colores
-                    fig_mapa.add_trace(go.Scattermapbox(
-                        lat=df_mapa['LATITUD'],
-                        lon=df_mapa['LONGITUD'],
-                        mode='markers+text',
-                        marker=dict(
-                            size=14,
-                            color=df_mapa['color'],
-                            opacity=0.95
-                        ),
-                        text=df_mapa['NOMBRE_MUNICIPIO'],
-                        textposition='top center',
-                        textfont=dict(
-                            size=12, 
-                            color='#000000',
-                            family='Arial Black'
-                        ),
-                        hovertemplate=(
-                            '<b style="font-size:16px;">%{text}</b><br><br>' +
-                            '<b>Departamento:</b> %{customdata[0]}<br>' +
-                            '<b>Año:</b> %{customdata[1]}<br>' +
-                            '<b>Mortalidad Fetal:</b> %{customdata[2]:.1f}‰<br>' +
-                            '<b>Nacimientos:</b> %{customdata[3]:,}<br>' +
-                            '<b>Clasificación:</b> %{customdata[4]}<br>' +
-                            '<extra></extra>'
-                        ),
-                        customdata=np.stack([
-                            df_mapa['DEPARTAMENTO'],
-                            df_mapa['ANO'].astype(int),
-                            df_mapa['tasa_mortalidad_fetal_pct'],
-                            df_mapa['total_nacimientos'].astype(int),
-                            df_mapa['RIESGO']
-                        ], axis=-1),
-                        name='Municipios'
-                    ))
+                    lat=df_mapa['LATITUD'],
+                    lon=df_mapa['LONGITUD'],
+                    mode='markers',
+                    marker=dict(
+                        size=18,
+                        color='black',
+                        opacity=1
+                    ),
+                    hoverinfo='skip',
+                    showlegend=False
+                ))
+                
+                # Capa principal con colores
+                fig_mapa.add_trace(go.Scattermapbox(
+                    lat=df_mapa['LATITUD'],
+                    lon=df_mapa['LONGITUD'],
+                    mode='markers+text',
+                    marker=dict(
+                        size=14,
+                        color=df_mapa['color'],
+                        opacity=0.95
+                    ),
+                    text=df_mapa['NOMBRE_MUNICIPIO'],
+                    textposition='top center',
+                    textfont=dict(
+                        size=12, 
+                        color='#000000',
+                        family='Arial Black'
+                    ),
+                    hovertemplate=(
+                        '<b style="font-size:16px;">%{text}</b><br><br>' +
+                        '<b>Departamento:</b> %{customdata[0]}<br>' +
+                        '<b>Año:</b> %{customdata[1]}<br>' +
+                        '<b>Mortalidad Fetal:</b> %{customdata[2]:.1f}‰<br>' +
+                        '<b>Nacimientos:</b> %{customdata[3]:,}<br>' +
+                        '<b>Clasificación:</b> %{customdata[4]}<br>' +
+                        '<extra></extra>'
+                    ),
+                    customdata=np.stack([
+                        df_mapa['DEPARTAMENTO'],
+                        df_mapa['ANO'].astype(int),
+                        df_mapa['tasa_mortalidad_fetal_pct'],
+                        df_mapa['total_nacimientos'].astype(int),
+                        df_mapa['RIESGO']
+                    ], axis=-1),
+                    name='Municipios'
+                ))
                 
                 fig_mapa.update_layout(
                     mapbox=dict(
