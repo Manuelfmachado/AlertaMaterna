@@ -1357,14 +1357,14 @@ def main():
                 st.markdown(f"""
                 <div style='background-color: {color_gauge}20; padding: 20px; border-radius: 10px; border-left: 5px solid {color_gauge};'>
                     <h2 style='color: {color_gauge}; margin:0;'>{nivel}</h2>
-                    <p style='font-size: 1.3rem;'>Estimación central: <b>{tasa_pred:.2f}‰</b></p>
-                    <p style='font-size: 1.1rem; color: #555;'>
+                    <p style='font-size: 1.3rem; color: white;'>Estimación central: <b>{tasa_pred:.2f}‰</b></p>
+                    <p style='font-size: 1.1rem; color: white;'>
                         📊 <b>Rango epidemiológico (80% confianza):</b><br>
                         &nbsp;&nbsp;&nbsp;&nbsp;🔽 Mejor escenario (P10): <b>{p10:.1f}‰</b><br>
                         &nbsp;&nbsp;&nbsp;&nbsp;⏺️ Escenario esperado (P50): <b>{p50:.1f}‰</b><br>
                         &nbsp;&nbsp;&nbsp;&nbsp;🔼 Peor escenario (P90): <b>{p90:.1f}‰</b>
                     </p>
-                    <p style='margin-top: 10px;'>{mensaje}</p>
+                    <p style='margin-top: 10px; color: white;'>{mensaje}</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
