@@ -166,6 +166,11 @@ def cargar_coordenadas():
         dptos_orinoquia = [50, 81, 85, 95, 99]
         df = df[df['COD_DPTO'].isin(dptos_orinoquia)].copy()
         
+        # AJUSTE CRÍTICO: Convertir código de municipio completo (ej. 50001) a corto (ej. 1)
+        # para que coincida con features_municipio_anio.csv
+        df['COD_MUNIC_FULL'] = df['COD_MUNIC'].astype(int)
+        df['COD_MUNIC'] = df['COD_MUNIC_FULL'] % 1000
+        
         # Convertir coordenadas
         # Reemplazar coma por punto y convertir a float
         df['LONGITUD'] = df['LONGITUD'].astype(str).str.replace(',', '.').astype(float)
@@ -211,6 +216,12 @@ def preparar_datos(df):
             on=['COD_DPTO', 'COD_MUNIC'],
             how='left'
         )
+        
+        # Fallback para nombres si el merge falló para algunos registros
+        mask_nan = df['NOMBRE_MUNICIPIO'].isna()
+        if mask_nan.any():
+            df.loc[mask_nan, 'NOMBRE_MUNICIPIO'] = 'Municipio ' + df.loc[mask_nan, 'COD_MUNIC'].astype(str)
+            
     else:
         df['NOMBRE_MUNICIPIO'] = 'Municipio ' + df['COD_MUNIC'].astype(str)
         df['LATITUD'] = np.nan
