@@ -52,7 +52,7 @@ El sistema analiza **34 indicadores de salud** (atención prenatal, bajo peso al
 
 - **Sistema híbrido de clasificación**: Combina percentiles estadísticos + umbrales críticos OMS/PAHO
 - **100% de detección de casos críticos**: Identifica todos los municipios con mortalidad >50‰
-- **Modelo predictivo XGBoost Regressor**: Predice tasa de mortalidad infantil (‰) con R² 0.52 y MAE 6.93‰
+- **Modelo predictivo híbrido**: Combina base epidemiológica (WHO/Lawn) + XGBoost + intervalos de confianza (P10/P50/P90)
 - **Dashboard interactivo**: Visualizaciones en tiempo real con Streamlit y Plotly
 - **Basado en datos oficiales DANE (2020-2024)**:
   - **Datos brutos**: 2,789,391 nacimientos y 138,385 defunciones fetales en toda Orinoquía
@@ -94,17 +94,22 @@ Un municipio es clasificado como **ALTO RIESGO** si cumple:
 
 ### Modelo 2: Predicción de Tasa de Mortalidad Infantil
 
-**Algoritmo**: XGBoost Regressor (predice valores continuos en ‰)
+**Algoritmo**: Modelo Híbrido Epidemiológico + Machine Learning
+- **Base epidemiológica**: Fórmula WHO/Lawn et al. (MI ≈ MN / 0.6)
+- **Ajustes ML**: XGBoost Regressor calibrado con factores de riesgo
+- **Intervalos de confianza**: Regresión por Cuantiles (P10/P50/P90)
 
-**Features**: 34 indicadores sociosanitarios (5 demográficas + 7 clínicas + 3 institucionales + 5 acceso a servicios RIPS + 3 socioeconómicas + 3 atención prenatal + 1 mortalidad neonatal + 2 mortalidad fetal + 2 presión obstétrica + 1 mortalidad evitable + 1 embarazo alto riesgo + 1 índice fragilidad)
+**Features**: 34 indicadores sociosanitarios + 15 features clave para cuantiles
 
-**Performance**:
+**Performance Modelo Híbrido**:
+- Predicción central sensible a indicadores del municipio
+- Intervalos de confianza (80%): Rango P10 - P90
+- Cobertura del intervalo: 90.2% (esperado: 80%)
 
-- R² Score: **0.52** (explica 52% de la variabilidad - bueno para datos de salud pública)
-- MAE (Error Absoluto Medio): **6.93‰** (desviación promedio)
-- RMSE: **12.62‰** (error cuadrático medio)
-- Reglas médicas integradas para casos extremos (>80‰ mortalidad fetal)
-- Overfitting controlado: R² Train 0.63 vs Test 0.52 (diferencia <12%)
+**Reglas de Coherencia Epidemiológica** (científicamente defendibles):
+1. MI ≥ Mortalidad Neonatal (definición OMS ICD-10)
+2. P10 ≥ 1.5‰ (piso mundial - UNICEF 2023)
+3. P90 ≤ 150‰ (techo observado - DANE Orinoquía)
 
 **Top 5 features más importantes**:
 
@@ -183,12 +188,16 @@ AlertaMaterna/
 │       └── features_alerta_materna.csv   # Con targets y clasificación
 ├── src/
 │   ├── features.py                       # Generación de 34 indicadores
-│   └── train_model.py                    # Entrenamiento de modelos
+│   ├── train_model.py                    # Entrenamiento modelo XGBoost
+│   └── train_quantile_models.py          # Entrenamiento modelos P10/P50/P90
 ├── models/                                # Modelos entrenados (.pkl)
-│   ├── modelo_mortalidad_xgb.pkl
+│   ├── modelo_mortalidad_xgb.pkl          # Modelo XGBoost base
+│   ├── modelo_quantile_p10.pkl            # Cuantil P10 (optimista)
+│   ├── modelo_quantile_p50.pkl            # Cuantil P50 (central)
+│   ├── modelo_quantile_p90.pkl            # Cuantil P90 (pesimista)
 │   ├── scaler_mortalidad.pkl
-│   ├── umbral_mortalidad.pkl
-│   └── umbral_riesgo_obstetrico.pkl
+│   ├── scaler_quantile.pkl
+│   └── feature_names_quantile.pkl
 ├── app_simple.py                          # Dashboard Streamlit
 ├── requirements.txt                       # Dependencias Python
 ├── DOCUMENTACION_TECNICA.md              # Justificación científica (60+ páginas)
@@ -220,7 +229,12 @@ El dashboard tiene **2 pestañas principales**:
    - **Demográficos** (5): Nacimientos, edad materna, madres adolescentes, edad avanzada, nivel educativo
    - **Clínicos** (5): Mortalidad neonatal, mortalidad fetal, bajo peso, prematuros, APGAR bajo
    - **Acceso a Salud** (5): Control prenatal, consultas promedio, cesáreas, instituciones, presión obstétrica
-2. El sistema predice la **tasa de mortalidad infantil (<1 año) en ‰** (muertes por 1,000 nacimientos)
+2. El sistema predice la **tasa de mortalidad infantil con intervalos de confianza**:
+   - **Estimación central**: Predicción puntual en ‰
+   - **Rango epidemiológico (80% confianza)**:
+     - 🔽 P10 (mejor escenario)
+     - ⏺️ P50 (escenario esperado)
+     - 🔼 P90 (peor escenario)
 3. Visualización con gauge interactivo que muestra:
    - **Verde (< 5‰)**: NORMAL - dentro de estándares OMS
    - **Amarillo (5-10‰)**: MODERADO - por encima de media global
@@ -444,8 +458,9 @@ Explora el sistema de clasificación de riesgo obstétrico en la región Orinoqu
 
 <div align="center">
 
-**AlertaMaterna v1.0** | 2024-2025
-*Anticipación del riesgo obstétrico en la región Orinoquía*
+**AlertaMaterna v1.0** | 2025
+*Sistema de clasificación de riesgo obstétrico y predicción de mortalidad infantil*
+*Con intervalos de confianza epidemiológicos (P10/P50/P90)*
 
 [Inicio](#alertamaterna-sistema-de-clasificación-de-riesgo-obstétrico-y-predicción-de-mortalidad-infantil-en-la-región-orinoquía) • [Dashboard](#-uso-del-dashboard) • [Documentación](#-documentación-adicional) • [Contribuir](#-contribuciones)
 

@@ -28,7 +28,11 @@
 AlertaMaterna es un sistema de Machine Learning especializado para identificar y predecir riesgo de mortalidad materno-infantil en la región Orinoquía de Colombia. El sistema implementa dos modelos complementarios:
 
 - **Modelo 1 (Clasificación de Riesgo):** Sistema híbrido que combina percentiles estadísticos con umbrales críticos absolutos basados en literatura médica internacional.
-- **Modelo 2 (Predicción de Mortalidad):** XGBoost que predice la tasa de mortalidad infantil (‰) con R²=0.52, MAE=6.93‰ y RMSE=12.62‰.
+- **Modelo 2 (Predicción de Mortalidad):** Sistema híbrido que combina:
+  - Base epidemiológica (fórmula WHO/Lawn et al.)
+  - Ajustes calibrados por XGBoost
+  - Intervalos de confianza mediante regresión por cuantiles (P10/P50/P90)
+  - Reglas de coherencia epidemiológica científicamente fundamentadas
 
 **Nota terminológica**: Un "registro" = 1 municipio en 1 año específico. Ejemplo: Villavicencio 2020-2024 = 5 registros.
 
@@ -42,7 +46,8 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 - **Mortalidad fetal promedio: 23.4‰** (23.4 muertes por 1,000 nacimientos)
 - **49.7% de muertes maternas son PREVENIBLES** (causas evitables CIE-10)
 - 40 registros con mortalidad crítica (>50‰) correctamente identificados (100% sensibilidad)
-- **Modelo predictivo: R²=0.52 | MAE=6.93‰ | RMSE=12.62‰**
+- **Modelo predictivo híbrido + intervalos de confianza P10/P50/P90**
+- **Cobertura del intervalo [P10, P90]: 90.2%**
 
 ---
 
@@ -102,9 +107,10 @@ Las 34 variables fueron seleccionadas basándose en:
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   MODELADO ML                                │
-│  Script: train_model.py                                      │
+│  Scripts: train_model.py + train_quantile_models.py         │
 │  • Modelo 1: Clasificación de riesgo (índice compuesto)     │
-│  • Modelo 2: Regresión XGBoost (tasa mortalidad infantil)   │
+│  • Modelo 2: Híbrido epidemiológico + XGBoost               │
+│  • Modelo 3: Regresión por cuantiles (P10/P50/P90)          │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -906,13 +912,13 @@ Crítico         18.7       24.3         Mayor incertidumbre
    - Factores no en dataset: clima, conflicto, infraestructura vial, índices pobreza
    - Futuro: integrar más fuentes de datos
 
-3. **Intervalos de Confianza (IMPLEMENTADO):**
+3. **Intervalos de Confianza:**
    - Regresión por cuantiles (P10/P50/P90) implementada con Gradient Boosting
    - Proporciona rango epidemiológico: "Estimación: X‰, Rango: P10 – P90"
    - Cobertura del intervalo [P10, P90]: ~90% (esperado: 80%)
    - Referencia: Koenker, R. (2005). Quantile Regression. Cambridge University Press.
 
-### 6.4 Modelo de Regresión por Cuantiles (Nuevo)
+### 6.4 Modelo de Regresión por Cuantiles
 
 **Motivación:** Un solo número de predicción (ej: "8.5‰") no comunica la incertidumbre inherente
 al pronóstico. En epidemiología, es mejor reportar un rango de confianza.
@@ -946,10 +952,27 @@ GradientBoostingRegressor(
 
 **Cobertura:** 90.2% de valores reales caen en [P10, P90] (esperado teórico: 80%)
 
-**Post-procesamiento:**
-1. Clip a valores ≥ 0 (no hay mortalidad negativa)
-2. Ordenamiento forzado: P10 ≤ P50 ≤ P90
-3. Límites epidemiológicos: P10 ≥ 80% mortalidad neonatal, P90 ≤ 150‰
+**Post-procesamiento (Reglas de Coherencia Epidemiológica):**
+
+Solo se aplican restricciones con sustento científico demostrable:
+
+1. **RESTRICCIÓN MATEMÁTICA (Definición OMS ICD-10):**
+   - Mortalidad Infantil = Neonatal + Post-neonatal
+   - Por tanto: P10 ≥ Mortalidad Neonatal (siempre)
+   - Es matemáticamente imposible que MI < MN
+
+2. **PISO MÍNIMO MUNDIAL (UNICEF State of World's Children 2023):**
+   - Los países con mejores indicadores (Japón, Finlandia, Islandia) tienen tasas de 1.5-2.0‰
+   - No existe lugar con 0‰
+   - P10 ≥ 1.5‰
+
+3. **TECHO MÁXIMO OBSERVABLE (DANE Estadísticas Vitales 2020-2024):**
+   - Máximo histórico observado en Orinoquía ~180‰
+   - P90 ≤ 150‰ (límite conservador)
+
+4. **ANCHO MÍNIMO DE INTERVALO (Principio estadístico):**
+   - Un intervalo de confianza con ancho 0 no tiene sentido
+   - Diferencia P90-P10 ≥ 2‰
 
 #### Top 10 Features Más Importantes (Dic 2025)
 
@@ -1233,9 +1256,10 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
    - Algunas variables aportan poco (<0.05)
    - Simplificación podría mejorar interpretabilidad
 
-3. **Sin intervalo de confianza:**
-   - Predice probabilidad puntual
-   - No comunica incertidumbre
+3. **Intervalos de confianza:**
+   - Regresión por cuantiles (P10/P50/P90)
+   - Comunica incertidumbre de forma profesional
+   - Cobertura del intervalo: 90.2%
 
 ### 9.2 Trabajo Futuro
 
@@ -1336,7 +1360,8 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
 
 El código completo está disponible en:
 - `src/features.py`: Generación de features
-- `src/train_model.py`: Entrenamiento de modelos
+- `src/train_model.py`: Entrenamiento de modelo XGBoost base
+- `src/train_quantile_models.py`: Entrenamiento de modelos P10/P50/P90
 - `app_simple.py`: Dashboard interactivo
 
 Para reproducir el análisis completo:
@@ -1346,10 +1371,13 @@ Para reproducir el análisis completo:
 cd src
 python features.py
 
-# 2. Entrenar modelos
+# 2. Entrenar modelo base
 python train_model.py
 
-# 3. Lanzar dashboard
+# 3. Entrenar modelos de cuantiles
+python train_quantile_models.py
+
+# 4. Lanzar dashboard
 cd ..
 streamlit run app_simple.py
 ```
@@ -1371,10 +1399,14 @@ plotly: 5.11.0+
 
 ```
 models/
-├── modelo_mortalidad_xgb.pkl        # Modelo XGBoost entrenado
-├── scaler_mortalidad.pkl            # StandardScaler para normalización
-├── umbral_mortalidad.pkl            # Umbral de alta mortalidad (6.42‰)
-└── umbral_riesgo_obstetrico.pkl     # Percentiles del Modelo 1
+├── modelo_mortalidad_xgb.pkl        # Modelo XGBoost base
+├── modelo_quantile_p10.pkl          # Cuantil P10 (escenario optimista)
+├── modelo_quantile_p50.pkl          # Cuantil P50 (predicción central)
+├── modelo_quantile_p90.pkl          # Cuantil P90 (escenario pesimista)
+├── scaler_mortalidad.pkl            # StandardScaler para XGBoost
+├── scaler_quantile.pkl              # RobustScaler para cuantiles
+├── feature_names_quantile.pkl       # Lista de 15 features para cuantiles
+└── MODEL_VERSION.txt                # Versión actual: v3.0 Quantile Models
 
 data/processed/
 ├── features_municipio_anio.csv      # Features sin target (310 registros)
@@ -1384,6 +1416,7 @@ data/processed/
 
 ---
 
-**Documento generado:** Noviembre 2025  
-**Proyecto:** AlertaMaterna - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil  
+**Documento generado:** Diciembre 2025
+**Proyecto:** AlertaMaterna v1.0 - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil  
 **Región:** Orinoquía, Colombia
+**Concurso:** Datos al Ecosistema 2025 - MinTIC
