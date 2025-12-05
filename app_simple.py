@@ -999,24 +999,56 @@ def main():
             X_scaled = scaler.transform(X)
             tasa_pred = model.predict(X_scaled)[0]
             
-            # Reglas post-predicción (DESACTIVADAS para permitir variabilidad natural)
-            # if mort_neonatal <= 3 and mort_fetal <= 10:
-            #     tasa_pred = min(tasa_pred, 5.0)
-            # elif mort_neonatal <= 5 and mort_fetal <= 15:
-            #     tasa_pred = min(tasa_pred, 8.0)
+            # ========================================================================
+            # AJUSTE HEURÍSTICO DE SENSIBILIDAD
+            # ========================================================================
+            # El modelo XGBoost prioriza fuertemente las tasas de mortalidad (fetal/neonatal)
+            # y la presión obstétrica, subestimando el impacto inmediato de factores de riesgo
+            # como falta de control prenatal o bajo peso.
+            # Se aplica un factor de corrección lineal para reflejar mejor el riesgo clínico.
             
-            # if mort_fetal > 80:
-            #     tasa_pred = max(tasa_pred, 15.0)
-            # if mort_neonatal > 15:
-            #     tasa_pred = max(tasa_pred, 20.0)
+            factor_ajuste = 0.0
             
-            # if not (mort_neonatal <= 2 and mort_fetal <= 5):
-            #     tasa_pred = max(tasa_pred, 3.0)
+            # 1. Impacto del Control Prenatal (Ref: OMS < 5% sin control)
+            # Por cada 1% adicional sin control, aumenta riesgo
+            if sin_prenatal > 5.0:
+                factor_ajuste += (sin_prenatal - 5.0) * 0.15
+            
+            # 2. Impacto del Bajo Peso (Ref: < 7%)
+            if bajo_peso > 7.0:
+                factor_ajuste += (bajo_peso - 7.0) * 0.25
+                
+            # 3. Impacto de Prematuridad (Ref: < 8%)
+            if prematuro > 8.0:
+                factor_ajuste += (prematuro - 8.0) * 0.20
+                
+            # 4. Impacto de Madres Adolescentes (Ref: < 10%)
+            if adolesc > 10.0:
+                factor_ajuste += (adolesc - 10.0) * 0.05
+                
+            # 5. Impacto APGAR Bajo (Ref: < 1%)
+            if apgar_bajo > 1.0:
+                factor_ajuste += (apgar_bajo - 1.0) * 0.8
+                
+            # 6. Impacto Educación Baja (Ref: < 10%)
+            if bajo_educ > 10.0:
+                factor_ajuste += (bajo_educ - 10.0) * 0.05
+
+            # Aplicar ajuste (suavizado)
+            tasa_pred_ajustada = tasa_pred + factor_ajuste
+            
+            # Asegurar consistencia lógica (no puede ser menor que la neonatal)
+            tasa_pred = max(tasa_pred_ajustada, mort_neonatal + 1.0)
+            
+            # Reglas de consistencia final
+            if mort_neonatal <= 3 and mort_fetal <= 10 and factor_ajuste < 2:
+                 tasa_pred = min(tasa_pred, 8.0)
             
             st.session_state.resultado_prediccion = {
                 'tasa_pred': tasa_pred,
                 'features': features,
-                'X_columns': scaler_cols
+                'X_columns': scaler_cols,
+                'factor_ajuste': factor_ajuste # Guardar para debug
             }
 
         if 'resultado_prediccion' in st.session_state:
@@ -1168,7 +1200,9 @@ def main():
                         st.warning(f"No se pudo escalar features: {e}")
 
                     # Mostrar predicción actual
-                    st.markdown(f"**Predicción actual del modelo:** {tasa_pred:.2f}‰")
+                    st.markdown(f"**Predicción final:** {tasa_pred:.2f}‰")
+                    if 'factor_ajuste' in res:
+                         st.markdown(f"**Ajuste por factores de riesgo:** +{res['factor_ajuste']:.2f}‰")
 
                     # Prueba de sensibilidad para variables clave
                     st.markdown("**Análisis de sensibilidad (variar 3 variables clave):**")
