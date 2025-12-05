@@ -1064,17 +1064,31 @@ def main():
             # Si los indicadores vitales directos (Neonatal y Fetal) son normales,
             # la Mortalidad Infantil debe ser consistente con la proporción neonatal/infantil.
             # Fundamentación: En Colombia, la mortalidad neonatal aporta el ~60% de la infantil (DANE).
-            # Se usa un factor de 3.0x (muy conservador, asumiendo MN=33%) para el límite superior.
+            #
+            # ESCALA DE COHERENCIA:
+            # - MN < 1‰: Excelencia (Japón, Noruega). MI esperada: 2-4‰
+            # - MN 1-3‰: Muy bueno (Chile, Uruguay). MI esperada: 4-8‰
+            # - MN 3-5‰: Normal (Colombia promedio). MI esperada: 8-12‰
+            #
             if mort_neonatal < 5.0 and mort_fetal < 15.0:
-                # Si MN es normal (<5), la MI no debería exceder 3 veces ese valor salvo epidemia.
-                # Cap: Máximo 3.0 veces la neonatal o el piso de 10.0‰ (lo que sea mayor)
-                # Para MN=3.5 -> Cap = max(10.0, 10.5) = 10.5‰ (Borde Moderado/Alto)
-                # Ajuste fino: Si MN < 4.0, el riesgo no debería ser ALTO (>10) sin otros factores.
+                # Factor de multiplicación basado en evidencia:
+                # MN representa ~60% de MI → MI = MN / 0.6 ≈ MN * 1.67
+                # Usamos 2.5x como factor conservador (permite algo de post-neonatal)
                 
-                factor_seguridad = 3.0
-                piso_minimo = 8.0 # Promedio nacional bajo
+                factor_base = 2.5
                 
-                cap_coherencia = max(piso_minimo, mort_neonatal * factor_seguridad)
+                # Piso mínimo según escenario (no arbitrario):
+                # - Si MN < 1‰: piso 2.5‰ (límite teórico países desarrollados)
+                # - Si MN 1-3‰: piso 4.0‰ (muy buen sistema de salud)
+                # - Si MN 3-5‰: piso 6.0‰ (sistema funcional)
+                if mort_neonatal < 1.0:
+                    piso_minimo = 2.5
+                elif mort_neonatal < 3.0:
+                    piso_minimo = 4.0
+                else:
+                    piso_minimo = 6.0
+                
+                cap_coherencia = max(piso_minimo, mort_neonatal * factor_base)
                 tasa_pred = min(tasa_pred, cap_coherencia)
             
             # ===================================================================
