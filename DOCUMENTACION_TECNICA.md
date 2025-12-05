@@ -40,11 +40,11 @@ AlertaMaterna es un sistema de Machine Learning especializado para identificar y
 
 **Resultados principales (Orinoquía 2020-2024):**
 - 251 registros municipio-año válidos con ≥10 nacimientos/año (estándar OMS)
-- **57 municipios únicos** analizados en 5 departamentos
+- **51 municipios únicos** analizados en 5 departamentos
 - **137,780 nacimientos analizados** en registros válidos
-- **68 registros clasificados como alto riesgo** (mortalidad fetal >30‰)
+- **64 registros clasificados como alto riesgo** (sistema híbrido ≥3 puntos)
 - **40 registros con mortalidad crítica** (>50‰) correctamente identificados
-- **Mortalidad fetal promedio ponderada:** 49.0‰ (2020-2024)
+- **Mortalidad fetal promedio ponderada:** 49.7‰ (2020-2024)
 - **57.8% de muertes son potencialmente EVITABLES** (causas evitables según clasificación DANE)
 - **Modelo predictivo híbrido + intervalos de confianza P10/P50/P90**
 - **Cobertura del intervalo [P10, P90]: 90.2%**
