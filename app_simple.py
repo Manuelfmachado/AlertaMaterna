@@ -116,7 +116,13 @@ st.markdown("""
         min-width: 200px !important;
         flex: 1 1 auto !important;
     }
-    
+
+    /* Números de sliders y number_input más grandes */
+    .stSlider .css-1lv4b6l, .stNumberInput input {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+    }
+
     /* Evitar truncamiento de valores y etiquetas de métricas */
     [data-testid="stMetricValue"] {
         white-space: nowrap !important;
