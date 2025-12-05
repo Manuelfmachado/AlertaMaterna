@@ -482,25 +482,56 @@ def main():
         
         st.subheader("📈 Evolución de la Mortalidad (2020-2024)")
         
+        # Preparar datos para media ponderada (más precisa)
+        df['defunciones_estimadas'] = (df['tasa_mortalidad_fetal'] * df['total_nacimientos'] / 1000)
+        
         # Agrupar por año
         if depto_sel == 'Todos':
-            df_evol = df.groupby('ANO')['tasa_mortalidad_fetal'].mean().reset_index()
-            titulo_evol = "Evolución Promedio Orinoquía"
+            # Media Ponderada Regional
+            df_evol = df.groupby('ANO').apply(
+                lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 1000)
+            ).reset_index(name='tasa_mortalidad_fetal')
+            titulo_evol = "Evolución Ponderada Orinoquía"
+            
+            # Calcular Arauca para referencia (coincide con documentación técnica)
+            df_arauca_ref = df[df['DEPARTAMENTO'] == 'Arauca'].groupby('ANO')['tasa_mortalidad_fetal'].mean().reset_index()
+            
         else:
-            df_evol = df[df['DEPARTAMENTO'] == depto_sel].groupby('ANO')['tasa_mortalidad_fetal'].mean().reset_index()
-            titulo_evol = f"Evolución Promedio {depto_sel}"
+            # Media Ponderada Departamento
+            df_dept = df[df['DEPARTAMENTO'] == depto_sel]
+            if not df_dept.empty:
+                df_evol = df_dept.groupby('ANO').apply(
+                    lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 1000) if x['total_nacimientos'].sum() > 0 else 0
+                ).reset_index(name='tasa_mortalidad_fetal')
+            else:
+                df_evol = pd.DataFrame(columns=['ANO', 'tasa_mortalidad_fetal'])
+                
+            titulo_evol = f"Evolución Ponderada {depto_sel}"
+            df_arauca_ref = None
             
         fig_evol = go.Figure()
 
-        # Línea de evolución
+        # Línea de evolución principal
         fig_evol.add_trace(go.Scatter(
             x=df_evol['ANO'],
             y=df_evol['tasa_mortalidad_fetal'],
             mode='lines+markers',
-            name='Mortalidad Fetal',
+            name=f'Promedio {depto_sel}',
             line=dict(color='#FF4B4B', width=4),
-            marker=dict(size=12, color='#FF4B4B', line=dict(width=2, color='white'))
+            marker=dict(size=10, color='#FF4B4B')
         ))
+        
+        # Línea de Referencia Arauca (si estamos en vista general)
+        if depto_sel == 'Todos' and df_arauca_ref is not None:
+            fig_evol.add_trace(go.Scatter(
+                x=df_arauca_ref['ANO'],
+                y=df_arauca_ref['tasa_mortalidad_fetal'],
+                mode='lines',
+                name='Ref. Arauca (Doc. Técnica)',
+                line=dict(color='#888888', width=2, dash='dot'),
+                hoverinfo='skip'
+            ))
+            st.caption("Nota: La línea punteada muestra el promedio de Arauca (63.4‰ en 2024), que corresponde a los valores máximos citados en la documentación técnica.")
 
         # Línea OMS
         fig_evol.add_hline(y=5, line_dash="dash", line_color="#27AE60", annotation_text="Meta OMS (5‰)")
@@ -515,7 +546,8 @@ def main():
             hovermode='x unified',
             height=400,
             template='plotly_white',
-            xaxis=dict(tickmode='linear', dtick=1)
+            xaxis=dict(tickmode='linear', dtick=1),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         
         st.plotly_chart(fig_evol, use_container_width=True)
@@ -527,7 +559,7 @@ def main():
             if val_2024 > val_2023:
                 st.warning(f"""
                 ### 🚨 Alerta de Tendencia
-                Se observa un **incremento del {((val_2024-val_2023)/val_2023*100):.1f}%** en la mortalidad fetal promedio en 2024 respecto a 2023.
+                Se observa un **incremento del {((val_2024-val_2023)/val_2023*100):.1f}%** en la mortalidad fetal ponderada en 2024 respecto a 2023.
                 """)
 
         st.markdown("---")
