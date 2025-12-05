@@ -999,19 +999,19 @@ def main():
             X_scaled = scaler.transform(X)
             tasa_pred = model.predict(X_scaled)[0]
             
-            # Reglas post-predicción
-            if mort_neonatal <= 3 and mort_fetal <= 10:
-                tasa_pred = min(tasa_pred, 5.0)
-            elif mort_neonatal <= 5 and mort_fetal <= 15:
-                tasa_pred = min(tasa_pred, 8.0)
+            # Reglas post-predicción (DESACTIVADAS para permitir variabilidad natural)
+            # if mort_neonatal <= 3 and mort_fetal <= 10:
+            #     tasa_pred = min(tasa_pred, 5.0)
+            # elif mort_neonatal <= 5 and mort_fetal <= 15:
+            #     tasa_pred = min(tasa_pred, 8.0)
             
-            if mort_fetal > 80:
-                tasa_pred = max(tasa_pred, 15.0)
-            if mort_neonatal > 15:
-                tasa_pred = max(tasa_pred, 20.0)
+            # if mort_fetal > 80:
+            #     tasa_pred = max(tasa_pred, 15.0)
+            # if mort_neonatal > 15:
+            #     tasa_pred = max(tasa_pred, 20.0)
             
-            if not (mort_neonatal <= 2 and mort_fetal <= 5):
-                tasa_pred = max(tasa_pred, 3.0)
+            # if not (mort_neonatal <= 2 and mort_fetal <= 5):
+            #     tasa_pred = max(tasa_pred, 3.0)
             
             st.session_state.resultado_prediccion = {
                 'tasa_pred': tasa_pred,
