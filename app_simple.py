@@ -1041,7 +1041,16 @@ def main():
             tasa_pred = max(tasa_pred_ajustada, mort_neonatal + 1.0)
             
             # Reglas de consistencia final
-            if mort_neonatal <= 3 and mort_fetal <= 10 and factor_ajuste < 2:
+            
+            # Escenario de Excelencia: Indicadores muy bajos (Mortalidad casi nula)
+            if mort_neonatal <= 1.0 and mort_fetal <= 5.0 and factor_ajuste < 0.5:
+                # Si los inputs son casi perfectos, la predicción debe reflejar el estándar OMS (<5‰)
+                # Se permite bajar hasta 3.0‰ como piso realista para la región
+                tasa_pred = min(tasa_pred, 5.0)
+                tasa_pred = max(tasa_pred, 3.0)
+                
+            # Escenario Bueno: Indicadores bajos
+            elif mort_neonatal <= 3.0 and mort_fetal <= 10.0 and factor_ajuste < 2.0:
                  tasa_pred = min(tasa_pred, 8.0)
             
             st.session_state.resultado_prediccion = {
