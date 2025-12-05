@@ -1438,32 +1438,78 @@
 
         <!-- SLIDE 7 - Innovación y Tecnología -->
         <div class="slide slide-7">
-            <h2>Innovación y tecnología</h2>
+            <h2>Innovación y Tecnología</h2>
 
-            <div class="innovation-grid">
-                <div class="innovation-card">
-                    <div class="innovation-icon"><i class="fas fa-globe" style="color: #9C27B0;"></i></div>
-                    <div class="innovation-title">Base Epidemiológica OMS</div>
+            <!-- Fila superior: 3 columnas principales -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vw; margin-top: 2vh; padding: 0 2vw;">
+                
+                <!-- Modelo Híbrido Único -->
+                <div style="background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%); padding: 2.5vh 1.5vw; border-radius: 15px; box-shadow: 0 6px 20px rgba(25,118,210,0.35); color: white; text-align: center;">
+                    <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 1.5vh;"><i class="fas fa-dna"></i></div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 800; margin-bottom: 1vh; line-height: 1.3;">
+                        Modelo Híbrido Único
+                    </div>
+                    <div style="font-size: clamp(0.85rem, 1.2vw, 1rem); line-height: 1.7; opacity: 0.95;">
+                        <i class="fas fa-check-circle" style="color: #81D4FA;"></i> Fórmula OMS + XGBoost<br>
+                        <i class="fas fa-check-circle" style="color: #81D4FA;"></i> Base científica validada<br>
+                        <i class="fas fa-check-circle" style="color: #81D4FA;"></i> No es "caja negra"
+                    </div>
                 </div>
 
-                <div class="innovation-card">
-                    <div class="innovation-icon"><i class="fas fa-chart-area" style="color: #9C27B0;"></i></div>
-                    <div class="innovation-title">Regresión Cuantil (P10/P50/P90)</div>
+                <!-- Predicción con Incertidumbre -->
+                <div style="background: linear-gradient(135deg, #7B1FA2 0%, #4A148C 100%); padding: 2.5vh 1.5vw; border-radius: 15px; box-shadow: 0 6px 20px rgba(123,31,162,0.35); color: white; text-align: center;">
+                    <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 1.5vh;"><i class="fas fa-chart-line"></i></div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 800; margin-bottom: 1vh; line-height: 1.3;">
+                        Predicción con Incertidumbre
+                    </div>
+                    <div style="font-size: clamp(0.85rem, 1.2vw, 1rem); line-height: 1.7; opacity: 0.95;">
+                        <i class="fas fa-check-circle" style="color: #CE93D8;"></i> Intervalos P10/P50/P90<br>
+                        <i class="fas fa-check-circle" style="color: #CE93D8;"></i> <strong>90.2%</strong> cobertura<br>
+                        <i class="fas fa-check-circle" style="color: #CE93D8;"></i> Cuantifica riesgo real
+                    </div>
                 </div>
 
-                <div class="innovation-card">
-                    <div class="innovation-icon"><i class="fas fa-bell" style="color: #9C27B0;"></i></div>
-                    <div class="innovation-title">Alertas Tempranas Automáticas</div>
+                <!-- Alertas Inteligentes -->
+                <div style="background: linear-gradient(135deg, #C2185B 0%, #880E4F 100%); padding: 2.5vh 1.5vw; border-radius: 15px; box-shadow: 0 6px 20px rgba(194,24,91,0.35); color: white; text-align: center;">
+                    <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 1.5vh;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 800; margin-bottom: 1vh; line-height: 1.3;">
+                        Alertas Inteligentes
+                    </div>
+                    <div style="font-size: clamp(0.85rem, 1.2vw, 1rem); line-height: 1.7; opacity: 0.95;">
+                        <i class="fas fa-check-circle" style="color: #F48FB1;"></i> Clasificación automática<br>
+                        <i class="fas fa-check-circle" style="color: #F48FB1;"></i> Umbrales OMS + percentiles<br>
+                        <i class="fas fa-check-circle" style="color: #F48FB1;"></i> Priorización objetiva
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila inferior: 2 columnas -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2vw; margin-top: 2.5vh; padding: 0 2vw;">
+                
+                <!-- 5 Fuentes de Datos Abiertos -->
+                <div style="background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); padding: 2vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-left: 5px solid #2196F3;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 1vw;">
+                        <i class="fas fa-database" style="font-size: clamp(2rem, 3vw, 2.5rem); color: #2196F3;"></i>
+                        <div style="text-align: left;">
+                            <div style="font-size: clamp(1.1rem, 1.5vw, 1.3rem); font-weight: 800; color: #1a1a1a;">5 Fuentes de Datos Abiertos</div>
+                            <div style="font-size: clamp(0.85rem, 1.1vw, 0.95rem); color: #555; margin-top: 0.5vh;">
+                                DANE • DIVIPOLA • REPS • RIPS • <strong>datos.gov.co</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="innovation-card">
-                    <div class="innovation-icon"><i class="fas fa-code" style="color: #9C27B0;"></i></div>
-                    <div class="innovation-title">Código Abierto y Auditable</div>
-                </div>
-
-                <div class="innovation-card">
-                    <div class="innovation-icon"><i class="fas fa-rocket" style="color: #9C27B0;"></i></div>
-                    <div class="innovation-title">Listo para Usar Hoy</div>
+                <!-- 100% Código Abierto -->
+                <div style="background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); padding: 2vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-left: 5px solid #4CAF50;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 1vw;">
+                        <i class="fas fa-code-branch" style="font-size: clamp(2rem, 3vw, 2.5rem); color: #4CAF50;"></i>
+                        <div style="text-align: left;">
+                            <div style="font-size: clamp(1.1rem, 1.5vw, 1.3rem); font-weight: 800; color: #1a1a1a;">100% Código Abierto</div>
+                            <div style="font-size: clamp(0.85rem, 1.1vw, 0.95rem); color: #555; margin-top: 0.5vh;">
+                                Reproducible • Auditable • <strong>Listo para usar HOY</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1675,71 +1721,114 @@
 
         <!-- SLIDE 11 - Pipeline Técnico -->
         <div class="slide slide-11">
-            <h2>Pipeline Técnico</h2>
+            <h2>Pipeline AlertaMaterna</h2>
             
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2vw; margin-top: 3vh; padding: 0 2vw;">
-                <!-- Fase 1: Ingesta de Datos -->
-                <div style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); padding: 2.5vh 1.5vw; border-radius: 12px; box-shadow: 0 4px 12px rgba(33,150,243,0.3); color: white; text-align: center; position: relative;">
-                    <div style="font-size: clamp(2rem, 3vw, 2.5rem); margin-bottom: 1vh;"><i class="fas fa-download" style="color: white;"></i></div>
-                    <div style="font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 800; margin-bottom: 1.5vh; line-height: 1.2;">
-                        Ingesta de Datos
+            <!-- Títulos de cada fase -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1vw; margin-top: 2vh; padding: 0 2vw;">
+                <div style="text-align: center; font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 800; color: #1976D2;">
+                    <i class="fas fa-folder-open" style="margin-right: 0.3vw;"></i> DATOS ABIERTOS
+                </div>
+                <div style="text-align: center; font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 800; color: #388E3C;">
+                    <i class="fas fa-cogs" style="margin-right: 0.3vw;"></i> PROCESO RIGUROSO
+                </div>
+                <div style="text-align: center; font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 800; color: #E65100;">
+                    <i class="fas fa-brain" style="margin-right: 0.3vw;"></i> MODELO INNOVADOR
+                </div>
+                <div style="text-align: center; font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 800; color: #C2185B;">
+                    <i class="fas fa-bullseye" style="margin-right: 0.3vw;"></i> ACCIÓN INMEDIATA
+                </div>
+            </div>
+
+            <!-- Las 4 fases del pipeline -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5vw; margin-top: 1.5vh; padding: 0 2vw;">
+                <!-- Fase 1: Datos Abiertos -->
+                <div style="background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%); padding: 2.5vh 1.2vw; border-radius: 12px; box-shadow: 0 5px 15px rgba(33,150,243,0.35); color: white; text-align: center; position: relative;">
+                    <div style="font-size: clamp(2.2rem, 3.5vw, 3rem); margin-bottom: 1.5vh;"><i class="fas fa-database"></i></div>
+                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.7; text-align: left; padding: 0 0.5vw;">
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #81D4FA; margin-right: 0.3vw;"></i> DANE (EEVV)</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #81D4FA; margin-right: 0.3vw;"></i> Nacimientos</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #81D4FA; margin-right: 0.3vw;"></i> Defunciones</div>
+                        <div><i class="fas fa-check" style="color: #81D4FA; margin-right: 0.3vw;"></i> RIPS / REPS</div>
                     </div>
-                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.6; opacity: 0.95;">
-                        • DATOS.GOV.CO<br>
-                        • DANE (EEVV)<br>
-                        • 2.7M+ registros
+                    <div style="margin-top: 1.5vh; padding-top: 1vh; border-top: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.75rem, 1vw, 0.85rem); font-weight: 600;">
+                        <i class="fas fa-globe"></i> datos.gov.co
                     </div>
-                    <div style="position: absolute; right: -1.5vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.5rem, 2.5vw, 2rem); color: #E91E63;">→</div>
+                    <div style="position: absolute; right: -1.2vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.8rem, 2.5vw, 2.2rem); color: #E91E63; font-weight: 900;">→</div>
                 </div>
 
-                <!-- Fase 2: Procesamiento -->
-                <div style="background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); padding: 2.5vh 1.5vw; border-radius: 12px; box-shadow: 0 4px 12px rgba(76,175,80,0.3); color: white; text-align: center; position: relative;">
-                    <div style="font-size: clamp(2rem, 3vw, 2.5rem); margin-bottom: 1vh;"><i class="fas fa-cogs" style="color: white;"></i></div>
-                    <div style="font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 800; margin-bottom: 1.5vh; line-height: 1.2;">
-                        Procesamiento
+                <!-- Fase 2: Proceso Riguroso -->
+                <div style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); padding: 2.5vh 1.2vw; border-radius: 12px; box-shadow: 0 5px 15px rgba(76,175,80,0.35); color: white; text-align: center; position: relative;">
+                    <div style="font-size: clamp(2.2rem, 3.5vw, 3rem); margin-bottom: 1.5vh;"><i class="fas fa-filter"></i></div>
+                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.7; text-align: left; padding: 0 0.5vw;">
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #A5D6A7; margin-right: 0.3vw;"></i> Limpieza</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #A5D6A7; margin-right: 0.3vw;"></i> Validación</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #A5D6A7; margin-right: 0.3vw;"></i> Estándar DIVIPOLA</div>
+                        <div><i class="fas fa-check" style="color: #A5D6A7; margin-right: 0.3vw;"></i> Cruce 4 fuentes</div>
                     </div>
-                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.6; opacity: 0.95;">
-                        • Limpieza<br>
-                        • Normalización<br>
-                        • Estandarización DIVIPOLA
+                    <div style="margin-top: 1.5vh; padding-top: 1vh; border-top: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.75rem, 1vw, 0.85rem); font-weight: 600;">
+                        <i class="fas fa-map-marker-alt"></i> 51 municipios
                     </div>
-                    <div style="position: absolute; right: -1.5vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.5rem, 2.5vw, 2rem); color: #E91E63;">→</div>
+                    <div style="position: absolute; right: -1.2vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.8rem, 2.5vw, 2.2rem); color: #E91E63; font-weight: 900;">→</div>
                 </div>
 
-                <!-- Fase 3: Análisis Inteligente -->
-                <div style="background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); padding: 2.5vh 1.5vw; border-radius: 12px; box-shadow: 0 4px 12px rgba(255,111,0,0.3); color: white; text-align: center; position: relative;">
-                    <div style="font-size: clamp(2rem, 3vw, 2.5rem); margin-bottom: 1vh;"><i class="fas fa-brain" style="color: white;"></i></div>
-                    <div style="font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 800; margin-bottom: 1.5vh; line-height: 1.2;">
-                        Modelo Híbrido
+                <!-- Fase 3: Modelo Innovador -->
+                <div style="background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); padding: 2.5vh 1.2vw; border-radius: 12px; box-shadow: 0 5px 15px rgba(255,111,0,0.35); color: white; text-align: center; position: relative;">
+                    <div style="font-size: clamp(2.2rem, 3.5vw, 3rem); margin-bottom: 1.5vh;"><i class="fas fa-brain"></i></div>
+                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.7; text-align: left; padding: 0 0.5vw;">
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #FFCC80; margin-right: 0.3vw;"></i> Fórmula OMS</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #FFCC80; margin-right: 0.3vw;"></i> XGBoost ML</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #FFCC80; margin-right: 0.3vw;"></i> Cuantiles P10/P90</div>
+                        <div><i class="fas fa-check" style="color: #FFCC80; margin-right: 0.3vw;"></i> 8 factores riesgo</div>
                     </div>
-                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.6; opacity: 0.95;">
-                        • Base Epidemiológica OMS<br>
-                        • Regresión Cuantil ML<br>
-                        • Intervalos P10/P50/P90
+                    <div style="margin-top: 1.5vh; padding-top: 1vh; border-top: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.75rem, 1vw, 0.85rem); font-weight: 600;">
+                        <i class="fas fa-microscope"></i> Híbrido único
                     </div>
-                    <div style="position: absolute; right: -1.5vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.5rem, 2.5vw, 2rem); color: #E91E63;">→</div>
+                    <div style="position: absolute; right: -1.2vw; top: 50%; transform: translateY(-50%); font-size: clamp(1.8rem, 2.5vw, 2.2rem); color: #E91E63; font-weight: 900;">→</div>
                 </div>
 
-                <!-- Fase 4: Acción -->
-                <div style="background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%); padding: 2.5vh 1.5vw; border-radius: 12px; box-shadow: 0 4px 12px rgba(233,30,99,0.3); color: white; text-align: center;">
-                    <div style="font-size: clamp(2rem, 3vw, 2.5rem); margin-bottom: 1vh;"><i class="fas fa-bell" style="color: white;"></i></div>
-                    <div style="font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 800; margin-bottom: 1.5vh; line-height: 1.2;">
-                        Acción
+                <!-- Fase 4: Acción Inmediata -->
+                <div style="background: linear-gradient(135deg, #E91E63 0%, #AD1457 100%); padding: 2.5vh 1.2vw; border-radius: 12px; box-shadow: 0 5px 15px rgba(233,30,99,0.35); color: white; text-align: center;">
+                    <div style="font-size: clamp(2.2rem, 3.5vw, 3rem); margin-bottom: 1.5vh;"><i class="fas fa-tachometer-alt"></i></div>
+                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.7; text-align: left; padding: 0 0.5vw;">
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #F48FB1; margin-right: 0.3vw;"></i> Dashboard en vivo</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #F48FB1; margin-right: 0.3vw;"></i> Mapas interactivos</div>
+                        <div style="margin-bottom: 0.8vh;"><i class="fas fa-check" style="color: #F48FB1; margin-right: 0.3vw;"></i> Alertas automáticas</div>
+                        <div><i class="fas fa-check" style="color: #F48FB1; margin-right: 0.3vw;"></i> Rankings riesgo</div>
                     </div>
-                    <div style="font-size: clamp(0.8rem, 1.1vw, 0.95rem); line-height: 1.6; opacity: 0.95;">
-                        • Dashboard<br>
-                        • Alertas Tempranas<br>
-                        • Mapas de Riesgo
+                    <div style="margin-top: 1.5vh; padding-top: 1vh; border-top: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.75rem, 1vw, 0.85rem); font-weight: 600;">
+                        <i class="fas fa-bolt"></i> Tiempo real
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 4vh; text-align: center; padding: 2vh 4vw; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="font-size: clamp(1rem, 1.6vw, 1.3rem); font-weight: 800; color: #1a1a1a; margin-bottom: 1vh;">
-                    <i class="fas fa-sync-alt" style="color: #2196F3;"></i> Pipeline Automatizado End-to-End
+            <!-- Métricas clave -->
+            <div style="display: flex; justify-content: center; gap: 3vw; margin-top: 2.5vh; padding: 1.5vh 2vw;">
+                <div style="text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 2.2vw, 2rem); font-weight: 900; color: #1976D2;">4</div>
+                    <div style="font-size: clamp(0.75rem, 1vw, 0.9rem); color: #555;">fuentes oficiales</div>
                 </div>
-                <div style="font-size: clamp(0.85rem, 1.2vw, 1rem); color: #555; line-height: 1.6;">
-                    Desde datos brutos hasta alertas accionables en tiempo real — 100% código abierto y reproducible
+                <div style="text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 2.2vw, 2rem); font-weight: 900; color: #388E3C;">5 años</div>
+                    <div style="font-size: clamp(0.75rem, 1vw, 0.9rem); color: #555;">2020-2024</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 2.2vw, 2rem); font-weight: 900; color: #E65100;">137,780</div>
+                    <div style="font-size: clamp(0.75rem, 1vw, 0.9rem); color: #555;">nacimientos</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 2.2vw, 2rem); font-weight: 900; color: #C2185B;">64</div>
+                    <div style="font-size: clamp(0.75rem, 1vw, 0.9rem); color: #555;">alertas generadas</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 2vh; text-align: center; padding: 1.5vh 4vw; background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 700; color: #333;">
+                    <i class="fas fa-check-circle" style="color: #4CAF50; margin-right: 0.5vw;"></i> 100% Reproducible
+                    <span style="margin: 0 1.5vw; color: #ccc;">|</span>
+                    <i class="fas fa-code-branch" style="color: #2196F3; margin-right: 0.5vw;"></i> Código Abierto
+                    <span style="margin: 0 1.5vw; color: #ccc;">|</span>
+                    <i class="fas fa-expand-arrows-alt" style="color: #FF6F00; margin-right: 0.5vw;"></i> Escalable a nivel nacional
                 </div>
             </div>
         </div>
@@ -1995,8 +2084,8 @@
             <div class="final-project-name">AlertaMaterna</div>
             
             <div class="final-description">
-                Sistema híbrido epidemiológico + ML para clasificación de riesgo obstétrico<br>
-                y predicción de mortalidad infantil con intervalos de confianza
+                Sistema de Clasificación de Riesgo Obstétrico y Predicción de<br>
+                Mortalidad Infantil en la Región Orinoquía
             </div>
             
             <div class="final-thanks">Gracias</div>
