@@ -1,1 +1,4 @@
-﻿# Actualizado: 2025-12-04 10:39:00
+v3.0 - Quantile Models (P10, P50, P90)
+Fecha: Diciembre 2025
+Features: 15
+Train samples: 200

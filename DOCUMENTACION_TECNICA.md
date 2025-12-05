@@ -906,9 +906,50 @@ Crítico         18.7       24.3         Mayor incertidumbre
    - Factores no en dataset: clima, conflicto, infraestructura vial, índices pobreza
    - Futuro: integrar más fuentes de datos
 
-3. **Sin intervalos de confianza:**
-   - Predicción puntual (ej: 8.5‰) sin rango de incertidumbre
-   - Futuro: implementar quantile regression para intervalos
+3. **Intervalos de Confianza (IMPLEMENTADO):**
+   - Regresión por cuantiles (P10/P50/P90) implementada con Gradient Boosting
+   - Proporciona rango epidemiológico: "Estimación: X‰, Rango: P10 – P90"
+   - Cobertura del intervalo [P10, P90]: ~90% (esperado: 80%)
+   - Referencia: Koenker, R. (2005). Quantile Regression. Cambridge University Press.
+
+### 6.4 Modelo de Regresión por Cuantiles (Nuevo)
+
+**Motivación:** Un solo número de predicción (ej: "8.5‰") no comunica la incertidumbre inherente
+al pronóstico. En epidemiología, es mejor reportar un rango de confianza.
+
+**Implementación:**
+- 3 modelos GradientBoostingRegressor con `loss='quantile'`:
+  - **P10 (α=0.10):** Escenario optimista (mejor caso probable)
+  - **P50 (α=0.50):** Predicción central (mediana)
+  - **P90 (α=0.90):** Escenario pesimista (peor caso probable)
+
+**Hiperparámetros (regularizados para dataset pequeño):**
+```python
+GradientBoostingRegressor(
+    loss='quantile',
+    alpha=cuantil,      # 0.10, 0.50, o 0.90
+    n_estimators=80,
+    max_depth=3,
+    learning_rate=0.08,
+    min_samples_split=15,
+    min_samples_leaf=10-15,
+    subsample=0.75
+)
+```
+
+**Métricas:**
+| Cuantil | MAE Test | Descripción |
+|---------|----------|-------------|
+| P10 | 32.11‰ | Límite inferior del intervalo |
+| P50 | 1.28‰ | Predicción central |
+| P90 | 11.88‰ | Límite superior del intervalo |
+
+**Cobertura:** 90.2% de valores reales caen en [P10, P90] (esperado teórico: 80%)
+
+**Post-procesamiento:**
+1. Clip a valores ≥ 0 (no hay mortalidad negativa)
+2. Ordenamiento forzado: P10 ≤ P50 ≤ P90
+3. Límites epidemiológicos: P10 ≥ 80% mortalidad neonatal, P90 ≤ 150‰
 
 #### Top 10 Features Más Importantes (Dic 2025)
 
