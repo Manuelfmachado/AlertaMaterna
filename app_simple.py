@@ -1143,6 +1143,78 @@ def main():
                         vidas_salvadas = "< 1"
                     st.success(f"✅ **Impacto Potencial:** ~{vidas_salvadas} vidas salvadas/año en este municipio")
             
+            # Depuración / diagnóstico de predicción (útil para entender sensibilidad)
+            with st.expander("Depurar predicción (features, escala y sensibilidad)"):
+                st.markdown("**Features crudas usadas en la predicción:**")
+                try:
+                    df_feat = pd.DataFrame([features_base])
+                    st.dataframe(df_feat.T.rename(columns={0: 'valor'}))
+
+                    # Reconstruir X para escalado
+                    scaler_cols_ui = res.get('X_columns', list(df_feat.columns))
+                    X_pred = df_feat.copy()
+                    for c in scaler_cols_ui:
+                        if c not in X_pred.columns:
+                            X_pred[c] = 0.0
+                    X_pred = X_pred[scaler_cols_ui]
+
+                    # Mostrar features escaladas
+                    try:
+                        X_scaled = scaler.transform(X_pred)
+                        st.markdown("**Features escaladas (input al modelo):**")
+                        scaled_series = pd.Series(X_scaled[0], index=scaler_cols_ui)
+                        st.dataframe(scaled_series.to_frame('scaled'))
+                    except Exception as e:
+                        st.warning(f"No se pudo escalar features: {e}")
+
+                    # Mostrar predicción actual
+                    st.markdown(f"**Predicción actual del modelo:** {tasa_pred:.2f}‰")
+
+                    # Prueba de sensibilidad para variables clave
+                    st.markdown("**Análisis de sensibilidad (variar 3 variables clave):**")
+                    sensitive_vars = [
+                        ('tasa_mortalidad_neonatal', '‰',  -5, 5),
+                        ('tasa_mortalidad_fetal', '‰', -10, 10),
+                        ('pct_sin_control_prenatal', '% pts', -20, 20),
+                    ]
+
+                    sens_table = []
+                    for var, unit, lo, hi in sensitive_vars:
+                        base_val = features_base.get(var, None)
+                        if base_val is None:
+                            continue
+                        # crear tres puntos: base + lo, base, base + hi
+                        test_vals = [base_val + lo, base_val, base_val + hi]
+                        preds = []
+                        for tv in test_vals:
+                            Xt = X_pred.copy()
+                            # si es porcentaje en 0-1 (pct_), convertir
+                            if var.startswith('pct_'):
+                                # pct features are 0-1 in model; in UI they are 0-100
+                                Xt[var] = max(min(tv/100.0, 1.0), 0.0)
+                            else:
+                                Xt[var] = tv
+                            try:
+                                Xts = scaler.transform(Xt)
+                                p = model.predict(Xts)[0]
+                            except Exception:
+                                p = None
+                            preds.append(p)
+                        sens_table.append((var, unit, test_vals, preds))
+
+                    # Mostrar tabla de sensibilidad
+                    for row in sens_table:
+                        var, unit, test_vals, preds = row
+                        st.markdown(f"- **{var}** ({unit}):")
+                        for tv, p in zip(test_vals, preds):
+                            st.write(f"    - Valor: {tv} → Predicción: {p:.2f}‰" if p is not None else f"    - Valor: {tv} → Predicción: error")
+
+                    st.markdown("**Sugerencias si la predicción parece incoherente:**")
+                    st.markdown("- Verificar que las unidades de entrada coinciden con las del modelo (‰ vs %).\n- Inspeccionar features con valores extremos (ej. `presion_obstetrica`, `instituciones_per_1000nac`).\n- Ejecutar análisis de sensibilidad más fino sobre las variables que muestren mayor efecto.")
+
+                except Exception as e:
+                    st.error(f"Error al depurar predicción: {e}")
+
             # Texto explicativo breve bajo el gauge
             st.markdown(f"""
             **¿Qué representa este valor?**
