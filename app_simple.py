@@ -663,13 +663,12 @@ def main():
                             family='Arial Black'
                         ),
                         hovertemplate=(
-                            '<b style="font-size:18px; color:#2C3E50;">📍 %{text}</b><br>' +
-                            '<span style="font-size:14px;">━━━━━━━━━━━━━━━━━━━━</span><br>' +
-                            '<b style="color:#34495E;">▪ Departamento:</b> <span style="color:#16A085;">%{customdata[0]}</span><br>' +
-                            '<b style="color:#34495E;">▪ Año:</b> <span style="color:#3498DB;">%{customdata[1]}</span><br>' +
-                            '<b style="color:#34495E;">▪ Mortalidad Fetal:</b> <span style="color:#E74C3C; font-weight:bold;">%{customdata[2]:.1f}‰</span><br>' +
-                            '<b style="color:#34495E;">▪ Nacimientos:</b> <span style="color:#9B59B6;">%{customdata[3]:,}</span><br>' +
-                            '<b style="color:#34495E;">▪ Clasificación:</b> <span style="color:#F39C12; font-weight:bold;">%{customdata[4]}</span><br>' +
+                            '<b style="font-size:16px;">%{text}</b><br><br>' +
+                            '<b>Departamento:</b> %{customdata[0]}<br>' +
+                            '<b>Año:</b> %{customdata[1]}<br>' +
+                            '<b>Mortalidad Fetal:</b> %{customdata[2]:.1f}‰<br>' +
+                            '<b>Nacimientos:</b> %{customdata[3]:,}<br>' +
+                            '<b>Clasificación:</b> %{customdata[4]}<br>' +
                             '<extra></extra>'
                         ),
                         customdata=np.stack([
@@ -714,10 +713,9 @@ def main():
                         ),
                         text=df_mapa['NOMBRE_MUNICIPIO'],
                         hovertemplate=(
-                            '<b style="font-size:16px; color:#2C3E50;">📍 %{text}</b><br>' +
-                            '<span style="font-size:12px;">━━━━━━━━━━━━━━</span><br>' +
-                            '<b style="color:#34495E;">▪ Departamento:</b> <span style="color:#16A085;">%{customdata[0]}</span><br>' +
-                            '<b style="color:#34495E;">▪ Mortalidad:</b> <span style="color:#E74C3C; font-weight:bold;">%{customdata[1]:.1f}‰</span>' +
+                            '<b>%{text}</b><br>' +
+                            'Departamento: %{customdata[0]}<br>' +
+                            'Mortalidad: %{customdata[1]:.1f}‰' +
                             '<extra></extra>'
                         ),
                         customdata=np.stack([
