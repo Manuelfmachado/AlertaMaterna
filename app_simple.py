@@ -627,19 +627,31 @@ def main():
                 fig_mapa.add_trace(go.Scattermapbox(
                     lat=df_mapa['LATITUD'],
                     lon=df_mapa['LONGITUD'],
-                    mode='markers',
+                    mode='markers+text',
                     marker=dict(
-                        size=14,
+                        size=16,
                         color=df_mapa['color'],
-                        opacity=0.9
+                        opacity=0.92,
+                        line=dict(color='black', width=2)
                     ),
-                    text=df_mapa.apply(lambda row: f"<b>{row['NOMBRE_MUNICIPIO']}</b><br>" +
-                                                    f"Departamento: {row['DEPARTAMENTO']}<br>" +
-                                                    f"Año: {int(row['ANO'])}<br>" +
-                                                    f"Mortalidad: {row['tasa_mortalidad_fetal_pct']:.1f}‰<br>" +
-                                                    f"Nacimientos: {int(row['total_nacimientos']):,}<br>" +
-                                                    f"Clasificación: {row['RIESGO']}", axis=1),
-                    hoverinfo='text',
+                    text=df_mapa['NOMBRE_MUNICIPIO'],
+                    textposition='top center',
+                    textfont=dict(size=13, color='white', family='Arial Black'),
+                    hovertemplate=(
+                        '<b>%{text}</b><br>' +
+                        'Departamento: %{customdata[0]}<br>' +
+                        'Año: %{customdata[1]}<br>' +
+                        'Mortalidad: %{customdata[2]:.1f}‰<br>' +
+                        'Nacimientos: %{customdata[3]:,}<br>' +
+                        'Clasificación: %{customdata[4]}'
+                    ),
+                    customdata=np.stack([
+                        df_mapa['DEPARTAMENTO'],
+                        df_mapa['ANO'],
+                        df_mapa['tasa_mortalidad_fetal_pct'],
+                        df_mapa['total_nacimientos'],
+                        df_mapa['RIESGO']
+                    ], axis=-1),
                     name='Municipios'
                 ))
                 
