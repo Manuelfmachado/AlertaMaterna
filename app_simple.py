@@ -233,7 +233,7 @@ def preparar_datos(df):
     
     # Calcular riesgo obstétrico basado en criterios híbridos
     # Umbrales críticos
-    UMBRAL_CRITICO_MORTALIDAD = 5.0  # 5.0% (antes 50‰)
+    UMBRAL_CRITICO_MORTALIDAD = 50.0  # 50‰
     UMBRAL_CRITICO_SIN_PRENATAL = 0.50
     
     # Calcular percentiles para criterios
@@ -259,10 +259,10 @@ def preparar_datos(df):
     df['riesgo_obstetrico'] = (df['puntos_riesgo'] >= 3).astype(int)
     df['RIESGO'] = df['riesgo_obstetrico'].apply(lambda x: 'ALTO' if x == 1 else 'BAJO')
     
-    # CONVERSIÓN A PORCENTAJE (VISUALIZACIÓN)
-    # Convertir tasas ‰ a % para visualización más clara
-    df['tasa_mortalidad_fetal_pct'] = df['tasa_mortalidad_fetal'] / 10
-    df['tasa_mortalidad_neonatal_pct'] = df['tasa_mortalidad_neonatal'] / 10
+    # MANTENER EN POR MIL (VISUALIZACIÓN)
+    # Se mantiene la variable _pct por compatibilidad, pero el valor es ‰
+    df['tasa_mortalidad_fetal_pct'] = df['tasa_mortalidad_fetal']
+    df['tasa_mortalidad_neonatal_pct'] = df['tasa_mortalidad_neonatal']
     
     return df
 
@@ -282,7 +282,7 @@ def main():
     st.markdown("**Región Orinoquía** | Meta, Arauca, Casanare, Guaviare, Vichada")
     # Banner de aclaración de unidades
     st.markdown("""
-    <div style='background-color: #f9f9f9; border-left: 6px solid #FF69B4; padding: 16px; margin-bottom: 10px; font-size: 1.25rem;'>
+    <div style='background-color: #f9f9f9; border-left: 6px solid #FF69B4; padding: 16px; margin-bottom: 10px; font-size: 1.25rem; color: #000000;'>
         <b>IMPORTANTE:</b> Todas las tasas de mortalidad y riesgo en este dashboard se expresan en <b>“por mil nacidos vivos” (‰)</b>.<br>
         Ejemplo: <b>25.0‰ = 25 muertes por cada 1,000 nacimientos</b>.
     </div>
@@ -329,9 +329,9 @@ def main():
             
             **Nacimientos**: Total de nacimientos en el periodo
             
-            **Mortalidad Fetal**: Promedio de muertes fetales por cada 100 nacimientos (%)
-            - Normal: <1.0%
-            - Crítico: >5.0%
+            **Mortalidad Fetal**: Promedio de muertes fetales por cada 1,000 nacimientos (‰)
+            - Normal: <10‰
+            - Crítico: >50‰
             
             ### Sistema de Clasificación de Riesgo
             
@@ -343,7 +343,7 @@ def main():
               4. Prematuridad (>percentil 75)
               5. Baja cobertura cesáreas (<percentil 25)
               6. Presión obstétrica alta (>percentil 75)
-            - **O** mortalidad fetal >5.0% (automático)
+            - **O** mortalidad fetal >50‰ (automático)
             
             ### Visualizaciones
             
@@ -355,17 +355,17 @@ def main():
             
             ### Predictor de Mortalidad Infantil
             
-            Ingresa indicadores de un municipio para predecir la **tasa de mortalidad infantil (<1 año) en %** (muertes por cada 100 nacimientos).
+            Ingresa indicadores de un municipio para predecir la **tasa de mortalidad infantil (<1 año) en ‰** (muertes por cada 1,000 nacimientos).
             
             **Clasificación según estándares OMS/Colombia:**
-            - 🟢 Normal (<0.5%): Estándar OMS
-            - 🟡 Moderado (0.5-1.0%): Por encima de OMS, dentro de rango Colombia
-            - 🟠 Alto (1.0-2.0%): Requiere intervención prioritaria
-            - 🔴 Crítico (>2.0%): Emergencia sanitaria
+            - 🟢 Normal (<5‰): Estándar OMS
+            - 🟡 Moderado (5-10‰): Por encima de OMS, dentro de rango Colombia
+            - 🟠 Alto (10-20‰): Requiere intervención prioritaria
+            - 🔴 Crítico (>20‰): Emergencia sanitaria
             
-            **Modelo:** XGBoost Regressor | R²: 0.52 | MAE: 0.69%
+            **Modelo:** XGBoost Regressor | R²: 0.52 | MAE: 6.9‰
             
-            **Interpretación:** Los valores se contrastan con referencias de OMS (~0.5% global) y Colombia (0.8-1.2% según DANE 2023). Se calculan con datos abiertos de www.datos.gov.co.
+            **Interpretación:** Los valores se contrastan con referencias de OMS (~5‰ global) y Colombia (8-12‰ según DANE 2023). Se calculan con datos abiertos de www.datos.gov.co.
             """)
         
         st.markdown("---")
@@ -386,7 +386,7 @@ def main():
     df_filtrado = df_filtrado[df_filtrado['puntos_riesgo'] >= 0].copy()
     
     # ALERTAS CRÍTICAS
-    UMBRAL_CRITICO = 5.0
+    UMBRAL_CRITICO = 50.0
     municipios_criticos = df_filtrado[df_filtrado['tasa_mortalidad_fetal_pct'] > UMBRAL_CRITICO]
     
     if len(municipios_criticos) > 0:
@@ -394,18 +394,18 @@ def main():
         if anio_sel == 'Todos':
             num_criticos = len(municipios_criticos)
             num_alto_riesgo_total = len(df_filtrado[df_filtrado['RIESGO'] == 'ALTO'])
-            texto_alerta = f"URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >5.0%)"
+            texto_alerta = f"URGENTE: {num_criticos} de {num_alto_riesgo_total} registros de alto riesgo están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
             texto_expander = "Ver registros en alerta crítica"
         else:
             num_municipios_criticos = municipios_criticos['NOMBRE_MUNICIPIO'].nunique()
             num_municipios_alto_riesgo = df_filtrado[df_filtrado['RIESGO'] == 'ALTO']['NOMBRE_MUNICIPIO'].nunique()
-            texto_alerta = f"URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >5.0%)"
+            texto_alerta = f"URGENTE: {num_municipios_criticos} de {num_municipios_alto_riesgo} municipios en alto riesgo en {anio_sel} están en ALERTA CRÍTICA (mortalidad fetal >50‰)"
             texto_expander = f"Ver municipios en alerta crítica {anio_sel}"
         
         st.error(f"""
         **{texto_alerta}**
         
-        Estos valores son extremadamente altos (10x la tasa normal de 0.5%) y requieren:
+        Estos valores son extremadamente altos (10x la tasa normal de 5‰) y requieren:
         - Verificación inmediata con autoridades de salud locales
         - Validación de datos con DANE
         - Intervención urgente si los datos son correctos
@@ -416,7 +416,7 @@ def main():
             for _, row in municipios_criticos.iterrows():
                 st.markdown(f"""
                 **{row['NOMBRE_MUNICIPIO']}** ({row['DEPARTAMENTO']})
-                - Mortalidad fetal: **{row['tasa_mortalidad_fetal_pct']:.1f}%**
+                - Mortalidad fetal: **{row['tasa_mortalidad_fetal_pct']:.1f}‰**
                 - Nacimientos: {int(row['total_nacimientos'])}
                 - Clasificación: {'ALTO RIESGO' if row['RIESGO'] == 'ALTO' else 'BAJO RIESGO'}
                 - Puntaje: {int(row['puntos_riesgo'])}/8
@@ -451,7 +451,7 @@ def main():
             if not df_prev.empty:
                 mort_prev = df_prev['tasa_mortalidad_fetal_pct'].mean()
                 delta_mort = mort_promedio - mort_prev
-                delta_mort_str = f"{delta_mort:+.1f}% vs {anio_prev}"
+                delta_mort_str = f"{delta_mort:+.1f}‰ vs {anio_prev}"
                 delta_color_val = "inverse"
         
         st.markdown("### 🚨 Panorama de Impacto")
@@ -501,7 +501,7 @@ def main():
         if depto_sel == 'Todos':
             # Media Ponderada Regional
             df_evol = df.groupby('ANO').apply(
-                lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 100)
+                lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 1000)
             ).reset_index(name='tasa_mortalidad_fetal_pct')
             titulo_evol = "Evolución Ponderada Orinoquía"
             
@@ -513,7 +513,7 @@ def main():
             df_dept = df[df['DEPARTAMENTO'] == depto_sel]
             if not df_dept.empty:
                 df_evol = df_dept.groupby('ANO').apply(
-                    lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 100) if x['total_nacimientos'].sum() > 0 else 0
+                    lambda x: (x['defunciones_estimadas'].sum() / x['total_nacimientos'].sum() * 1000) if x['total_nacimientos'].sum() > 0 else 0
                 ).reset_index(name='tasa_mortalidad_fetal_pct')
             else:
                 df_evol = pd.DataFrame(columns=['ANO', 'tasa_mortalidad_fetal_pct'])
@@ -543,13 +543,13 @@ def main():
                 line=dict(color='#888888', width=2, dash='dot'),
                 hoverinfo='skip'
             ))
-            st.caption("Nota: La línea punteada muestra el promedio de Arauca (6.3% en 2024), que corresponde a los valores máximos citados en la documentación técnica.")
+            st.caption("Nota: La línea punteada muestra el promedio de Arauca (63.4‰ en 2024), que corresponde a los valores máximos citados en la documentación técnica.")
 
         # Línea OMS
-        fig_evol.add_hline(y=0.5, line_dash="dash", line_color="#27AE60", annotation_text="Meta OMS (0.5%)")
+        fig_evol.add_hline(y=5.0, line_dash="dash", line_color="#27AE60", annotation_text="Meta OMS (5‰)")
         
         # Línea Crítica
-        fig_evol.add_hline(y=2.0, line_dash="dash", line_color="#E74C3C", annotation_text="Umbral Crítico (2.0%)")
+        fig_evol.add_hline(y=20.0, line_dash="dash", line_color="#E74C3C", annotation_text="Umbral Crítico (20‰)")
 
         fig_evol.update_layout(
             title=titulo_evol,
@@ -586,11 +586,11 @@ def main():
             if not df_mapa.empty:
                 # Definir colores según mortalidad
                 def get_color(mort):
-                    if mort < 1.0:
+                    if mort < 10.0:
                         return '#27AE60'  # Verde
-                    elif mort < 3.0:
+                    elif mort < 30.0:
                         return '#F39C12'  # Amarillo
-                    elif mort < 5.0:
+                    elif mort < 50.0:
                         return '#E67E22'  # Naranja
                     else:
                         return '#E74C3C'  # Rojo
@@ -611,7 +611,7 @@ def main():
                     text=df_mapa.apply(lambda row: f"<b>{row['NOMBRE_MUNICIPIO']}</b><br>" +
                                                     f"Departamento: {row['DEPARTAMENTO']}<br>" +
                                                     f"Año: {int(row['ANO'])}<br>" +
-                                                    f"Mortalidad: {row['tasa_mortalidad_fetal_pct']:.1f}%<br>" +
+                                                    f"Mortalidad: {row['tasa_mortalidad_fetal_pct']:.1f}‰<br>" +
                                                     f"Nacimientos: {int(row['total_nacimientos']):,}<br>" +
                                                     f"Clasificación: {row['RIESGO']}", axis=1),
                     hoverinfo='text',
@@ -635,16 +635,16 @@ def main():
                 st.caption("Leyenda de Niveles de Riesgo por Mortalidad Fetal")
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
-                    st.markdown("🟢 **< 1.0%**")
+                    st.markdown("🟢 **< 10‰**")
                     st.caption("Normal: Tasa aceptable según OMS")
                 with col2:
-                    st.markdown("🟡 **1.0-3.0%**")
+                    st.markdown("🟡 **10-30‰**")
                     st.caption("Moderado: Requiere monitoreo")
                 with col3:
-                    st.markdown("🟠 **3.0-5.0%**")
+                    st.markdown("🟠 **30-50‰**")
                     st.caption("Alto: Intervención necesaria")
                 with col4:
-                    st.markdown("🔴 **> 5.0%**")
+                    st.markdown("🔴 **> 50‰**")
                     st.caption("Crítico: Emergencia sanitaria")
             else:
                 st.warning("No hay datos geográficos disponibles para los filtros seleccionados.")
@@ -725,7 +725,7 @@ def main():
                 st.metric(
                     "Mortalidad Fetal",
                     f"{mult_mort_fetal:.1f}x",
-                    help=f"Los municipios de ALTO RIESGO tienen {mult_mort_fetal:.1f} veces MÁS mortalidad fetal que los de bajo riesgo. Alto: {alto['tasa_mortalidad_fetal_pct'].mean():.1f}% vs Bajo: {bajo['tasa_mortalidad_fetal_pct'].mean():.1f}%"
+                    help=f"Los municipios de ALTO RIESGO tienen {mult_mort_fetal:.1f} veces MÁS mortalidad fetal que los de bajo riesgo. Alto: {alto['tasa_mortalidad_fetal_pct'].mean():.1f}‰ vs Bajo: {bajo['tasa_mortalidad_fetal_pct'].mean():.1f}‰"
                 )
                 if mult_mort_fetal > 3:
                     st.error("⚠️ CRÍTICO: >3x el valor normal")
