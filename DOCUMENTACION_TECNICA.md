@@ -1230,9 +1230,9 @@ print(f"ROC-AUC CV: {scores.mean():.3f} (+/- {scores.std():.3f})")
      2. **Consistencia fetal-neonatal:** Si MF > 50‰ → MI mínimo 15‰
         - Fundamentación: Lawn et al. (Lancet 2005) - Correlación MF-MN-MI
         - Referencia: *"4 million neonatal deaths: when? where? why?"*
-     3. **Cap de excelencia:** Si MN<1‰ y MF<5‰ → MI máximo 10‰
-        - Fundamentación: Imposibilidad médica de MI crítica con MN y MF muy bajas
-        - Referencia: ACOG (2014) Committee Opinion No. 579
+     3. **Cap de coherencia clínica:** Si MN<5‰ y MF<15‰ → MI máximo 15‰ (o 4x MN)
+        - Fundamentación: La mortalidad neonatal representa el 60-70% de la infantil. Si los indicadores vitales directos son normales, la predicción no puede ser crítica por error del modelo.
+        - Referencia: ACOG (2014) Committee Opinion No. 579 / WHO Global Health Estimates
 
 2. **Precision baja en alto riesgo (40%):**
 

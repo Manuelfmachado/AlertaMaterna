@@ -1036,11 +1036,16 @@ def main():
             if mort_fetal > 50.0:
                 tasa_pred = max(tasa_pred, 15.0)  # Mínimo razonable para crisis
             
-            # REGLA 3: Límite superior de coherencia
-            # Si mortalidad neonatal y fetal son ambas cero, MI no puede ser crítica
-            # Fundamentación: Imposible tener MI>20‰ con MN=0 y MF=0
-            if mort_neonatal < 1.0 and mort_fetal < 5.0:
-                tasa_pred = min(tasa_pred, 10.0)  # Cap en moderado
+            # REGLA 3: Límite superior de coherencia (Expandido)
+            # Si los indicadores vitales directos (Neonatal y Fetal) son normales,
+            # la Mortalidad Infantil no puede ser "Crítica" (>20‰) por pura alucinación del modelo.
+            # Fundamentación: La mortalidad neonatal suele ser el 60-70% de la infantil.
+            if mort_neonatal < 5.0 and mort_fetal < 15.0:
+                # Si MN es normal (<5), la MI difícilmente supera 15-18‰ salvo crisis post-neonatal grave
+                # Cap: Máximo 15‰ o 4 veces la neonatal (lo que sea mayor para ser conservador)
+                # Esto evita que el modelo prediga 69‰ cuando la neonatal es 3.5‰
+                cap_coherencia = max(12.0, mort_neonatal * 4.0)
+                tasa_pred = min(tasa_pred, cap_coherencia)
             
             st.session_state.resultado_prediccion = {
                 'tasa_pred': tasa_pred,
@@ -1049,7 +1054,7 @@ def main():
                 'X_columns': scaler_cols,
                 'restricciones_aplicadas': {
                     'limite_inferior': limite_inferior,
-                    'cap_excelencia': mort_neonatal < 1.0 and mort_fetal < 5.0
+                    'cap_excelencia': mort_neonatal < 5.0 and mort_fetal < 15.0
                 }
             }
 
