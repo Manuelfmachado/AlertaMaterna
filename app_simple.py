@@ -916,35 +916,59 @@ def main():
         if st.button("Calcular Riesgo", type="primary"):
             # CÁLCULO ADAPTATIVO: Ajustar variables ocultas basadas en indicadores ingresados
             
-            # Índice de fragilidad basado en cobertura y resultados
-            fragilidad_base = 15.0
-            if mort_neonatal < 3 and num_inst >= 15:
-                fragilidad_base = 6.0
-            elif mort_neonatal < 5 and num_inst >= 10:
-                fragilidad_base = 9.0
-            elif mort_neonatal < 10:
-                fragilidad_base = 12.0
-            
-            # % Embarazos alto riesgo inferido
-            if mort_neonatal < 2:
-                pct_alto_riesgo = 0.10
-            elif mort_neonatal < 5:
-                pct_alto_riesgo = 0.18
-            elif mort_neonatal < 10:
-                pct_alto_riesgo = 0.25
+            # ===================================================================
+            # CÁLCULO DE VARIABLES DERIVADAS (TRANSPARENTE)
+            # ===================================================================
+
+            # 1. Índice de fragilidad: Basado en indicadores reales
+            fragilidad_components = []
+            if mort_neonatal > 10:
+                fragilidad_components.append(30)
+            elif mort_neonatal > 5:
+                fragilidad_components.append(15)
             else:
-                pct_alto_riesgo = 0.35
-            
-            # % Mortalidad evitable inferida
-            mortalidad_combinada = mort_fetal + mort_neonatal
-            if mortalidad_combinada < 8:
-                pct_evitable = 0.20
-            elif mortalidad_combinada < 15:
+                fragilidad_components.append(5)
+
+            if mort_fetal > 50:
+                fragilidad_components.append(30)
+            elif mort_fetal > 20:
+                fragilidad_components.append(15)
+            else:
+                fragilidad_components.append(5)
+
+            if sin_prenatal > 50:
+                fragilidad_components.append(20)
+            elif sin_prenatal > 25:
+                fragilidad_components.append(10)
+            else:
+                fragilidad_components.append(3)
+
+            if num_inst < 3:
+                fragilidad_components.append(15)
+            elif num_inst < 8:
+                fragilidad_components.append(8)
+            else:
+                fragilidad_components.append(2)
+
+            fragilidad_base = sum(fragilidad_components) / 4  # Promedio
+
+            # 2. % Embarazos alto riesgo: Basado en prematuridad + bajo peso
+            pct_alto_riesgo = (prematuro + bajo_peso) / 200  # Promedio simple
+
+            # 3. % Mortalidad evitable: Basado en causas prevenibles esperadas
+            # Fórmula conservadora: Si hay control prenatal, la evitabilidad es menor
+            if sin_prenatal > 50:
+                pct_evitable = 0.60  # Sin prenatal = alta evitabilidad
+            elif sin_prenatal > 25:
+                pct_evitable = 0.45
+            elif sin_prenatal > 10:
                 pct_evitable = 0.30
-            elif mortalidad_combinada < 25:
-                pct_evitable = 0.40
             else:
-                pct_evitable = 0.55
+                pct_evitable = 0.20  # Buen control = baja evitabilidad
+
+            # Ajustar por mortalidad observada
+            if mort_fetal > 50 or mort_neonatal > 15:
+                pct_evitable = min(pct_evitable + 0.15, 0.70)
             
             # Preparar features
             features = {
@@ -1053,6 +1077,58 @@ def main():
                 cap_coherencia = max(piso_minimo, mort_neonatal * factor_seguridad)
                 tasa_pred = min(tasa_pred, cap_coherencia)
             
+            # ===================================================================
+            # VALIDACIÓN DE COHERENCIA (ALERTA AL USUARIO)
+            # ===================================================================
+
+            # Detectar inputs "buenos" que generan predicción alta
+            inputs_buenos = (
+                mort_neonatal < 5.0 and
+                mort_fetal < 15.0 and
+                sin_prenatal < 20.0 and
+                num_inst >= 8 and
+                bajo_peso < 10.0
+            )
+
+            if inputs_buenos and tasa_pred > 10.0:
+                st.warning(f"""
+                ⚠️ **Advertencia de Coherencia**
+                
+                Los indicadores principales que ingresaste son **buenos**, pero la 
+                predicción del modelo es **ALTA** ({tasa_pred:.2f}‰).
+                
+                **Posibles causas:**
+                1. **Variables ocultas calculadas:** El modelo usa {len(features)} variables, 
+                   algunas estimadas internamente (fragilidad sistémica, mortalidad evitable).
+                2. **Interacciones no lineales:** XGBoost detecta patrones complejos que no 
+                   son evidentes en indicadores individuales.
+                3. **Datos de entrenamiento:** El modelo aprendió de municipios reales de 
+                   Orinoquía (2020-2024) con características similares.
+                
+                **Recomendación:** Revisa las variables calculadas en "Depurar predicción" 
+                o contacta autoridades de salud para validar indicadores reales del municipio.
+                """)
+
+            # Detectar restricciones aplicadas
+            restricciones = res.get('restricciones_aplicadas', {}) if 'res' in locals() else {}
+            if not restricciones:
+                 # Si no existe res, crear un dict temporal para lógica de visualización
+                 restricciones = {
+                    'limite_inferior': limite_inferior,
+                    'cap_excelencia': mort_neonatal < 5.0 and mort_fetal < 15.0
+                 }
+
+            ajustes_texto = []
+            
+            if tasa_pred_raw < limite_inferior:
+                ajustes_texto.append(f"Ajustado de {tasa_pred_raw:.2f}‰ a {tasa_pred:.2f}‰ (límite inferior epidemiológico)")
+            
+            if (mort_neonatal < 5.0 and mort_fetal < 15.0) and tasa_pred < tasa_pred_raw:
+                ajustes_texto.append(f"Limitado a {tasa_pred:.2f}‰ (cap de coherencia clínica)")
+            
+            if ajustes_texto:
+                st.info("ℹ️ **Restricciones Médicas Aplicadas:**\n" + "\n".join(f"- {a}" for a in ajustes_texto))
+
             st.session_state.resultado_prediccion = {
                 'tasa_pred': tasa_pred,
                 'tasa_pred_raw': tasa_pred_raw,
@@ -1125,22 +1201,105 @@ def main():
                 # EXPLICABILIDAD SIMPLIFICADA
                 st.markdown("#### 🔍 Factores de Riesgo Identificados")
                 
-                # Identificar factores altos
+                # Detectar factores críticos de TODAS las variables (incluyendo ocultas)
                 factores = []
+
+                # Variables visibles del usuario
                 if features_base['tasa_mortalidad_neonatal'] > 5:
-                    factores.append(("Mortalidad Neonatal Alta", "⬆️", "Crítico"))
-                if features_base['pct_sin_control_prenatal'] > 0.20:
-                    factores.append(("Falta Control Prenatal", "⬆️", "Alto"))
-                if features_base['pct_bajo_peso'] > 0.10:
-                    factores.append(("Bajo Peso al Nacer", "⬆️", "Medio"))
-                if features_base['num_instituciones'] < 5:
-                    factores.append(("Escasez Instituciones Salud", "⬆️", "Alto"))
-                
+                    factores.append({
+                        'nombre': "Mortalidad Neonatal Elevada",
+                        'valor': f"{mort_neonatal:.1f}‰",
+                        'nivel': "CRÍTICO",
+                        'icono': "🔴"
+                    })
+
+                if features_base['tasa_mortalidad_fetal'] > 20:
+                    factores.append({
+                        'nombre': "Mortalidad Fetal Alta",
+                        'valor': f"{mort_fetal:.1f}‰",
+                        'nivel': "CRÍTICO",
+                        'icono': "🔴"
+                    })
+                elif features_base['tasa_mortalidad_fetal'] > 10:
+                    factores.append({
+                        'nombre': "Mortalidad Fetal Moderada",
+                        'valor': f"{mort_fetal:.1f}‰",
+                        'nivel': "MEDIO",
+                        'icono': "🟡"
+                    })
+
+                if features_base['pct_sin_control_prenatal'] > 0.25:
+                    factores.append({
+                        'nombre': "Falta de Control Prenatal",
+                        'valor': f"{sin_prenatal:.1f}%",
+                        'nivel': "ALTO",
+                        'icono': "🟠"
+                    })
+                elif features_base['pct_sin_control_prenatal'] > 0.15:
+                    factores.append({
+                        'nombre': "Control Prenatal Insuficiente",
+                        'valor': f"{sin_prenatal:.1f}%",
+                        'nivel': "MEDIO",
+                        'icono': "🟡"
+                    })
+
+                if features_base['pct_bajo_peso'] > 0.12:
+                    factores.append({
+                        'nombre': "Bajo Peso al Nacer Elevado",
+                        'valor': f"{bajo_peso:.1f}%",
+                        'nivel': "ALTO",
+                        'icono': "🟠"
+                    })
+
+                if features_base['num_instituciones'] < 3:
+                    factores.append({
+                        'nombre': "Escasez Crítica de Instituciones",
+                        'valor': f"{num_inst} instituciones",
+                        'nivel': "CRÍTICO",
+                        'icono': "🔴"
+                    })
+                elif features_base['num_instituciones'] < 8:
+                    factores.append({
+                        'nombre': "Infraestructura Limitada",
+                        'valor': f"{num_inst} instituciones",
+                        'nivel': "MEDIO",
+                        'icono': "🟡"
+                    })
+
+                # Variables ocultas/calculadas que pueden elevar predicción
+                if features_base['indice_fragilidad_sistema'] > 20:
+                    factores.append({
+                        'nombre': "Fragilidad Sistémica Alta",
+                        'valor': f"{features_base['indice_fragilidad_sistema']:.1f}/100",
+                        'nivel': "ALTO",
+                        'icono': "🟠"
+                    })
+
+                if features_base['pct_mortalidad_evitable'] > 0.40:
+                    factores.append({
+                        'nombre': "Alta Mortalidad Evitable",
+                        'valor': f"{features_base['pct_mortalidad_evitable']*100:.1f}%",
+                        'nivel': "ALTO",
+                        'icono': "🟠"
+                    })
+
+                # Mostrar factores detectados
                 if not factores:
                     st.success("✅ No se detectaron factores de riesgo críticos individuales.")
+                    
+                    # EXPLICACIÓN si predicción es alta sin factores evidentes
+                    if tasa_pred >= 10.0:
+                        st.info("""
+                        ℹ️ **Nota:** Aunque los indicadores individuales parecen normales, 
+                        la predicción es ALTA debido a la **combinación** de múltiples 
+                        factores moderados que interactúan de forma no lineal.
+                        
+                        Esto es común en modelos de Machine Learning complejos (XGBoost), 
+                        donde el riesgo emerge de interacciones sutiles entre variables.
+                        """)
                 else:
                     for f in factores:
-                        st.markdown(f"**{f[1]} {f[0]}**: Impacto {f[2]}")
+                        st.markdown(f"{f['icono']} **{f['nombre']}**: {f['valor']} (Impacto: {f['nivel']})")
 
             st.markdown("---")
             
@@ -1183,10 +1342,17 @@ def main():
                 )
                 
                 if delta > 0:
-                    vidas_salvadas = int((delta / 1000) * features_base['total_nacimientos'])
-                    if vidas_salvadas < 1:
-                        vidas_salvadas = "< 1"
-                    st.success(f"✅ **Impacto Potencial:** ~{vidas_salvadas} vidas salvadas/año en este municipio")
+                    vidas_salvadas = (delta / 1000) * features_base['total_nacimientos']
+                    
+                    # Formatear apropiadamente
+                    if vidas_salvadas < 1.0:
+                        vidas_texto = f"~{vidas_salvadas:.1f}"
+                    elif vidas_salvadas < 2.0:
+                        vidas_texto = "~1-2"
+                    else:
+                        vidas_texto = f"~{int(round(vidas_salvadas))}"
+                    
+                    st.success(f"✅ **Impacto Potencial:** {vidas_texto} vidas salvadas/año en este municipio")
             
             # Depuración / diagnóstico de predicción (útil para entender sensibilidad)
             with st.expander("Depurar predicción (features, escala y sensibilidad)"):
