@@ -1488,35 +1488,35 @@
 
         <!-- SLIDE 9 - Resultados Verificados -->
         <div class="slide slide-9">
-            <h2>Resultados verificados</h2>
+            <h2>Resultados verificados en Orinoquía</h2>
 
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-number">2,789,391</div>
-                    <div class="metric-label">nacimientos totales<br><small style="font-size: 0.8em; color: #666;">(datos brutos DANE)</small></div>
+                    <div class="metric-label">nacimientos totales<br><small style="font-size: 0.8em; color: #666;">(datos brutos DANE nacional)</small></div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-number">137,780</div>
-                    <div class="metric-label">nacimientos analizados<br><small style="font-size: 0.8em; color: #666;">(≥10/año estándar OMS)</small></div>
+                    <div class="metric-label">nacimientos analizados<br><small style="font-size: 0.8em; color: #666;">(Orinoquía 2020-2024)</small></div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-number">63</div>
-                    <div class="metric-label">casos de alto riesgo<br><small style="font-size: 0.8em; color: #666;">(25.1% del total)</small></div>
+                    <div class="metric-number">68</div>
+                    <div class="metric-label">registros alto riesgo<br><small style="font-size: 0.8em; color: #666;">(mortalidad fetal &gt;30‰)</small></div>
                 </div>
 
                 <div class="metric-card">
                     <div class="metric-number">40</div>
-                    <div class="metric-label">casos de mortalidad crítica<br><small style="font-size: 0.8em; color: #666;">(&gt;50‰ detectados 100%)</small></div>
+                    <div class="metric-label">registros críticos<br><small style="font-size: 0.8em; color: #666;">(mortalidad fetal &gt;50‰)</small></div>
                 </div>
             </div>
 
             <div class="chart-display">
                 <svg viewBox="0 0 800 400" style="max-width: 800px; width: 100%; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); padding: 20px;">
                     <!-- Título -->
-                    <text x="400" y="30" text-anchor="middle" style="font-size: 22px; font-weight: 700; fill: #1a1a1a;">Distribución de Casos por Nivel de Riesgo</text>
-                    <text x="400" y="55" text-anchor="middle" style="font-size: 16px; fill: #666;">251 casos válidos analizados (2020-2024)</text>
+                    <text x="400" y="30" text-anchor="middle" style="font-size: 22px; font-weight: 700; fill: #1a1a1a;">Distribución por Nivel de Riesgo (Mortalidad Fetal)</text>
+                    <text x="400" y="55" text-anchor="middle" style="font-size: 16px; fill: #666;">251 registros municipio-año en Orinoquía (2020-2024)</text>
                     
                     <!-- Eje Y -->
                     <line x1="100" y1="100" x2="100" y2="330" stroke="#333" stroke-width="2"/>
@@ -1535,64 +1535,63 @@
                     <line x1="100" y1="170" x2="700" y2="170" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="5,5"/>
                     <line x1="100" y1="115" x2="700" y2="115" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="5,5"/>
                     
-                    <!-- Barra 1: Bajo Riesgo (188 casos = 74.9%) -->
-                    <rect x="200" y="125" width="150" height="205" fill="#4CAF50" rx="5"/>
-                    <text x="275" y="110" text-anchor="middle" style="font-size: 28px; font-weight: 700; fill: #4CAF50;">188</text>
-                    <text x="275" y="155" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: white;">BAJO</text>
-                    <text x="275" y="180" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: white;">RIESGO</text>
-                    <text x="275" y="360" text-anchor="middle" style="font-size: 16px; font-weight: 600; fill: #1a1a1a;">Bajo Riesgo</text>
-                    <text x="275" y="378" text-anchor="middle" style="font-size: 11px; fill: #666; font-style: italic;">Tres cuartos de los casos</text>
+                    <!-- Barra 1: Bajo Riesgo (183 casos = 72.9%) -->
+                    <rect x="200" y="132" width="150" height="198" fill="#4CAF50" rx="5"/>
+                    <text x="275" y="117" text-anchor="middle" style="font-size: 28px; font-weight: 700; fill: #4CAF50;">183</text>
+                    <text x="275" y="165" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: white;">BAJO</text>
+                    <text x="275" y="190" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: white;">RIESGO</text>
+                    <text x="275" y="360" text-anchor="middle" style="font-size: 16px; font-weight: 600; fill: #1a1a1a;">MF &lt;30‰ (72.9%)</text>
+                    <text x="275" y="378" text-anchor="middle" style="font-size: 11px; fill: #666; font-style: italic;">Tres cuartos de registros</text>
                     
-                    <!-- Barra 2: Alto Riesgo TOTAL (63 casos = 25.1%) - Color rosa claro -->
-                    <rect x="450" y="262" width="150" height="68" fill="#E91E63" rx="5"/>
-                    <text x="525" y="247" text-anchor="middle" style="font-size: 28px; font-weight: 700; fill: #E91E63;">63</text>
-                    <text x="525" y="360" text-anchor="middle" style="font-size: 16px; font-weight: 600; fill: #1a1a1a;">Alto Riesgo (25.1%)</text>
-                    <text x="525" y="378" text-anchor="middle" style="font-size: 11px; fill: #666; font-style: italic;">Un cuarto de los casos</text>
+                    <!-- Barra 2: Alto Riesgo TOTAL (68 registros = 27.1%) - Color rosa claro -->
+                    <rect x="450" y="257" width="150" height="73" fill="#E91E63" rx="5"/>
+                    <text x="525" y="242" text-anchor="middle" style="font-size: 28px; font-weight: 700; fill: #E91E63;">68</text>
+                    <text x="525" y="360" text-anchor="middle" style="font-size: 16px; font-weight: 600; fill: #1a1a1a;">MF &gt;30‰ (27.1%)</text>
+                    <text x="525" y="378" text-anchor="middle" style="font-size: 11px; fill: #666; font-style: italic;">Requieren atención</text>
                     
-                    <!-- Segmento crítico DENTRO de Alto Riesgo (40 de 63) - Color naranja oscuro -->
-                    <rect x="450" y="286" width="150" height="44" fill="#FF6F00" rx="5"/>
-                    <text x="525" y="285" text-anchor="middle" style="font-size: 16px; font-weight: 700; fill: white;">Alto Riesgo</text>
-                    <text x="525" y="308" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: white;">40 Críticos</text>
-                    <text x="525" y="325" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: white;">(&gt;50‰)</text>
+                    <!-- Segmento crítico DENTRO de Alto Riesgo (40 de 68) - Color naranja oscuro -->
+                    <rect x="450" y="282" width="150" height="48" fill="#FF6F00" rx="5"/>
+                    <text x="525" y="298" text-anchor="middle" style="font-size: 14px; font-weight: 700; fill: white;">40 Críticos</text>
+                    <text x="525" y="318" text-anchor="middle" style="font-size: 12px; font-weight: 600; fill: white;">(MF &gt;50‰)</text>
                     
                     <!-- Notas aclaratorias -->
                     <rect x="120" y="395" width="560" height="50" fill="#F5F5F5" stroke="#ddd" stroke-width="1" rx="8"/>
                     
-                    <!-- Nota 1: Porcentajes -->
+                    <!-- Nota 1: Registros municipio-año -->
                     <circle cx="140" cy="410" r="4" fill="#2196F3"/>
-                    <text x="150" y="414" style="font-size: 12px; font-weight: 600; fill: #1a1a1a;">74.9% y 25.1%:</text>
-                    <text x="245" y="414" style="font-size: 11px; fill: #555;">Proporción de casos analizados clasificados</text>
+                    <text x="150" y="414" style="font-size: 12px; font-weight: 600; fill: #1a1a1a;">251 registros:</text>
+                    <text x="235" y="414" style="font-size: 11px; fill: #555;">Combinaciones municipio-año con ≥10 nacimientos (57 municipios × 5 años)</text>
                     
                     <!-- Nota 2: Por mil -->
                     <circle cx="140" cy="430" r="4" fill="#FF6F00"/>
-                    <text x="150" y="434" style="font-size: 12px; font-weight: 600; fill: #1a1a1a;">&gt;50‰ (por mil):</text>
-                    <text x="245" y="434" style="font-size: 11px; fill: #555;">Más de 50 muertes por cada 1,000 nacimientos (crisis de salud pública)</text>
+                    <text x="150" y="434" style="font-size: 12px; font-weight: 600; fill: #1a1a1a;">MF (Mort. Fetal):</text>
+                    <text x="260" y="434" style="font-size: 11px; fill: #555;">Defunciones fetales por cada 1,000 nacimientos</text>
                 </svg>
             </div>
         </div>
 
         <!-- SLIDE 10 - Hallazgos Relevantes -->
         <div class="slide slide-10">
-            <h2>Hallazgos relevantes</h2>
+            <h2>Hallazgos relevantes en Orinoquía</h2>
 
             <div class="findings-grid">
                 <div class="finding-card critical">
                     <div class="finding-icon"><i class="fas fa-bullseye" style="color: #E91E63;"></i></div>
                     <div class="finding-title">Municipio más crítico (2024)</div>
                     <div class="finding-value">Saravena (Arauca) — 162‰</div>
-                    <div class="finding-note">162 bebés muertos por cada 1,000 nacimientos</div>
+                    <div class="finding-note">Tasa mortalidad fetal más alta de la región</div>
                 </div>
 
                 <div class="finding-card warning">
                     <div class="finding-icon"><i class="fas fa-exclamation-triangle" style="color: #FF9800;"></i></div>
-                    <div class="finding-title">Retroceso sanitario 2024</div>
-                    <div class="finding-value">63.4‰ (+80%)</div>
+                    <div class="finding-title">Tendencia Orinoquía 2024</div>
+                    <div class="finding-value">44.6‰ (+6% vs 2023)</div>
                 </div>
 
                 <div class="finding-card info">
                     <div class="finding-icon"><i class="fas fa-pills" style="color: #2196F3;"></i></div>
                     <div class="finding-title">Muertes evitables (2020-2024)</div>
-                    <div class="finding-value">49.7%</div>
+                    <div class="finding-value">57.8%</div>
                 </div>
             </div>
 
@@ -1610,7 +1609,7 @@
                 <!-- Gráfico central -->
                 <div style="padding: 1.5vh; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <div style="font-size: clamp(0.8rem, 1.2vw, 0.95rem); font-weight: 700; color: #1a1a1a; margin-bottom: 1vh; text-align: center;">
-                        <i class="fas fa-chart-line" style="color: #1a1a1a;"></i> Evolución Temporal (2020-2024)
+                        <i class="fas fa-chart-line" style="color: #1a1a1a;"></i> Mortalidad Fetal Orinoquía (2020-2024)
                     </div>
                     
                     <svg viewBox="0 0 900 240" style="width: 100%; background: white; display: block;">
@@ -1620,33 +1619,33 @@
                         
                         <!-- Etiquetas eje Y -->
                         <text x="105" y="205" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">0‰</text>
-                        <text x="105" y="160" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">30‰</text>
-                        <text x="105" y="120" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">50‰</text>
-                        <text x="105" y="80" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">60‰</text>
-                        <text x="105" y="53" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">70‰</text>
+                        <text x="105" y="168" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">30‰</text>
+                        <text x="105" y="135" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">50‰</text>
+                        <text x="105" y="102" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">70‰</text>
+                        <text x="105" y="70" text-anchor="end" style="font-size: 16px; fill: #666; font-weight: 700;">90‰</text>
                         
                         <!-- Líneas guía -->
-                        <line x1="120" y1="160" x2="780" y2="160" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
-                        <line x1="120" y1="120" x2="780" y2="120" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
-                        <line x1="120" y1="80" x2="780" y2="80" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
+                        <line x1="120" y1="168" x2="780" y2="168" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
+                        <line x1="120" y1="135" x2="780" y2="135" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
+                        <line x1="120" y1="102" x2="780" y2="102" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,4"/>
                         
-                        <!-- Línea de tendencia -->
-                        <polyline points="190,145 310,160 430,170 550,178 670,75" 
-                                  fill="none" stroke="#E91E63" stroke-width="3.5" stroke-linejoin="round"/>
+                        <!-- Línea de tendencia: 61.7 -> 52.4 -> 44.3 -> 42.1 -> 44.6 -->
+                        <polyline points="190,98 310,118 430,140 550,145 670,138" 
+                                  fill="none" stroke="#4CAF50" stroke-width="3.5" stroke-linejoin="round"/>
                         
                         <!-- Puntos -->
-                        <circle cx="190" cy="145" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
-                        <circle cx="310" cy="160" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
-                        <circle cx="430" cy="170" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
-                        <circle cx="550" cy="178" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
-                        <circle cx="670" cy="75" r="9" fill="#FF5252" stroke="#fff" stroke-width="2"/>
+                        <circle cx="190" cy="98" r="9" fill="#FF5252" stroke="#fff" stroke-width="2"/>
+                        <circle cx="310" cy="118" r="7" fill="#FF9800" stroke="#fff" stroke-width="2"/>
+                        <circle cx="430" cy="140" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
+                        <circle cx="550" cy="145" r="7" fill="#4CAF50" stroke="#fff" stroke-width="2"/>
+                        <circle cx="670" cy="138" r="7" fill="#FF9800" stroke="#fff" stroke-width="2"/>
                         
                         <!-- Valores -->
-                        <text x="190" y="135" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">48.3‰</text>
-                        <text x="310" y="150" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">42.1‰</text>
-                        <text x="430" y="160" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">38.7‰</text>
-                        <text x="550" y="168" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">35.2‰</text>
-                        <text x="670" y="65" text-anchor="middle" style="font-size: 18px; font-weight: 900; fill: #D32F2F;">63.4‰</text>
+                        <text x="190" y="85" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #D32F2F;">61.7‰</text>
+                        <text x="310" y="108" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #E65100;">52.4‰</text>
+                        <text x="430" y="130" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">44.3‰</text>
+                        <text x="550" y="158" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #2E7D32;">42.1‰</text>
+                        <text x="670" y="128" text-anchor="middle" style="font-size: 15px; font-weight: 800; fill: #E65100;">44.6‰</text>
                         
                         <!-- Años -->
                         <text x="190" y="220" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: #333;">2020</text>
@@ -1656,18 +1655,19 @@
                         <text x="670" y="220" text-anchor="middle" style="font-size: 18px; font-weight: 700; fill: #333;">2024</text>
                         
                         <!-- Indicador -->
-                        <text x="610" y="115" text-anchor="middle" style="font-size: 22px; fill: #D32F2F;">↑</text>
-                        <text x="610" y="135" text-anchor="middle" style="font-size: 12px; font-weight: 700; fill: #D32F2F;">+80%</text>
+                        <!-- Indicador mejora -->
+                        <text x="320" y="70" text-anchor="middle" style="font-size: 18px; fill: #4CAF50;">↓</text>
+                        <text x="320" y="88" text-anchor="middle" style="font-size: 11px; font-weight: 700; fill: #4CAF50;">-28% vs 2020</text>
                     </svg>
                 </div>
 
                 <!-- Municipios críticos -->
                 <div style="padding: 1.5vh 1.2vw; background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%); color: white; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
                     <div style="font-size: clamp(0.8rem, 1.2vw, 0.95rem); font-weight: 800; line-height: 1.4;">
-                        <i class="fas fa-bell" style="color: #E91E63;"></i> 11 municipios críticos (&gt;50‰)
+                        <i class="fas fa-bell" style="color: white;"></i> 18 municipios críticos (&gt;50‰)
                     </div>
                     <div style="margin-top: 0.5vh; font-size: clamp(0.75rem, 1.05vw, 0.88rem); font-weight: 600; opacity: 0.95;">
-                        4,811 nacimientos afectados en 2024
+                        ~22,000 nacimientos monitoreados en 2024
                     </div>
                 </div>
             </div>
@@ -1746,31 +1746,31 @@
 
         <!-- SLIDE 12 - Impacto Social y Sanitario -->
         <div class="slide slide-12">
-            <h2>Impacto Social y Sanitario</h2>
+            <h2>Impacto Social y Sanitario en Orinoquía</h2>
             
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5vw; margin-top: 3vh;">
                 <!-- Impacto 1: Reducción en Mortalidad -->
                 <div style="background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%); padding: 3vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(233,30,99,0.3); color: white; text-align: center;">
-                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">49.7%</div>
-                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Reducción en Mortalidad<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">~320 vidas salvadas anualmente</span></div>
+                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">57.8%</div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Muertes Evitables<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Potencial de intervención temprana</span></div>
                 </div>
 
                 <!-- Impacto 2: Crisis Atendidas -->
                 <div style="background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); padding: 3vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(255,111,0,0.3); color: white; text-align: center;">
                     <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">100%</div>
-                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Crisis Atendidas<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Detección y respuesta garantizada</span></div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Cobertura Orinoquía<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">57 municipios analizados</span></div>
                 </div>
 
                 <!-- Impacto 3: Municipios Priorizados -->
                 <div style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); padding: 3vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(33,150,243,0.3); color: white; text-align: center;">
-                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">63</div>
-                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Municipios Priorizados<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Recursos optimizados estratégicamente</span></div>
+                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">36</div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Municipios Alto Riesgo<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Requieren intervención prioritaria</span></div>
                 </div>
 
-                <!-- Impacto 4: Embarazos Monitoreados -->
+                <!-- Impacto 4: Nacimientos Monitoreados -->
                 <div style="background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); padding: 3vh 2vw; border-radius: 12px; box-shadow: 0 4px 15px rgba(76,175,80,0.3); color: white; text-align: center;">
-                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">4,811</div>
-                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Embarazos Monitoreados<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Alto riesgo con seguimiento especializado</span></div>
+                    <div style="font-size: clamp(3rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 1vh;">137,780</div>
+                    <div style="font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 700; line-height: 1.3;">Nacimientos Analizados<br><span style="font-size: clamp(0.95rem, 1.35vw, 1.1rem); font-weight: 600; opacity: 0.95;">Período 2020-2024</span></div>
                 </div>
             </div>
         </div>
