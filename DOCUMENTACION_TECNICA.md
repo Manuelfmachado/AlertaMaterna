@@ -17,7 +17,7 @@
 5. [Modelo 1: Clasificación de Riesgo Obstétrico](#5-modelo-1-clasificación-de-riesgo-obstétrico)
 6. [Modelo 2: Predicción de Mortalidad Infantil](#6-modelo-2-predicción-de-mortalidad-infantil)
 7. [Resultados y Análisis](#7-resultados-y-análisis)
-   - 7.6 [Impacto Económico de la Prevención](#76-impacto-económico-de-la-prevención)
+   - 7.6 [Impacto Económico de la Prevención][def]
 8. [Validación y Coherencia](#8-validación-y-coherencia)
 9. [Limitaciones y Trabajo Futuro](#9-limitaciones-y-trabajo-futuro)
 10. [Referencias](#10-referencias)
@@ -1237,30 +1237,6 @@ Si AlertaMaterna permite focalizar recursos y prevenir:
   • 1 muerte materna evitada       × $300M = $300M COP/año
   ────────────────────────────────────────────────────────
   BENEFICIO TOTAL ESTIMADO:                  $550M COP/año
-
-Costo de implementación AlertaMaterna:
-  • Infraestructura servidor                 = $20M
-  • Actualización anual datos                = $15M
-  • Capacitación personal salud              = $10M
-  • Mantenimiento                            = $5M/año
-  ────────────────────────────────────────────────────────
-  INVERSIÓN TOTAL:                           $50M COP
-
-ROI AlertaMaterna = $550M / $50M = 11:1
-```
-
-**D. Proyección 5 años (Orinoquía):**
-
-```
-Año 1: Inversión inicial $50M  → Ahorro $550M → ROI 11:1
-Año 2: Mantenimiento $5M      → Ahorro $550M → ROI 110:1
-Año 3: Mantenimiento $5M      → Ahorro $550M → ROI 110:1
-Año 4: Mantenimiento $5M      → Ahorro $550M → ROI 110:1
-Año 5: Mantenimiento $5M      → Ahorro $550M → ROI 110:1
-────────────────────────────────────────────────────────────
-Total invertido: $70M COP
-Total ahorrado:  $2,750M COP
-ROI acumulado:   39:1
 ```
 
 #### 7.6.6 Escalabilidad del Impacto Económico
@@ -1634,3 +1610,6 @@ data/processed/
 **Proyecto:** AlertaMaterna v1.0 - Sistema de Clasificación de Riesgo Obstétrico y Predicción de Mortalidad Infantil  
 **Región:** Orinoquía, Colombia
 **Concurso:** Datos al Ecosistema 2025 - MinTIC
+
+
+[def]: #76-impacto-económico-de-la-prevención
