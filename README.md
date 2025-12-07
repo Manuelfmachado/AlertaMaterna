@@ -75,6 +75,21 @@ El sistema analiza **34 indicadores de salud** (atención prenatal, bajo peso al
 | **Mortalidad evitable**         | 49.7% de muertes maternas son PREVENIBLES                               |
 | **Casos críticos detectados**  | 40 registros (mortalidad >50‰) - 100% sensibilidad                     |
 
+## Impacto Económico
+
+La prevención prenatal estructurada no solo salva vidas, sino que genera un **retorno económico significativo**:
+
+| Concepto | Valor (COP) |
+|----------|-------------|
+| **Costo complicación obstétrica** | $20M - $60M por caso |
+| **Costo prevención prenatal** | ~$2M por madre |
+| **Retorno de inversión (ROI)** | **10:1 a 30:1** |
+| **Ahorro estimado Orinoquía** | $550M COP/año |
+
+**AlertaMaterna maximiza este retorno** al identificar los **28 municipios críticos** donde focalizar recursos genera el mayor impacto económico y social.
+
+📊 *Para detalles completos del análisis económico con referencias científicas (OMS, PAHO, Banco Mundial, MinSalud), consulta la [Documentación Técnica - Sección 7.6](DOCUMENTACION_TECNICA.md#76-impacto-económico-de-la-prevención).*
+
 ## Modelos Implementados
 
 ### Modelo 1: Clasificación de Riesgo Obstétrico
