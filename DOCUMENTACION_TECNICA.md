@@ -1205,30 +1205,9 @@ AlertaMaterna no realiza intervenciones médicas directas, sino que **optimiza l
 3. **Prevención temprana:** Alertas antes de que se desarrollen complicaciones
 4. **Optimización presupuestaria:** Maximizar retorno de cada peso invertido
 
-**B. Modelo de Impacto (Orinoquía):**
+**B. Estimación de Beneficio Económico (Orinoquía):**
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  ESCENARIO SIN ALERTAMATERNA                                    │
-├─────────────────────────────────────────────────────────────────┤
-│  Inversión en prevención: Distribuida uniformemente             │
-│  Recursos en 51 municipios: $100M COP                          │
-│  Impacto: BAJO (recursos dispersos, baja focalización)         │
-│  Complicaciones evitadas: 3-5 casos/año                         │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│  ESCENARIO CON ALERTAMATERNA                                    │
-├─────────────────────────────────────────────────────────────────┤
-│  Inversión en prevención: Focalizada en 28 municipios críticos │
-│  Mismos recursos: $100M COP                                     │
-│  Impacto: ALTO (concentración en poblaciones vulnerables)      │
-│  Complicaciones evitadas: 8-12 casos/año                        │
-│  Beneficio adicional: 5-7 casos más evitados = $100M-$420M COP │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**C. Cálculo Conservador de Beneficio (Orinoquía):**
+AlertaMaterna permite a las autoridades de salud **focalizar los recursos de prevención** en los municipios críticos identificados. Bajo un escenario conservador, si esta focalización permite prevenir:
 
 ```
 Si AlertaMaterna permite focalizar recursos y prevenir:
