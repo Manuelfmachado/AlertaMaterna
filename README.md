@@ -7,9 +7,6 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
 
-> **📱 Dashboard en Vivo:** [Acceder a AlertaMaterna](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)  
-> ⚠️ *Nota: Si aparece "App is sleeping", espera ~60 segundos. Es normal en apps de Streamlit Community Cloud que no han tenido actividad reciente.*
-
 ---
 
 ## Concurso Datos al Ecosistema 2025
