@@ -4,11 +4,21 @@
 
 ---
 
-## 🌐 Ver Aplicación en Vivo
+## 🌐 Abrir el Sitio Web de AlertaMaterna
 
-**👉 Para ver la aplicación en vivo, haz clic en el botón "Open in Streamlit" de abajo y espera unos segundos mientras carga la página.**
+**Accede a la aplicación web en vivo:**
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
+### [👉 Ir a AlertaMaterna Dashboard](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
+
+**📋 Instrucciones importantes:**
+
+1. **Haz clic en el enlace de arriba** para abrir la aplicación
+2. **Si aparece un botón amarillo** que dice *"Yes, get this app back up!"* (la app se está despertando):
+   - Presiona el botón amarillo y espera unos segundos
+3. **Si la página carga directamente** con el dashboard de AlertaMaterna:
+   - ¡Perfecto! No hagas nada, ya estás listo para usar la aplicación
+
+> 💡 **Nota:** La primera carga puede tardar 20-30 segundos mientras Streamlit despierta el servidor.
 
 ---
 
@@ -470,21 +480,9 @@ de Mortalidad Infantil en la Región Orinoquía. GitHub: Manuelfmachado/AlertaMa
 
 ---
 
-## Abrir el Sitio Web de AlertaMaterna
+## 🌐 Acceso a la Aplicación
 
-**Accede a la aplicación web en vivo:**
-
-### [Ir a AlertaMaterna Dashboard](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
-
-**📋 Instrucciones importantes:**
-
-1. **Haz clic en el enlace de arriba** para abrir la aplicación
-2. **Si aparece un botón amarillo** que dice *"Yes, get this app back up!"* (la app se está despertando):
-   - Presiona el botón amarillo y espera unos segundos
-3. **Si la página carga directamente** con el dashboard de AlertaMaterna:
-   - ¡Perfecto! No hagas nada, ya estás listo para usar la aplicación
-
-> 💡 **Nota:** La primera carga puede tardar 20-30 segundos mientras Streamlit despierta el servidor.
+### [👉 Abrir AlertaMaterna Dashboard](https://alertamaterna-h58nkmrssz5e6mceegqcxe.streamlit.app/)
 
 Explora el sistema de clasificación de riesgo obstétrico en la región Orinoquía y utiliza el predictor de mortalidad infantil directamente desde tu navegador.
 
