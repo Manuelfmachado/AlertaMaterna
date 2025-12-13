@@ -38,13 +38,16 @@ wheels/
 .DS_Store
 Thumbs.db
 
-# Streamlit (permitir config.toml para deploy)
-.streamlit/secrets.toml
+# Streamlit
+.streamlit/
 
 # Datos temporales
 *.tmp
 *.bak
 *.log
+
+# Scripts temporales de Windows
+*.ps1
 
 # Archivos grandes (>50MB)
 data/processed/*_decoded.csv
