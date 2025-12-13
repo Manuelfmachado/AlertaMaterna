@@ -2,6 +2,8 @@
 
 ![AlertaMaterna Banner](ALERTAMATERNA.png)
 
+> **Nota:** Para ver la aplicación en vivo, haz clic en el botón "Open in Streamlit" de abajo y espera unos segundos mientras carga la página.
+
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
